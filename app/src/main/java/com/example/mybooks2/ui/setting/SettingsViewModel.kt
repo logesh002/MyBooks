@@ -33,15 +33,11 @@ class SettingsViewModel(
             try {
                 val booksWithTags = bookDao.getAllBooksWithTags().first() // Get the current list
 
-                // Build the CSV string
                 val csvBuilder = StringBuilder()
-                // Header row
                 csvBuilder.append("title,author,isbn,status,rating,startDate,finishDate,review,tags\n")
 
-                // Data rows
                 booksWithTags.forEach { bookWithTags ->
                     val book = bookWithTags.book
-                    // Join tags with a pipe "|" character
                     val tagsString = bookWithTags.tags.joinToString("|") { it.name }
 
                     csvBuilder.append("\"${book.title}\",")
@@ -55,7 +51,6 @@ class SettingsViewModel(
                     csvBuilder.append("\"$tagsString\"\n")
                 }
 
-                // Write the string to the file chosen by the user
                 context.contentResolver.openOutputStream(uri)?.use { outputStream ->
                     outputStream.write(csvBuilder.toString().toByteArray())
                 }
@@ -63,7 +58,6 @@ class SettingsViewModel(
 
             }
             catch (e: Exception) {
-                // On failure, post an error message
                 _toastMessage.postValue(Event("Error: Failed to export data."))
                 e.printStackTrace()
             }
@@ -87,11 +81,9 @@ class SettingsViewModel(
                             val isbn = tokens[2].removeSurrounding("\"").ifEmpty { null }
                             var shouldImport = true
 
-                            // --- THIS IS THE NEW LOGIC ---
                             if (!isbn.isNullOrBlank()) {
                                 val existingBook = bookDao.getBookByIsbn(isbn)
                                 if (existingBook != null) {
-                                    // A book with this ISBN already exists, so we skip it.
                                     shouldImport = false
                                     skippedCount++
                                 }
@@ -110,7 +102,6 @@ class SettingsViewModel(
                                 val tagNames = tokens[8].removeSurrounding("\"").split("|")
                                     .filter { it.isNotBlank() }
 
-                                // Use your existing transaction to save the book and its tags
                                 bookDao.saveBookWithTags(book, tagNames.toSet())
                                 importedCount++
                             }
@@ -122,7 +113,6 @@ class SettingsViewModel(
                 _toastMessage.postValue(Event(message))
             }
             catch (e: Exception) {
-                // On failure, post an error message
                 _toastMessage.postValue(Event("Error: Failed to import data. Check file format."))
                 e.printStackTrace()
             }

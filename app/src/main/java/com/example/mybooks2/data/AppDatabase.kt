@@ -20,17 +20,15 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun bookDao(): BookDao
 
     companion object {
-        // Volatile ensures that the instance is always up-to-date and the same for all execution threads.
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
         fun getDatabase(context: Context): AppDatabase {
-            // Return the existing instance if it's not null, otherwise create a new one.
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "book_database1" // The name of your database file
+                    "book_database1"
                 ).build()
                 INSTANCE = instance
                 instance
@@ -41,7 +39,6 @@ abstract class AppDatabase : RoomDatabase() {
 class Converters {
     @TypeConverter
     fun fromReadingStatus(status: ReadingStatus?): String? {
-        // Convert the enum to its string name (e.g., ReadingStatus.FINISHED -> "FINISHED")
         return status?.name
     }
 
@@ -50,12 +47,12 @@ class Converters {
         return try {
             value?.let { ReadingStatus.valueOf(it) }
         } catch (e: IllegalArgumentException) {
-            null // Or return a default value like ReadingStatus.UNFINISHED
+            null
         }
     }
     @TypeConverter
     fun fromBookFormat(format: BookFormat?): String? {
-        return format?.name // Converts enum to string (e.g., "PAPERBACK")
+        return format?.name
     }
 
     @TypeConverter

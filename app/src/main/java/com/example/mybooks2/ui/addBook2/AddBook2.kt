@@ -55,7 +55,6 @@ class AddBook2 : AppCompatActivity() {
     ) { uri: Uri? ->
         uri?.let {
             viewModel.updateCoverImage(it)
-          //  binding.imageViewPreview.setImageURI(it)
             binding.imageViewPreview.visibility = View.VISIBLE
             binding.imageCl.visibility=View.VISIBLE
             binding.coverImageCard.visibility = View.GONE
@@ -63,40 +62,15 @@ class AddBook2 : AppCompatActivity() {
     }
 
 
-   // private val stars = mutableListOf<ImageView>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
-       // enableEdgeToEdge()
         binding = AddBook2Binding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val window = window
         val decorView = window.decorView
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            // Get the height of the keyboard
-//            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
-//
-//            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-//            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-//
-//            binding.scrollView.updatePadding(bottom = imeHeight)
-
-
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val cutout = insets.displayCutout
-            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            cutout?.let {
-                if(isLandscape())
-                    view.setPadding(it.safeInsetLeft, systemBars.top, it.safeInsetRight, systemBars.bottom)
-                else{
-                    println("No landscape")
-                }
-            }
-            insets
-        }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
@@ -118,9 +92,9 @@ class AddBook2 : AppCompatActivity() {
 
             view.setPadding(
                 systemBarInsets.left,
-                systemBarInsets.top, // Use status bar top inset
+                systemBarInsets.top,
                 systemBarInsets.right,
-                imeInsets.bottom // Use IME bottom inset (keyboard)
+                imeInsets.bottom
             )
 
             WindowInsetsCompat.CONSUMED
@@ -141,24 +115,21 @@ class AddBook2 : AppCompatActivity() {
         val bookId = intent.getLongExtra("EXTRA_BOOK_ID", -1L)
 
         if (bookId != -1L) {
-            // EDIT MODE
             supportActionBar?.title = "Edit Book"
             viewModel.loadBook(bookId)
         } else {
 
             val prefillTitle = intent.getStringExtra("EXTRA_PREFILL_TITLE")
             if (prefillTitle != null) {
-                // Pre-fill mode
                 val prefillAuthor = intent.getStringExtra("EXTRA_PREFILL_AUTHOR")
                 val prefillIsbn = intent.getStringExtra("EXTRA_PREFILL_ISBN")
                 val prefillYear = intent.getIntExtra("EXTRA_PREFILL_YEAR", 0)
                 val prefillCover = intent.getStringExtra("EXTRA_PREFILL_COVER_URL")
+                val prefillPages = intent.getIntExtra("EXTRA_PREFILL_PAGES", 0)
 
-                viewModel.prefillData(prefillTitle, prefillAuthor, prefillIsbn, prefillYear,prefillCover)
+                viewModel.prefillData(prefillTitle, prefillAuthor, prefillIsbn, prefillYear,prefillCover,prefillPages)
             }
-            // ADD MODE
             supportActionBar?.title = "Add Book"
-            // The ViewModel is already initialized with an empty state, so we do nothing.
         }
         setupViews()
         setupObservers()
@@ -170,7 +141,6 @@ class AddBook2 : AppCompatActivity() {
             handleCloseAttempt()
         }
 
-        // Handle the system's back button/gesture
         onBackPressedDispatcher.addCallback(this) {
             handleCloseAttempt()
         }
@@ -178,7 +148,6 @@ class AddBook2 : AppCompatActivity() {
         supportFragmentManager.setFragmentResultListener(DiscardChangesDialogFragment.REQUEST_KEY, this) { _, bundle ->
             val confirmed = bundle.getBoolean(DiscardChangesDialogFragment.RESULT_KEY)
             if (confirmed) {
-                // The user tapped "Discard" in the dialog, so now we close the activity.
                 finish()
             }
         }
@@ -208,7 +177,7 @@ class AddBook2 : AppCompatActivity() {
         if (viewModel.hasUnsavedChanges()) {
             showDiscardChangesDialog()
         } else {
-            finish() // No changes, so close immediately
+            finish()
         }
     }
 
@@ -216,34 +185,18 @@ class AddBook2 : AppCompatActivity() {
         return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 
-//    private fun showDiscardChangesDialog() {
-//        MaterialAlertDialogBuilder(this)
-//            .setTitle("Discard changes?")
-//            .setMessage("You have unsaved changes. Are you sure you want to discard them?")
-//            .setNegativeButton("Cancel") { dialog, which ->
-//                // Do nothing, just close the dialog
-//            }
-//            .setPositiveButton("Discard") { dialog, which ->
-//                // User confirmed, close the activity
-//                finish()
-//            }
-//            .show()
-//    }
     private fun showDiscardChangesDialog() {
-        // Show the DialogFragment instead of building the dialog directly.
         DiscardChangesDialogFragment.newInstance()
             .show(supportFragmentManager, DiscardChangesDialogFragment.TAG)
     }
 
     private fun setupTags() {
-        // 1. Set up the AutoComplete suggestions
         viewModel.allTags.observe(this) { tags ->
             println("tags sd"+tags)
             val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, tags)
             binding.autoCompleteTags.setAdapter(adapter)
         }
 
-        // 2. Add tag when user selects from dropdown or presses Enter
         binding.autoCompleteTags.setOnItemClickListener { _, _, _, _ ->
             addTagFromInput()
         }
@@ -255,10 +208,6 @@ class AddBook2 : AppCompatActivity() {
             false
         }
 
-        // 3. Observe the current book's tags and update the ChipGroup
-//        viewModel.currentBookTags.observe(this) { tags ->
-//            updateTagsChipGroup(tags.toSet())
-//        }
     }
 
     private fun addTagFromInput() {
@@ -267,20 +216,7 @@ class AddBook2 : AppCompatActivity() {
         binding.autoCompleteTags.setText("") // Clear the input
     }
 
-//    private fun updateTagsChipGroup(tags: Set<kotlin.String>) {
-//        binding.chipGroupTags.removeAllViews()
-//        for (tag in tags) {
-//            val chip = Chip(this)
-//            chip.text = tag
-//            chip.isCloseIconVisible = true
-//            chip.setOnCloseIconClickListener {
-//                viewModel.removeTag(tag.toString())
-//            }
-//            binding.chipGroupTags.addView(chip)
-//        }
-//    }
     private fun updateTagsChipGroup(tags: Set<String>) {
-        // To prevent an infinite loop, check if the UI is already up-to-date
         val currentChips = (0 until binding.chipGroupTags.childCount).map {
             (binding.chipGroupTags.getChildAt(it) as Chip).text.toString()
         }.toSet()
@@ -315,7 +251,6 @@ class AddBook2 : AppCompatActivity() {
     }
 
     private fun setupViews() {
-        // Cover Image
         binding.coverImageCard.setOnClickListener {
             if(binding.imageCl.isGone)
             pickImageLauncher.launch("image/*")
@@ -327,7 +262,6 @@ class AddBook2 : AppCompatActivity() {
             binding.coverImageCard.visibility=View.VISIBLE
         }
 
-        // Status Chips
         binding.statusChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
             if (checkedIds.isNotEmpty()) {
                 val status = when (checkedIds[0]) {
@@ -459,94 +393,10 @@ class AddBook2 : AppCompatActivity() {
         }
     }
 
-/*
-    private fun setupObservers() {
-        viewModel.bookFormState.observe(this) { state ->
 
-            if (state.coverImageUri != null) {
-                binding.coverImageCard.visibility = View.GONE
-                binding.imageCl.visibility = View.VISIBLE
-
-                binding.imageViewPreview.load(state.coverImageUri) {
-                    crossfade(true)
-                    placeholder(R.drawable.outline_image_24) // Optional
-                    error(R.drawable.outline_filter_list_24) // Optional
-                }
-            } else {
-                binding.coverImageCard.visibility = View.VISIBLE
-            }
-
-            // Update Title
-            if (binding.titleEditText.text.toString() != state.title) {
-                binding.titleEditText.setText(state.title)
-            }
-
-            // Update Author
-            if (binding.authorEditText.text.toString() != state.author) {
-                binding.authorEditText.setText(state.author)
-            }
-
-            // Update Status
-            val buttonIdToCheck = when (state.status) {
-                ReadingStatus.FINISHED -> R.id.finishedChip
-                ReadingStatus.IN_PROGRESS -> R.id.inProgressChip
-                ReadingStatus.FOR_LATER -> R.id.forLaterChip
-                ReadingStatus.UNFINISHED -> R.id.unfinishedChip
-            }
-            if (binding.toggleButtonStatus.checkedButtonId != buttonIdToCheck) {
-                binding.toggleButtonStatus.check(buttonIdToCheck)
-            }
-
-            // Update Rating
-            if (binding.ratingBar.rating != state.rating) {
-                binding.ratingBar.rating = state.rating
-            }
-        }
-
-        viewModel.validationError.observe(this) { errors ->
-            binding.titleInputLayout.error = errors.titleError
-            binding.authorInputLayout.error = errors.authorError
-            binding.pagesInputLayout.error = errors.pagesError
-            binding.yearInputLayout.error = errors.yearError
-            if(errors.dateError!=null){
-                binding.inputLayoutStartDate.error=" "
-            }
-            else{
-                binding.inputLayoutStartDate.error=null
-            }
-            binding.inputLayoutFinishDate.error= errors.dateError
-            binding.isbnInputLayout.error=errors.isbnError
-        }
-
-        viewModel.saveSuccess.observe(this) { success ->
-            success?.let {
-                if (it !=null) {
-                   // Snackbar.make(binding.root, "Book saved successfully", Snackbar.LENGTH_SHORT).show()
-                    val resultIntent = Intent()
-                    resultIntent.putExtra("EXTRA_SAVED_BOOK_ID", it)
-                    resultIntent.putExtra("EXTRA_TITLE", viewModel.bookFormState.value.title)
-                    resultIntent.putExtra("EXTRA_AUTHOR", viewModel.bookFormState.value.author)
-
-                    setResult(Activity.RESULT_OK,resultIntent)
-                    finish()
-                } else {
-                    Snackbar.make(binding.root, "Failed to save book", Snackbar.LENGTH_SHORT).show()
-                }
-                viewModel.resetSaveSuccess()
-            }
-        }
-        viewModel.showValidationErrorEvent.observe(this) { event ->
-            event.getContentIfNotHandled()?.let {
-                // This code will run only when the validation fails on a save attempt
-                Snackbar.make(binding.root, "Please fix the errors before saving", Snackbar.LENGTH_SHORT).show()
-            }
-        }
-    }
-*/
 private fun setupObservers() {
     viewModel.bookFormState.observe(this) { state ->
 
-        // Update Cover Image
         if (state.coverImageUri != null) {
             binding.coverImageCard.visibility = View.GONE
             binding.imageCl.visibility = View.VISIBLE
@@ -560,52 +410,42 @@ private fun setupObservers() {
             binding.imageCl.visibility = View.GONE
         }
 
-        // Update Title
         if (binding.titleEditText.text.toString() != state.title) {
             binding.titleEditText.setText(state.title)
         }
 
-        // Update Subtitle
         if (binding.subtitleEditText.text.toString() != state.subtitle) {
             binding.subtitleEditText.setText(state.subtitle)
         }
 
-        // Update Author
         if (binding.authorEditText.text.toString() != state.author) {
             binding.authorEditText.setText(state.author)
         }
 
-        // Update Number of Pages
         if (binding.pagesEditText.text.toString() != state.numberOfPages.toString()) {
             binding.pagesEditText.setText(state.numberOfPages.toString())
         }
 
-        // Update Publication Year
         if (binding.yearEditText.text.toString() != state.publicationYear.toString()) {
             binding.yearEditText.setText(state.publicationYear.toString())
         }
 
-        // Update Description
         if (binding.descriptionEditText.text.toString() != state.description) {
             binding.descriptionEditText.setText(state.description)
         }
 
-        // Update ISBN
         if (binding.isbnEditText.text.toString() != state.isbn) {
             binding.isbnEditText.setText(state.isbn)
         }
 
-        // Update Review
         if (binding.reviewEditText.text.toString() != state.review) {
             binding.reviewEditText.setText(state.review)
         }
 
-        // Update Notes
         if (binding.notesEditText.text.toString() != state.notes) {
             binding.notesEditText.setText(state.notes)
         }
 
-        // Update Status Chips
         val buttonIdToCheck = when (state.status) {
             ReadingStatus.FINISHED -> R.id.finishedChip
             ReadingStatus.IN_PROGRESS -> R.id.inProgressChip
@@ -616,7 +456,6 @@ private fun setupObservers() {
             binding.statusChipGroup.check(buttonIdToCheck)
         }
 
-        // Update Dates
         val dateFormat = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
         state.startDate?.let {
             val formattedDate = dateFormat.format(Date(it))
@@ -631,7 +470,6 @@ private fun setupObservers() {
             }
         }
 
-        // Update Rating
         if (binding.ratingBar.rating != state.rating) {
             binding.ratingBar.rating = state.rating.toFloat()
         }
@@ -666,7 +504,6 @@ private fun setupObservers() {
 
     viewModel.saveSuccess.observe(this) { success ->
         success?.let {
-            // Snackbar.make(binding.root, "Book saved successfully", Snackbar.LENGTH_SHORT).show()
             val resultIntent = Intent()
             resultIntent.putExtra("EXTRA_SAVED_BOOK_ID", it)
             resultIntent.putExtra("EXTRA_TITLE", viewModel.bookFormState.value.title)
@@ -679,7 +516,6 @@ private fun setupObservers() {
     }
     viewModel.showValidationErrorEvent.observe(this) { event ->
         event.getContentIfNotHandled()?.let {
-            // This code will run only when the validation fails on a save attempt
             Snackbar.make(binding.root, "Please fix the errors before saving", Snackbar.LENGTH_SHORT).show()
         }
     }
@@ -691,7 +527,6 @@ private fun setupObservers() {
 
 }
     private fun scrollToView(viewToScrollTo: View) {
-        // A small delay ensures the error message has been rendered before we scroll.
         binding.scrollView?.postDelayed({
             binding.scrollView?.smoothScrollTo(0, viewToScrollTo.top)
         }, 100)

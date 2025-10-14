@@ -19,7 +19,6 @@ class DeleteConfirmationDialogFragment : DialogFragment() {
             .setMessage("Are you sure you want to permanently delete these books?")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Delete") { _, _ ->
-                // Send a result back to the fragment that showed this dialog
                 setFragmentResult("delete_request", bundleOf("result" to true))
             }
             .create()
@@ -29,7 +28,6 @@ class DeleteConfirmationDialogFragment : DialogFragment() {
         const val TAG = "DeleteConfirmationDialog"
         private const val ARG_COUNT = "arg_count"
 
-        // Helper function to create an instance with arguments
         fun newInstance(count: Int): DeleteConfirmationDialogFragment {
             return DeleteConfirmationDialogFragment().apply {
                 arguments = bundleOf(ARG_COUNT to count)

@@ -41,21 +41,6 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         navView.setupWithNavController(navController)
 
-
-
-//        val navHostFragment = supportFragmentManager
-//            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-//        navController = navHostFragment.navController
-//
-//        fab = findViewById(R.id.fab)
-//        val bottomNavView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-//
-//        // Link the BottomNavigationView with the NavController
-//        NavigationUI.setupWithNavController(bottomNavView, navController)
-//
-//        // Set up the listener to control FAB visibility
-//        setupFabVisibility()
-
         val window = window
         val decorView = window.decorView
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -70,31 +55,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private fun setupFabVisibility() {
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            println(destination)
-            when (destination.id) {
-                // If the destination is the Home Fragment, show the FAB
-                R.id.navigation_home -> fab.show()
 
-                // For any other destination, hide the FAB
-                else -> {
-                    println(destination.id)
-                    fab.hide()
-                }
-            }
-        }
-    }
     fun isDarkTheme(): Boolean {
         return (resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-
-//            getMenuInflater().inflate(R.menu.action_bar_menu_1, menu);
-        return super.onCreateOptionsMenu(menu)
-
-    }
 
 }

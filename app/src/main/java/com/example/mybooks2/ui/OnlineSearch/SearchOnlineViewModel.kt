@@ -28,22 +28,24 @@ class SearchOnlineViewModel(val application: MyBooksApplication) : ViewModel() {
     val errorMessage: LiveData<Event<String>> = _errorMessage
     fun search(query: String) {
         if (!NetworkUtils.isNetworkAvailable(application)) {
-            // 2. If there's no connection, post an error message and stop.
             _errorMessage.value = Event("No internet connection")
             return
         }
-        if (query.isBlank()) {
+        val sanitizedQuery = query.trim().replace(Regex("\\s+"), " ")
+
+        if (sanitizedQuery == lastQuery) {
+            return
+        }
+        lastQuery = sanitizedQuery
+
+        if (sanitizedQuery.isBlank()) {
             _searchResults.value = emptyList()
             return
         }
-        if (query == lastQuery) {
-            return
-        }
-        lastQuery = query
         _isLoading.value = true
         viewModelScope.launch {
             try {
-                val response = ApiClient.apiService.searchBooks(query)
+                val response = ApiClient.apiService.searchBooks(sanitizedQuery)
                 _searchResults.postValue(response.docs)
             } catch (e: Exception) {
                 Log.d("Exceptions",e.toString())

@@ -28,8 +28,6 @@ import com.example.bookapp.ui.AddBook2
 import com.example.mybooks2.R
 import com.example.mybooks2.databinding.FragmentHomeBinding
 import com.example.mybooks2.ui.OnlineSearch.SearchOnlineActivity
-import com.example.mybooks2.ui.addBook.AddBook
-import com.example.mybooks2.ui.addBook2.AddBook2ViewModel
 import com.example.mybooks2.ui.addBook2.BookFormat
 import com.example.mybooks2.ui.detailScreen.DetailActivity
 import com.example.mybooks2.ui.searchView.SearchActivity
@@ -74,7 +72,6 @@ class HomeFragment : Fragment() {
         addBookLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            // This is where you handle the result from AddBookActivity
             if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
                 val title = data?.getStringExtra("EXTRA_TITLE")
@@ -83,7 +80,6 @@ class HomeFragment : Fragment() {
 
                 if(bookId != -1L){
                     val intent1 = Intent(requireActivity(), DetailActivity::class.java).apply {
-                        // Pass the book's ID to the activity for "edit" mode
                         putExtra("EXTRA_BOOK_ID",bookId)
                     }
                     detailBookLauncher.launch(intent1)
@@ -119,9 +115,6 @@ class HomeFragment : Fragment() {
 
 
         fab.setOnClickListener {
-//            val intent = Intent(requireActivity(), AddBook2::class.java)
-//            addBookLauncher.launch(intent)
-         //   showAddBookOptionsDialog()
             AddBookOptionsBottomSheet().show(parentFragmentManager, AddBookOptionsBottomSheet.TAG)
         }
 
@@ -138,33 +131,10 @@ class HomeFragment : Fragment() {
         setupRecyclerView()
         observeViewModel()
 
-//        parentFragmentManager.setFragmentResultListener("filter_request", this) { _, bundle ->
-//            val author = bundle.getString("KEY_AUTHOR")
-//            val tag = bundle.getString("KEY_TAG")
-//            viewModel.applyAdvancedFilters(author, tag)
-//        }
-
-//        parentFragmentManager.setFragmentResultListener("query_request", this) { _, bundle ->
-//            if (bundle.isEmpty) {
-//                println("tet")
-//                viewModel.clearAdvancedFilters()
-//            }
-//            else {
-//                val author = bundle.getString("KEY_AUTHOR")
-//                val tag = bundle.getString("KEY_TAG")
-//                val sortBy = bundle.getSerializable("KEY_SORT_BY") as? SortBy
-//                val order = bundle.getSerializable("KEY_ORDER") as? SortOrder
-//                val format = bundle.getSerializable("KEY_FORMAT") as? BookFormat
-//
-//                viewModel.updateQuery(author = author, tag = tag, sortBy = sortBy, order = order, format = format)
-//            }
-//        }
 
 
-        // In HomeFragment's onViewCreated()
         parentFragmentManager.setFragmentResultListener("query_request", this) { _, bundle ->
             if (bundle.isEmpty) {
-                // --- This is the "Clear Filters" logic ---
                 viewModel.updateQuery { currentState ->
                     currentState.copy(
                         author = null,
@@ -175,7 +145,6 @@ class HomeFragment : Fragment() {
                     )
                 }
             } else {
-                // --- This is the "Apply" logic ---
                 val author = bundle.getString("KEY_AUTHOR")
                 val tag = bundle.getString("KEY_TAG")
                 val format = bundle.getSerializable("KEY_FORMAT") as? BookFormat
@@ -202,12 +171,10 @@ class HomeFragment : Fragment() {
         parentFragmentManager.setFragmentResultListener("add_book_request", this) { _, bundle ->
             when (bundle.getString("option")) {
                 "MANUAL" -> {
-                    // The user chose "Add Manually"
                     val intent = Intent(requireActivity(), AddBook2::class.java)
                     addBookLauncher.launch(intent)
                 }
                 "ONLINE" -> {
-                    // The user chose "Search Online"
                     val intent = Intent(requireActivity(), SearchOnlineActivity::class.java)
                     startActivity(intent)
                 }
@@ -221,12 +188,10 @@ class HomeFragment : Fragment() {
             .setItems(R.array.add_book_options) { dialog, which ->
                 when (which) {
                     0 -> {
-                        // Option 0: "Add Manually"
                         val intent = Intent(requireActivity(), AddBook2::class.java)
                         addBookLauncher.launch(intent)
                     }
                     1 -> {
-                        // Option 1: "Search Online"
                         val intent = Intent(requireActivity(), SearchOnlineActivity::class.java)
                         startActivity(intent)
                     }
@@ -235,13 +200,11 @@ class HomeFragment : Fragment() {
             .show()
     }
     private fun setupToolbar() {
-        // Required to have the fragment manage the menu
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.myToolbar)
         setHasOptionsMenu(true)
     }
     private fun setupFilterChips() {
         binding.chipGroupFilter.setOnCheckedStateChangeListener { group, checkedIds ->
-            // checkedIds is a list, but we only have one selection
             val selectedChipId = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
 
             val scroll = binding.horizontalScroll
@@ -251,24 +214,17 @@ class HomeFragment : Fragment() {
                 R.id.chip_to_be_read -> "To be read"
                 else -> "Dropped"
             }
-           //  viewModel.setFilter(filter)
             viewModel.updateQuery { currentState ->
                 currentState.copy(status = filter)
             }
 
             group.post {
-                // 1. Check if the ChipGroup is wider than the ScrollView (i.e., if it's scrollable)
                 val isScrollable = scroll.width < group.width
 
-                println("is scrollable $isScrollable")
                 if (isScrollable) {
-                    // 2. Check if the first chip ("All") was the one selected
                     if (selectedChipId == R.id.chip_in_progress) {
-                        println("tets scroll")
-                        // Scroll to the far left
                         scroll.smoothScrollTo(0, 0)
                     } else {
-                        // For any other chip, scroll to the far right
                         scroll.smoothScrollTo(group.width, 0)
                     }
                 }
@@ -278,16 +234,10 @@ class HomeFragment : Fragment() {
 
     private fun setupRecyclerView() {
         bookAdapter = BookAdapter ({ book ->
-            // This is the code that runs when a book is clicked
-            val intent = Intent(requireActivity(), AddBook2::class.java).apply {
-                // Pass the book's ID to the activity for "edit" mode
-                putExtra("EXTRA_BOOK_ID", book.id)
-            }
             val intent1 = Intent(requireActivity(), DetailActivity::class.java).apply {
-                // Pass the book's ID to the activity for "edit" mode
                 putExtra("EXTRA_BOOK_ID", book.id)
             }
-            editBookLauncher.launch(intent1)
+            detailBookLauncher.launch(intent1)
         },
             onItemLongClicked = { book -> viewModel.toggleSelection(book.id) }
 
@@ -297,15 +247,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-//        viewModel.filteredBooks.observe(viewLifecycleOwner) { books ->
-//            // Submit the new list to the adapter. DiffUtil will handle the animations.
-//            books?.let {
-//                bookAdapter.submitList(it)
-//            }
-//        }
+
         viewModel.booksToShow.observe(viewLifecycleOwner) { books ->
-            // Submit the final, filtered, and sorted list to the adapter.
-            // DiffUtil will handle the animations.
+
             books?.let {
                 bookAdapter.submitList(it)
             }
@@ -315,16 +259,13 @@ class HomeFragment : Fragment() {
             switchLayoutManager(mode)
         }
         viewModel.isSelectionModeActive.observe(viewLifecycleOwner) { isActive ->
-            // Redraw the menu whenever selection mode changes
             bookAdapter.isSelectionModeActive = isActive
             onBackPressedCallback.isEnabled = isActive
             requireActivity().invalidateOptionsMenu()
         }
 
         viewModel.selectedItems.observe(viewLifecycleOwner) { selectedIds ->
-            // Update the adapter with the new set of selected IDs
             bookAdapter.setSelectedIds(selectedIds)
-            // Update the toolbar title with the selection count
             val toolbar = (requireActivity() as AppCompatActivity).supportActionBar
             if (selectedIds.isNotEmpty()) {
                 toolbar?.title = "${selectedIds.size} selected"
@@ -339,19 +280,17 @@ class HomeFragment : Fragment() {
         super.onPrepareOptionsMenu(menu)
         val isSelectionActive = viewModel.isSelectionModeActive.value ?: false
 
-        // Show/hide menu items based on selection mode
         menu.findItem(R.id.search).isVisible = !isSelectionActive
         menu.findItem(R.id.action_filter).isVisible = !isSelectionActive
         menu.findItem(R.id.layout_pref).isVisible = !isSelectionActive
         menu.findItem(R.id.settings).isVisible=!isSelectionActive
 
-        // Add a delete item to your home_menu.xml and control its visibility
         menu.findItem(R.id.action_delete).isVisible = isSelectionActive
 
         val toolbar = (requireActivity() as AppCompatActivity).supportActionBar
         if (isSelectionActive) {
             toolbar?.setDisplayHomeAsUpEnabled(true)
-            toolbar?.setHomeAsUpIndicator(R.drawable.outline_close_24) // Close icon
+            toolbar?.setHomeAsUpIndicator(R.drawable.outline_close_24)
         } else {
             toolbar?.setDisplayHomeAsUpEnabled(false)
         }
@@ -360,7 +299,7 @@ class HomeFragment : Fragment() {
     private fun switchLayoutManager(mode: LayoutMode) {
         val displayMetrics = resources.displayMetrics
         val screenWidthDp = displayMetrics.widthPixels / displayMetrics.density
-        val desiredItemWidthDp = 160 // The width you want each grid item to be
+        val desiredItemWidthDp = 160
 
         val spanCount = (screenWidthDp / desiredItemWidthDp).toInt()
 
@@ -373,52 +312,41 @@ class HomeFragment : Fragment() {
         } else {
             binding.recyclerViewBooks.layoutManager = LinearLayoutManager(requireContext())
         }
-        // Tell the adapter to use the new layout mode
         bookAdapter.setLayoutMode(mode)
     }
 
     private fun updateLayoutIcon(mode: LayoutMode?) {
         val iconRes = when (mode) {
-            LayoutMode.GRID -> R.drawable.outline_list_24 // If current mode is Grid, show the List icon
-            LayoutMode.LIST -> R.drawable.outline_grid_view_24  // If current mode is List, show the Grid icon
+            LayoutMode.GRID -> R.drawable.outline_list_24
+            LayoutMode.LIST -> R.drawable.outline_grid_view_24
             else -> R.drawable.outline_list_24
         }
         layoutToggleMenuItem?.setIcon(iconRes)
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-       // inflater.inflate(R.menu.action_bar_menu_1, menu)
         inflater.inflate(R.menu.action_bar_menu_1, menu)
-        // Get a reference to the menu item
         layoutToggleMenuItem = menu.findItem(R.id.layout_pref)
-        // Set the initial icon state based on the ViewModel's current value
         updateLayoutIcon(viewModel.layoutMode.value)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.layout_pref -> {
-                println("test")
-                // Tell the ViewModel to toggle the mode
                 viewModel.toggleLayoutMode()
                 true
             }
-//            R.id.sort -> {
-//                showSortDialog()
-//                true
-//            }
+
             R.id.search ->{
                 startActivity(Intent(requireContext(), SearchActivity::class.java))
                 true
             }
-            android.R.id.home -> { // Handles the toolbar's navigation icon click
+            android.R.id.home -> {
                 if (viewModel.isSelectionModeActive.value == true) {
-                    viewModel.clearSelections() // If in selection mode, the icon is "close"
+                    viewModel.clearSelections()
                 }
                 true
             }
             R.id.action_delete -> {
-               // viewModel.deleteSelectedItems()
-                //showDeleteConfirmationDialog()
                 val selectedCount = viewModel.selectedItems.value?.size ?: 0
                 if (selectedCount > 0) {
                     DeleteConfirmationDialogFragment.newInstance(selectedCount)
@@ -440,102 +368,10 @@ class HomeFragment : Fragment() {
             }
         }
     }
-    private fun showDeleteConfirmationDialog() {
-        val selectedCount = viewModel.selectedItems.value?.size ?: 0
-        if (selectedCount == 0) return
 
-        // Use the plural string resource for a dynamic title
-        val title = resources.getQuantityString(R.plurals.delete_dialog_title, selectedCount, selectedCount)
-
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(title)
-            .setMessage("Are you sure you want to permanently delete these books?")
-            .setNegativeButton("Cancel", null)
-            .setPositiveButton("Delete") { _, _ ->
-                viewModel.deleteSelectedItems()
-            }
-            .show()
-    }
-
-    private fun showSortDialog() {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_sort, null)
-        val sortByGroup = dialogView.findViewById<RadioGroup>(R.id.radio_group_sort_by)
-        val orderGroup = dialogView.findViewById<RadioGroup>(R.id.radio_group_order)
-
-        // Pre-select the current sort options
-        val currentSortState = viewModel.getCurrentSortState()
-        when (currentSortState.sortBy) {
-            SortBy.DATE_ADDED -> sortByGroup.check(R.id.radio_date_added)
-            SortBy.TITLE -> sortByGroup.check(R.id.radio_title)
-            SortBy.AUTHOR -> sortByGroup.check(R.id.radio_author)
-            SortBy.RATING -> sortByGroup.check(R.id.radio_rating)
-        }
-        if (currentSortState.order == SortOrder.ASCENDING) {
-            orderGroup.check(R.id.radio_ascending)
-        } else {
-            orderGroup.check(R.id.radio_descending)
-        }
-
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Sort Books")
-            .setView(dialogView)
-            .setNegativeButton("Cancel", null)
-            .setPositiveButton("Apply") { dialog, _ ->
-                val newSortBy = when (sortByGroup.checkedRadioButtonId) {
-                    R.id.radio_title -> SortBy.TITLE
-                    R.id.radio_author -> SortBy.AUTHOR
-                    R.id.radio_rating -> SortBy.RATING
-                    else -> SortBy.DATE_ADDED
-                }
-                val newOrder = if (orderGroup.checkedRadioButtonId == R.id.radio_ascending) {
-                    SortOrder.ASCENDING
-                } else {
-                    SortOrder.DESCENDING
-                }
-                viewModel.applySort(newSortBy, newOrder)
-            }
-            .show()
-    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
-class DemoCollectionPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
-    override fun getCount(): Int  = 4
-
-    override fun getItem(i: Int): Fragment {
-        val fragment = DemoObjectFragment()
-        fragment.arguments = Bundle().apply {
-            // Our object is just an integer :-P
-            putInt(ARG_OBJECT, i + 1)
-        }
-        return fragment
-    }
-
-    override fun getPageTitle(position: Int): CharSequence {
-        return "OBJECT ${(position + 1)}"
-    }
-}
-
-
-private const val ARG_OBJECT = "object"
-
-// Instances of this class are fragments representing a single
-// object in the collection.
-class DemoObjectFragment : Fragment() {
-
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_tab1, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
-            val textView: TextView = view.findViewById(R.id.text1)
-            textView.text = getInt(ARG_OBJECT).toString()
-        }
-    }
-}

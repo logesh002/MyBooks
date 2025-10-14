@@ -36,7 +36,6 @@ class SearchOnlineAdapter(private val onItemClicked: (BookDoc) -> Unit) :
 
         fun bind(bookDoc: BookDoc) {
             titleTextView.text = bookDoc.title ?: "No Title"
-            // Join the list of authors into a single string
             authorTextView.text = bookDoc.authorName?.joinToString(", ") ?: "Unknown Author"
 
             val coverUrl = bookDoc.getCoverUrl("M") // Get medium-sized image
@@ -50,7 +49,6 @@ class SearchOnlineAdapter(private val onItemClicked: (BookDoc) -> Unit) :
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<BookDoc>() {
             override fun areItemsTheSame(oldItem: BookDoc, newItem: BookDoc): Boolean {
-                // OpenLibrary doesn't provide a stable ID in this response, so we compare content
                 return oldItem.title == newItem.title && oldItem.authorName == newItem.authorName
             }
 

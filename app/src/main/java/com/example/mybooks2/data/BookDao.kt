@@ -24,15 +24,12 @@ interface BookDao {
     @Delete
     suspend fun deleteBook(book: Book)
 
-    // Get a single book by its ID
     @Query("SELECT * FROM books WHERE id = :bookId")
     fun getBookById(bookId: Int): Flow<Book>
 
-    // Get all books, ordered by when they were added
     @Query("SELECT * FROM books ORDER BY addedDate DESC")
     fun getAllBooks(): Flow<List<Book>>
 
-    // Get all books that match a specific status (for filtering)
     @Query("SELECT * FROM books WHERE status = :status ORDER BY addedDate DESC")
     fun getBooksByStatus(status: String): Flow<List<Book>>
 
@@ -52,33 +49,27 @@ interface BookDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTag(tag: Tag): Long
 
-    // Link a book and a tag in the join table.
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertBookTagCrossRef(crossRef: BookTagCrossRef)
 
-    // Get all tags for the autocomplete suggestions.
     @Query("SELECT * FROM tags ORDER BY name ASC")
     fun getAllTags(): Flow<List<Tag>>
 
-    // Get a specific tag by its name.
     @Query("SELECT * FROM tags WHERE name = :tagName")
     suspend fun getTagByName(tagName: String): Tag?
 
-    // Get a single book with all its associated tags.
     @Transaction
     @Query("SELECT * FROM books WHERE id = :bookId")
     fun getBookWithTags(bookId: Long): Flow<BookWithTags?>
 
     @Transaction
     suspend fun insertBookWithTags(book: Book, tagNames: List<String>): Long {
-        val bookId = insertBook(book) // Assumes insertBook returns the ID
+        val bookId = insertBook(book)
         for (tagName in tagNames) {
-            // Insert tag (if new) and get its ID
             var tagId = getTagByName(tagName)?.tagId
             if (tagId == null) {
                 tagId = insertTag(Tag(name = tagName))
             }
-            // Create the link
             insertBookTagCrossRef(BookTagCrossRef(bookId, tagId))
         }
         return bookId
@@ -124,13 +115,13 @@ interface BookDao {
     fun getTotalBooksRead(): Flow<Int>
 
     @Query("SELECT SUM(totalPages) FROM books WHERE status = 'FINISHED'")
-    fun getTotalPagesRead(): Flow<Long?> // Sum can be null if no books are read
+    fun getTotalPagesRead(): Flow<Long?>
 
     @Query("SELECT COUNT(*) FROM books WHERE status = 'IN_PROGRESS'")
     fun getBooksInProgressCount(): Flow<Int>
 
     @Query("SELECT AVG(personalRating) FROM books WHERE status = 'FINISHED' AND personalRating IS NOT NULL AND personalRating IS NOT 0")
-    fun getAverageRating(): Flow<Float?> // Avg can be null
+    fun getAverageRating(): Flow<Float?>
 
     @Query("SELECT * FROM books WHERE status = 'FINISHED' AND startDate IS NOT NULL AND finishedDate IS NOT NULL")
     fun getFinishedBooksWithDates(): Flow<List<Book>>

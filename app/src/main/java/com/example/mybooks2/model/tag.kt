@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-// The 'unique' index ensures you can't have two tags with the same name.
 @Entity(tableName = "tags", indices = [Index(value = ["name"], unique = true)])
 data class Tag(
     @PrimaryKey(autoGenerate = true)

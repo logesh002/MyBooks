@@ -63,14 +63,12 @@ class SearchOnlineActivity : AppCompatActivity() {
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
             val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            // Apply padding to the root to handle the status and navigation bars
             v.updatePadding(
                 left = systemBarInsets.left,
                 top = systemBarInsets.top,
                 right = systemBarInsets.right
             )
 
-            // Apply the keyboard's height as bottom padding to the RecyclerView
             binding.recyclerViewOnlineResults.updatePadding(bottom = imeInsets.bottom)
             insets
         }
@@ -88,17 +86,16 @@ class SearchOnlineActivity : AppCompatActivity() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
         searchAdapter = SearchOnlineAdapter { bookDoc ->
-            // When a search result is clicked, launch the AddBookActivity with pre-filled data
             val intent = Intent(this, AddBook2::class.java).apply {
                 putExtra("EXTRA_PREFILL_TITLE", bookDoc.title)
                 putExtra("EXTRA_PREFILL_AUTHOR", bookDoc.authorName?.firstOrNull())
                 putExtra("EXTRA_PREFILL_ISBN", bookDoc.isbn?.firstOrNull())
                 putExtra("EXTRA_PREFILL_YEAR", bookDoc.firstPublishYear)
                 putExtra("EXTRA_PREFILL_COVER_URL", bookDoc.getCoverUrl("L"))
-
+                putExtra("EXTRA_PREFILL_PAGES", bookDoc.numberOfPages)
             }
             startActivity(intent)
-            finish() // Close the search screen after selection
+            finish()
         }
         binding.recyclerViewOnlineResults.adapter = searchAdapter
 
@@ -114,21 +111,18 @@ class SearchOnlineActivity : AppCompatActivity() {
 
     private fun setupSearch() {
         binding.editTextSearchOnline.addTextChangedListener { editable ->
-            searchJob?.cancel() // Cancel previous job
+            searchJob?.cancel()
             binding.textViewNoResults.visibility=View.GONE
             searchJob = lifecycleScope.launch {
-                delay(500L) // Debounce: wait for 500ms of no typing
+                delay(500L)
                 viewModel.search(editable.toString())
             }
         }
         binding.editTextSearchOnline.setOnEditorActionListener { textView, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                // Cancel any pending debounced search
                 searchJob?.cancel()
-                // Perform the search immediately
                 viewModel.search(textView.text.toString())
 
-                // Hide the keyboard for a better UX
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(textView.windowToken, 0)
                 textView.clearFocus()
@@ -152,7 +146,6 @@ class SearchOnlineActivity : AppCompatActivity() {
 
         viewModel.isLoading.observe(this) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-           // binding.textViewNoResults.visibility=if (isLoading) View.GONE else View.VISIBLE
 
             binding.recyclerViewOnlineResults.visibility =if (isLoading) View.GONE else View.VISIBLE
         }

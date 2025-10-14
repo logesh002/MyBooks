@@ -91,7 +91,6 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
     private var initialState: BookFormState? = null
 
     init {
-        // Capture the initial state for a new book
         initialState = _bookFormState.value
     }
     private var currentBookId: Long? = null
@@ -200,11 +199,9 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
     private fun validateDates(startDate: Long?, finishDate: Long?) {
         val currentError = _validationError.value ?: ValidationError()
 
-        // The validation rule: if both dates are set, start must not be after finish.
         if (startDate != null && finishDate != null && startDate > finishDate) {
             _validationError.value = currentError.copy(dateError = "Start date cannot be after finish date")
         } else {
-            // If the rule passes (or dates are not set), clear the error.
             _validationError.value = currentError.copy(dateError = null)
         }
     }
@@ -263,13 +260,11 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
         val currentError = _validationError.value ?: ValidationError()
         if (isbn.isNullOrBlank()) {
             _validationError.value = currentError.copy(isbnError = null)
-            return  // ISBN is optional, so no error if it's empty
+            return
         }
 
-        // 1. Sanitize the input by removing hyphens and spaces
         val sanitizedIsbn = isbn.replace("-", "").replace(" ", "")
 
-        // 2. Check the length
         _validationError.value = currentError.copy(isbnError =
          when (sanitizedIsbn.length) {
             10 -> if (isValidIsbn10Checksum(sanitizedIsbn)) null else "Invalid ISBN-10 checksum"
@@ -324,7 +319,6 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
     suspend fun validateAndSave() {
         val state = _bookFormState.value ?: return
 
-        // Validate all required fields
         validateTitle(state.title)
         validateAuthor(state.author)
         validatePages(state.numberOfPages)
@@ -336,7 +330,6 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
 
         val errors = _validationError.value ?: ValidationError()
 
-        // Check if there are any validation errors
         if (errors.titleError == null &&
             errors.authorError == null &&
             errors.pagesError == null &&
@@ -347,12 +340,9 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
 
             var savedImagePath: String? = null
 
-            // If a cover image Uri exists, process and save it
             state.coverImageUri?.let { uri ->
                 savedImagePath = processAndSaveImage(application.applicationContext, uri)
             }
-            println("saceImagepath $savedImagePath")
-            // Proceed with saving
             state.coverImagePath = savedImagePath
             saveBook(state)
         }
@@ -364,7 +354,6 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
                 errors.yearError != null -> R.id.pageAndYearLayout
                 errors.dateError != null -> R.id.duration_text_view
                 errors.isbnError != null -> R.id.isbn_ll
-                // Add other fields here...
                 else -> null
             }
 
@@ -387,22 +376,16 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
         if (result is SuccessResult) {
             val bitmap = (result.drawable as BitmapDrawable).bitmap
 
-            // 1. Generate a unique ID here
             val uniqueName = UUID.randomUUID().toString()
 
-            // 2. Pass it to the save function
             return saveImageToInternalStorage(context, bitmap, uniqueName)
         }
         return null
     }
 
-
-
-
     fun loadBook(bookId: Long) {
         currentBookId = bookId
         viewModelScope.launch {
-           // val book = bookDao.getBookById(bookId)
 
             val bookWithTags = bookDao.getBookWithTags(bookId).first()
 
@@ -445,8 +428,6 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
         }
     }
     fun hasUnsavedChanges(): Boolean {
-        // This works because BookFormState is a data class,
-        // which automatically gives us a correct `equals()` comparison.
         return _bookFormState.value != initialState
     }
     private fun saveBook( bookData: BookFormState) {
@@ -462,25 +443,22 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
             var isDuplicate = false
             if (!book.isbn.isNullOrBlank()) {
                 val existingBook = bookDao.getBookByIsbn(book.isbn)
-                // It's a duplicate if a book with that ISBN exists AND it's not the book we are currently editing.
                 if (existingBook != null && existingBook.id != currentBookId) {
                     isDuplicate = true
 
                 }
             }
             if (isDuplicate) {
-                _showIsbnExistsError.postValue(Event(Unit))// Show the general "fix errors" snackbar
+                _showIsbnExistsError.postValue(Event(Unit))
             }
             else {
 
                 try {
-                    // val bookId = bookDao.insertBook(book)
                     val bookId =
                         bookDao.saveBookWithTags(book, tagNames = currentBookTags.value.toSet())
                     _saveSuccess.postValue(bookId)
 
                 } catch (e: SQLiteConstraintException) {
-                    // 2. Catch the specific exception for unique constraint violation
                     _showIsbnExistsError.postValue(Event(Unit))
 
                 } catch (e: Exception) {
@@ -517,30 +495,12 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
         tags.map { it.name }
     }.asLiveData()
 
-    // Holds the tags for the current book being added/edited
     val currentBookTags = MutableLiveData<MutableSet<String>>(mutableSetOf())
-
-//    fun addTag(tag: String) {
-//        println(tag)
-//        val cleanTag = tag.trim()
-//        if (cleanTag.isNotBlank()) {
-//            val updatedTags = currentBookTags.value ?: mutableSetOf()
-//            updatedTags.add(cleanTag)
-//            currentBookTags.value = updatedTags
-//        }
-//    }
-//
-//    fun removeTag(tag: String) {
-//        val updatedTags = currentBookTags.value ?: mutableSetOf()
-//        updatedTags.remove(tag)
-//        currentBookTags.value = updatedTags
-//    }
 
     fun addTag(tag: String) {
         val cleanTag = tag.trim()
         if (cleanTag.isNotBlank()) {
             val currentTags = _bookFormState.value?.currentBookTags ?: emptySet()
-            // Create a new set with the added tag
             val updatedTags = currentTags + cleanTag
             _bookFormState.value = _bookFormState.value?.copy(currentBookTags = updatedTags)
         }
@@ -548,7 +508,6 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
 
     fun removeTag(tag: String) {
         val currentTags = _bookFormState.value?.currentBookTags ?: emptySet()
-        // Create a new set without the removed tag
         val updatedTags = currentTags - tag
         _bookFormState.value = _bookFormState.value?.copy(currentBookTags = updatedTags)
     }
@@ -566,7 +525,6 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
         }
     }
     fun saveImageToInternalStorage(context: Context, bitmap: Bitmap, uniqueName: String): String? {
-        // Use the uniqueName for the filename
         val fileName = "cover_${uniqueName}.jpg"
 
         val directory = context.filesDir
@@ -585,48 +543,32 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
         return file.absolutePath
     }
 
-    fun prefillData(
-        prefillTitle: String,
-        prefillAuthor: String?,
-        prefillIsbn: String?,
-        prefillYear: Int
-    ) {
-        _bookFormState.value = _bookFormState.value.copy(
-            title = prefillTitle,
-            author = prefillAuthor?:"",
-            isbn = prefillIsbn?:"",
-            publicationYear = if(prefillYear<=0) "" else prefillYear.toString()
-        )
-    }
-    fun prefillData(title: String, author: String?, isbn: String?, year: Int, coverUrl: String?) {
-        // 1. Immediately update the text fields
+    fun prefillData(title: String, author: String?, isbn: String?, year: Int, coverUrl: String?,pages:Int) {
         val initialTextState = BookFormState(
             title = title,
             author = author ?: "",
             isbn = isbn ?: "",
-            publicationYear = if(year<=0) "" else year.toString()
+            publicationYear = if(year<=0) "" else year.toString(),
+            numberOfPages = if(pages<=0) "" else pages.toString(),
         )
         _bookFormState.value = initialTextState
 
-        // 2. If a cover URL exists, start the download in the background
         if (!coverUrl.isNullOrBlank()) {
             viewModelScope.launch {
                 val imageLoader = ImageLoader(application)
                 val request = ImageRequest.Builder(application)
                     .data(coverUrl)
-                    .allowHardware(false) // Required to get a manipulable bitmap
+                    .allowHardware(false)
                     .build()
 
                 val result = imageLoader.execute(request)
                 if (result is SuccessResult) {
                     val bitmap = (result.drawable as BitmapDrawable).bitmap
 
-                    // 3. Save the downloaded bitmap to internal storage
                     val uniqueName = UUID.randomUUID().toString()
                     val savedPath = saveImageToInternalStorage(application, bitmap, uniqueName)
 
                     savedPath?.let {
-                        // 4. Convert the local path to a Uri and update the state
                         val localUri = File(it).toUri()
                         _bookFormState.postValue(_bookFormState.value?.copy(coverImageUri = localUri))
                     }

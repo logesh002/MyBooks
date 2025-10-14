@@ -32,12 +32,12 @@ class AddBookOptionsBottomSheet : BottomSheetDialogFragment() {
 
         binding.optionAddManually.setOnClickListener {
             setFragmentResult("add_book_request", bundleOf("option" to "MANUAL"))
-            dismiss() // Close the bottom sheet
+            dismiss()
         }
 
         binding.optionSearchOnline.setOnClickListener {
             setFragmentResult("add_book_request", bundleOf("option" to "ONLINE"))
-            dismiss() // Close the bottom sheet
+            dismiss()
         }
     }
 

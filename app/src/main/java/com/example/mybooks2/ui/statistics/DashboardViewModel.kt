@@ -30,7 +30,6 @@ class DashboardViewModel(bookDao: BookDao) : ViewModel() {
 
     val formatBreakdownForChart: LiveData<List<PieEntry>> = formatBreakdown.map { breakdownList ->
         breakdownList.map { formatCount ->
-            // Convert each FormatCount into a PieEntry(value, label)
             PieEntry(formatCount.count.toFloat(), formatCount.format.displayName)
         }
     }
@@ -49,19 +48,16 @@ class DashboardViewModel(bookDao: BookDao) : ViewModel() {
             val calendar = Calendar.getInstance()
             val currentYear = calendar.get(Calendar.YEAR)
 
-            // 1. Filter timestamps for the current year (2025) and group by month
             val monthlyCounts = timestamps.map {
                 calendar.timeInMillis = it
                 calendar
             }.filter {
                 it.get(Calendar.YEAR) == currentYear
             }.groupBy {
-                it.get(Calendar.MONTH) // Group by month index (0=Jan, 1=Feb, etc.)
+                it.get(Calendar.MONTH)
             }.mapValues {
-                it.value.size // Count the books in each month
+                it.value.size
             }
-
-            // 2. Convert the map into a list of BarEntry objects for the chart
             val entries = mutableListOf<BarEntry>()
             for (month in 0..11) {
                 val count = monthlyCounts[month]?.toFloat() ?: 0f
@@ -72,7 +68,7 @@ class DashboardViewModel(bookDao: BookDao) : ViewModel() {
 
     val averageReadingTime: LiveData<Long> = bookDao.getFinishedBooksWithDates().map { finishedBooks ->
         if (finishedBooks.isEmpty()) {
-            0L // Return 0 if there are no finished books
+            0L
         } else {
             val totalTimeInMillis = finishedBooks.sumOf { it.finishedDate!! - it.startDate!! }
             val averageTimeInMillis = totalTimeInMillis / finishedBooks.size

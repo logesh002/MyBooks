@@ -34,8 +34,8 @@ import kotlinx.coroutines.launch
 class SearchActivity : AppCompatActivity() {
 
     val viewModel by viewModels<SearchViewModel> { SearchViewModel.Companion.factory }
-    private lateinit var searchAdapter: SearchResultAdapter // You'll need to create this simple adapter
-    private lateinit var binding: ActivitySearchBinding // Use ViewBinding
+    private lateinit var searchAdapter: SearchResultAdapter
+    private lateinit var binding: ActivitySearchBinding
 
     private var searchJob: Job? = null
     private lateinit var searchResultsRecyclerView: RecyclerView
@@ -59,14 +59,12 @@ class SearchActivity : AppCompatActivity() {
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
             val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            // Apply padding to the root to handle the status and navigation bars
             v.updatePadding(
                 left = systemBarInsets.left,
                 top = systemBarInsets.top,
                 right = systemBarInsets.right
             )
 
-            // Apply the keyboard's height as bottom padding to the RecyclerView
             binding.recyclerViewSearchResults.updatePadding(bottom = imeInsets.bottom)
 
 
@@ -99,11 +97,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupSearch() {
-        println("sadasd")
         binding.editTextSearch.addTextChangedListener { editable ->
-            // Debounce the search to avoid querying on every keystroke
-            println(editable.toString())
-                println("sdfs")
             searchJob?.cancel()
             searchJob = lifecycleScope.launch {
 
@@ -116,36 +110,11 @@ class SearchActivity : AppCompatActivity() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        menuInflater.inflate(R.menu.search_menu, menu)
-//        val searchItem = menu.findItem(R.id.action_search)
-//        val searchView = searchItem.actionView as SearchView
-//
-//        searchView.isIconified = false // Open the search view immediately
-//        searchView.queryHint = "Search by title, author, or ISBN..."
-//
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                return false
-//            }
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                viewModel.search(newText.orEmpty())
-//                return true
-//            }
-//        })
-//        return true
-//    }
 
-//    private fun setupRecyclerView() {
-//        searchAdapter = SearchResultAdapter { book -> /* Handle item click */ }
-//        findViewById<RecyclerView>(R.id.recycler_view_search_results).adapter = searchAdapter
-//    }
     private fun setupRecyclerView() {
     val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
-    // Create an instance of the adapter and define what happens when an item is clicked
         searchAdapter = SearchResultAdapter { book ->
-            // When a search result is tapped, open the AddBookActivity in edit mode
             val intent = Intent(this, DetailActivity::class.java).apply {
                 putExtra("EXTRA_BOOK_ID", book.id)
             }

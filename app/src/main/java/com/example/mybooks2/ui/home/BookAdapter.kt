@@ -26,7 +26,6 @@ class BookAdapter(private val onItemClicked: (Book) -> Unit,
 
     private var currentLayoutMode: LayoutMode = LayoutMode.GRID // Default to Grid
 
-    // View Type constants
     private val VIEW_TYPE_GRID = 0
     private val VIEW_TYPE_LIST = 1
     var isSelectionModeActive: Boolean = false
@@ -35,24 +34,20 @@ class BookAdapter(private val onItemClicked: (Book) -> Unit,
 
     fun setSelectedIds(ids: Set<Long>) {
         selectedIds = ids
-        notifyDataSetChanged() // Redraw to show selection changes
+        notifyDataSetChanged()
     }
     fun setLayoutMode(mode: LayoutMode) {
         currentLayoutMode = mode
-        notifyDataSetChanged() // Force a redraw with the new layout types
+        notifyDataSetChanged()
     }
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {
-//        val view = LayoutInflater.from(parent.context)
-//            .inflate(R.layout.grid_item_book, parent, false)
-//        return BookViewHolder(view)
-//    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == VIEW_TYPE_GRID) {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.grid_item_book, parent, false)
             BookViewHolder(view)
-        } else { // viewType is VIEW_TYPE_LIST
+        } else {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.list_item_book, parent, false)
             ListViewHolder(view)
@@ -67,8 +62,6 @@ class BookAdapter(private val onItemClicked: (Book) -> Unit,
         val book = getItem(position)
         val isSelected = selectedIds.contains(book.id)
 
-        // Change the item's visual state
-       // holder.itemView.isActivated = isSelected
 
         val cardView = holder.itemView.findViewById<MaterialCardView>(R.id.card_item)
         cardView.isActivated = isSelected
@@ -77,27 +70,25 @@ class BookAdapter(private val onItemClicked: (Book) -> Unit,
             cardView.strokeWidth = holder.itemView.context.resources.getDimensionPixelSize(R.dimen.selected_card_stroke_width) // Define this in dimens.xml
             cardView.strokeColor = ContextCompat.getColor(holder.itemView.context, R.color.your_selection_border_color)
         } else {
-            cardView.strokeWidth = 0 // No stroke when not selected
+            cardView.strokeWidth = 0
         }
 
         // Handle clicks
         holder.itemView.setOnClickListener {
-            // If in selection mode, a normal click should also toggle selection
-            if (isSelectionModeActive) { // Assuming you pass this LiveData or its value
-                onItemLongClicked(book) // Re-use the long click logic for toggling
+            if (isSelectionModeActive) {
+                onItemLongClicked(book)
             } else {
-                onItemClicked(book) // Normal navigation
+                onItemClicked(book)
             }
         }
         holder.itemView.setOnLongClickListener {
             onItemLongClicked(book)
-            true // Consume the event
+            true
         }
 
-        // Handle long clicks to start selection mode
         holder.itemView.setOnLongClickListener {
             onItemLongClicked(book)
-            true // Consume the event
+            true
         }
 
         if (holder is BookViewHolder) {
@@ -130,9 +121,7 @@ class BookAdapter(private val onItemClicked: (Book) -> Unit,
                 coverImageView.visibility = View.VISIBLE
                 coverImageView.load(File(book.coverImagePath)) { crossfade(true) }
             } else {
-                coverImageView.visibility = View.GONE // or GONE
-
-                // **CRITICAL FIX:** Clear the old image from the recycled view.
+                coverImageView.visibility = View.GONE
                 coverImageView.setImageDrawable(null)
             }
 
@@ -153,30 +142,22 @@ class BookAdapter(private val onItemClicked: (Book) -> Unit,
         private val authorTextView: TextView = itemView.findViewById(R.id.text_view_author)
 
         fun bind(book: Book) {
-            // This if-else block is critical
             if (!book.coverImagePath.isNullOrEmpty()) {
-                // --- Image is available ---
                 titleTextView.visibility = View.GONE
                 authorTextView.visibility = View.GONE
-                coverImageView.visibility = View.VISIBLE // Make sure it's visible
+                coverImageView.visibility = View.VISIBLE
 
-                // Load the image from the file path
                 val imageFile = File(book.coverImagePath)
                 coverImageView.load(imageFile) {
                     crossfade(true)
-                    // It's also good practice to have a placeholder during loading
                     placeholder(R.drawable.outline_downloading_24)
                     error(R.drawable.outline_book_24)
                 }
             } else {
-                // --- No image is available ---
                 titleTextView.visibility = View.VISIBLE
                 authorTextView.visibility = View.VISIBLE
-                // This part is the FIX.
-                // It was trying to show text over an old, recycled image.
-                coverImageView.visibility = View.INVISIBLE // or GONE
+                coverImageView.visibility = View.INVISIBLE
 
-                // **CRITICAL FIX:** Clear the old image from the recycled view.
                 coverImageView.setImageDrawable(null)
 
                 titleTextView.text = book.title

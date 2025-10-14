@@ -42,7 +42,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_preferences, rootKey)
 
-        // --- Theme Preference Logic ---
         val themePreference: ListPreference? = findPreference("theme_preference")
         themePreference?.setOnPreferenceChangeListener { _, newValue ->
             val mode = when (newValue as String) {
@@ -55,7 +54,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
 
-        // --- Reset Database Logic ---
         val resetPreference: Preference? = findPreference("reset_database")
         resetPreference?.setOnPreferenceClickListener {
             showResetConfirmationDialog()
@@ -63,7 +61,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         findPreference<Preference>("export_data")?.setOnPreferenceClickListener {
-            // Suggest a filename like "MyBooks_Export_20251014.csv"
             val fileName = "MyBooks_Export_${System.currentTimeMillis()}.csv"
             exportLauncher.launch(fileName)
             true
@@ -74,7 +71,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        // --- App Version Logic ---
         val versionPreference: Preference? = findPreference("app_version")
         try {
             val pInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
@@ -100,12 +96,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             .setMessage("Are you sure you want to delete all your saved books and tags? This action cannot be undone.")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Reset") { _, _ ->
-                // Call your database clearing logic here
-             //   val database = AppDatabase.getDatabase(requireContext().applicationContext)
+
                 val database = (requireActivity().application as MyBooksApplication).database
                 lifecycleScope.launch(Dispatchers.IO) {
                     database.clearAllTables()
-                    // You might want to navigate out or show a Toast
                 }
                 Toast.makeText(requireContext(), "Database has been reset.", Toast.LENGTH_SHORT).show()
 

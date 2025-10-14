@@ -87,12 +87,6 @@ class DashboardFragment : Fragment() {
         viewModel.favoriteTag.observe(viewLifecycleOwner) { tag ->
             binding.textFavoriteTag.text = "Favorite genre: ${tag ?: "N/A"}"
         }
-        viewModel.formatBreakdown.observe(viewLifecycleOwner) { breakdown ->
-            println(breakdown)
-            val breakdownText = breakdown.joinToString(", ") { "${it.format.displayName} (${it.count})" }
-          //  binding.textFormatBreakdown.text = "Formats: $breakdownText"
-        }
-        // In StatisticsFragment.kt's observeViewModel()
         viewModel.booksByDecade.observe(viewLifecycleOwner) { decadeText ->
             binding.textBooksByDecade.text = decadeText
         }
@@ -133,7 +127,6 @@ class DashboardFragment : Fragment() {
 
                 val durationInMillis = book.finishedDate - book.startDate
 
-                // 2. Convert milliseconds to days and add 1 for an inclusive count
                 val durationInDays = TimeUnit.MILLISECONDS.toDays(durationInMillis) + 1
                 binding.textLongestTimeBookValue.text = "$durationInDays days"
             } else {
@@ -147,7 +140,6 @@ class DashboardFragment : Fragment() {
 
                 val durationInMillis = book.finishedDate - book.startDate
 
-                // 2. Convert milliseconds to days and add 1 for an inclusive count
                 val durationInDays = TimeUnit.MILLISECONDS.toDays(durationInMillis) + 1
 
                 binding.textShortestTimeBookTitle.text = book.title
@@ -194,15 +186,12 @@ class DashboardFragment : Fragment() {
             }
         }
 
-
-        // Add click listeners for longestRead and shortestRead layouts...
     }
 
     private fun setupFormatPieChart(entries: List<PieEntry>) {
         val pieChart = binding.pieChartFormat
 
         val dataSet = PieDataSet(entries, "Book Formats")
-        // Set colors for the slices
         dataSet.colors = ColorTemplate.MATERIAL_COLORS.toList()
         dataSet.valueTextSize = 12f
         dataSet.valueTextColor = ContextCompat.getColor(requireContext(), R.color.md_theme_onSurface)
@@ -210,14 +199,12 @@ class DashboardFragment : Fragment() {
         val pieData = PieData(dataSet)
         pieChart.data = pieData
 
-        // Style the chart
         pieChart.description.isEnabled = false
         pieChart.isDrawHoleEnabled = true // Creates a donut chart
         pieChart.setHoleColor(Color.TRANSPARENT)
         pieChart.setEntryLabelTextSize(12f)
         pieChart.setEntryLabelColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onSurface))
 
-        // Refresh the chart
         pieChart.invalidate()
     }
     private fun setupMonthlyChart(entries: List<BarEntry>) {
@@ -230,23 +217,19 @@ class DashboardFragment : Fragment() {
 
         barChart.data = BarData(dataSet)
 
-        // Style the chart
         barChart.description.isEnabled = false
         barChart.legend.isEnabled = false
         barChart.setDrawValueAboveBar(true)
         barChart.setFitBars(true)
 
-        // Style the X-axis (months)
         val months = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
         barChart.xAxis.valueFormatter = IndexAxisValueFormatter(months)
         barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         barChart.xAxis.setDrawGridLines(false)
 
-        // Style the Y-axis
         barChart.axisRight.isEnabled = false
         barChart.axisLeft.axisMinimum = 0f
 
-        // Refresh the chart
         barChart.invalidate()
     }
     private fun setupToolbar() {

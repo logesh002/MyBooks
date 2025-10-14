@@ -61,7 +61,7 @@
         android:layout_height="match_parent"
         android:id="@+id/scroll_view"
         android:layout_marginVertical="12dp"
-        android:paddingBottom="22dp"
+        android:paddingBottom="30dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout

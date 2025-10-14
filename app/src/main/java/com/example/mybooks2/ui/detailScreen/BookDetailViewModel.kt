@@ -34,7 +34,6 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
             var updatedBook = currentBook.copy(status = newStatus)
 
             if (currentBook.status == ReadingStatus.FOR_LATER && newStatus == ReadingStatus.IN_PROGRESS) {
-                // Set the start date to the current time
                 updatedBook = updatedBook.copy(startDate = System.currentTimeMillis())
             }
             if (newStatus == ReadingStatus.FINISHED) {
@@ -51,7 +50,7 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
                 currentPage = 0,
                 startDate = System.currentTimeMillis(),
                 finishedDate = null,
-                personalRating = null, // Clear old rating for the new read
+                personalRating = null,
                 timesRead = currentBook.timesRead + 1
             )
             bookDao.updateBook(updatedBook)
