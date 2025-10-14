@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name=".MyBooksApplication"
         android:allowBackup="true"
@@ -22,7 +26,7 @@
         <activity
             android:name=".ui.searchView.SearchActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" /> <!-- <activity -->
+             /> <!-- <activity -->
         <!-- android:name=".ui.addBook.AddBook" -->
         <!-- android:exported="false" /> -->
         <activity

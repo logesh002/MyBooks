@@ -145,6 +145,17 @@ class AddBook2 : AppCompatActivity() {
             supportActionBar?.title = "Edit Book"
             viewModel.loadBook(bookId)
         } else {
+
+            val prefillTitle = intent.getStringExtra("EXTRA_PREFILL_TITLE")
+            if (prefillTitle != null) {
+                // Pre-fill mode
+                val prefillAuthor = intent.getStringExtra("EXTRA_PREFILL_AUTHOR")
+                val prefillIsbn = intent.getStringExtra("EXTRA_PREFILL_ISBN")
+                val prefillYear = intent.getIntExtra("EXTRA_PREFILL_YEAR", 0)
+                val prefillCover = intent.getStringExtra("EXTRA_PREFILL_COVER_URL")
+
+                viewModel.prefillData(prefillTitle, prefillAuthor, prefillIsbn, prefillYear,prefillCover)
+            }
             // ADD MODE
             supportActionBar?.title = "Add Book"
             // The ViewModel is already initialized with an empty state, so we do nothing.

@@ -121,7 +121,8 @@ class HomeFragment : Fragment() {
         fab.setOnClickListener {
 //            val intent = Intent(requireActivity(), AddBook2::class.java)
 //            addBookLauncher.launch(intent)
-            showAddBookOptionsDialog()
+         //   showAddBookOptionsDialog()
+            AddBookOptionsBottomSheet().show(parentFragmentManager, AddBookOptionsBottomSheet.TAG)
         }
 
         onBackPressedCallback = object : OnBackPressedCallback(false) {
@@ -198,6 +199,20 @@ class HomeFragment : Fragment() {
                 viewModel.deleteSelectedItems()
             }
         }
+        parentFragmentManager.setFragmentResultListener("add_book_request", this) { _, bundle ->
+            when (bundle.getString("option")) {
+                "MANUAL" -> {
+                    // The user chose "Add Manually"
+                    val intent = Intent(requireActivity(), AddBook2::class.java)
+                    addBookLauncher.launch(intent)
+                }
+                "ONLINE" -> {
+                    // The user chose "Search Online"
+                    val intent = Intent(requireActivity(), SearchOnlineActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+        }
     }
 
     private fun showAddBookOptionsDialog() {
@@ -212,7 +227,6 @@ class HomeFragment : Fragment() {
                     }
                     1 -> {
                         // Option 1: "Search Online"
-                        // TODO: Create a new SearchOnlineActivity
                         val intent = Intent(requireActivity(), SearchOnlineActivity::class.java)
                         startActivity(intent)
                     }

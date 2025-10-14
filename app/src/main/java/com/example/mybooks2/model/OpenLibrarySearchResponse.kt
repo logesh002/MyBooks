@@ -18,4 +18,11 @@ data class BookDoc(
     val isbn: List<String>?,
     @SerializedName("cover_i")
     val coverId: Int?
-)
+){
+    fun getCoverUrl(size: String = "M"): String? {
+        // Only construct a URL if a cover ID exists
+        return coverId?.let {
+            "https://covers.openlibrary.org/b/id/$it-$size.jpg"
+        }
+    }
+}

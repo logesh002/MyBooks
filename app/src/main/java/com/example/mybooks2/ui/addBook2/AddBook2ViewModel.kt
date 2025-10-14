@@ -41,7 +41,7 @@ data class BookFormState(
     val title: String = "",
     val subtitle: String = "",
     val author: String = "",
-    val status: ReadingStatus = ReadingStatus.FINISHED,
+    val status: ReadingStatus = ReadingStatus.FOR_LATER,
     var rating: Float = 0.0f,
     val numberOfPages: String = "",
     val publicationYear: String = "",
@@ -584,7 +584,58 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
 
         return file.absolutePath
     }
+
+    fun prefillData(
+        prefillTitle: String,
+        prefillAuthor: String?,
+        prefillIsbn: String?,
+        prefillYear: Int
+    ) {
+        _bookFormState.value = _bookFormState.value.copy(
+            title = prefillTitle,
+            author = prefillAuthor?:"",
+            isbn = prefillIsbn?:"",
+            publicationYear = if(prefillYear<=0) "" else prefillYear.toString()
+        )
+    }
+    fun prefillData(title: String, author: String?, isbn: String?, year: Int, coverUrl: String?) {
+        // 1. Immediately update the text fields
+        val initialTextState = BookFormState(
+            title = title,
+            author = author ?: "",
+            isbn = isbn ?: "",
+            publicationYear = if(year<=0) "" else year.toString()
+        )
+        _bookFormState.value = initialTextState
+
+        // 2. If a cover URL exists, start the download in the background
+        if (!coverUrl.isNullOrBlank()) {
+            viewModelScope.launch {
+                val imageLoader = ImageLoader(application)
+                val request = ImageRequest.Builder(application)
+                    .data(coverUrl)
+                    .allowHardware(false) // Required to get a manipulable bitmap
+                    .build()
+
+                val result = imageLoader.execute(request)
+                if (result is SuccessResult) {
+                    val bitmap = (result.drawable as BitmapDrawable).bitmap
+
+                    // 3. Save the downloaded bitmap to internal storage
+                    val uniqueName = UUID.randomUUID().toString()
+                    val savedPath = saveImageToInternalStorage(application, bitmap, uniqueName)
+
+                    savedPath?.let {
+                        // 4. Convert the local path to a Uri and update the state
+                        val localUri = File(it).toUri()
+                        _bookFormState.postValue(_bookFormState.value?.copy(coverImageUri = localUri))
+                    }
+                }
+            }
+        }
+    }
 }
+
 open class Event<out T>(private val content: T) {
     var hasBeenHandled = false
         private set

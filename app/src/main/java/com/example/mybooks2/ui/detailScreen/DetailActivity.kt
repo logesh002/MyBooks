@@ -331,7 +331,6 @@ class DetailActivity : AppCompatActivity() {
                 else{
                     binding.textReadCount.visibility =View.GONE
                 }
-                // TODO: Format and display date range
 
                 if (book.startDate != null && book.finishedDate != null) {
                     // 1. Create a formatter for "Month Day, Year"
@@ -366,19 +365,6 @@ class DetailActivity : AppCompatActivity() {
             }
         }
 
-//        if (book.status == ReadingStatus.FINISHED && book.startDate != null && book.finishedDate != null) {
-//            binding.cardDates.visibility = View.VISIBLE
-//            // TODO: Format these Long timestamps into readable dates
-//            binding.textViewDates.text = "From ${book.startDate} to ${book.finishedDate}"
-//        } else {
-//            binding.cardDates.visibility = View.GONE
-//        }
-//        if (bookWithTags.tags.isNotEmpty()) {
-//            binding.cardTags.visibility = View.VISIBLE
-//            populateTags(bookWithTags.tags)
-//        } else {
-//            binding.cardTags.visibility = View.GONE
-//        }
         binding.cardDescription.visibility = if (book.description?.isNotBlank()?:false) View.VISIBLE else View.GONE
         binding.textViewDescription.text = book.description
 

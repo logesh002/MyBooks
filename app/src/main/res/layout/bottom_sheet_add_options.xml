@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:paddingHorizontal="16dp"
+        android:text="Add a new book"
+        android:textAppearance="?attr/textAppearanceTitleLarge" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/option_add_manually"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="16dp"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:minHeight="?attr/listPreferredItemHeight"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="Add Manually"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        app:drawableStartCompat="@drawable/outline_edit_24" />
+
+    <TextView
+        android:id="@+id/option_search_online"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="16dp"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:minHeight="?attr/listPreferredItemHeight"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="Search Online"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        app:drawableStartCompat="@drawable/baseline_search_24" />
+
+</LinearLayout>
