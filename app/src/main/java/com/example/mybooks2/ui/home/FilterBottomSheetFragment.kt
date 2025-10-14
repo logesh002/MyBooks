@@ -108,35 +108,66 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
         }
         binding.filterChipGroupFormat.check(chipIdToCheck)
 
-        when (currentState.sortBy) {
-            SortBy.DATE_ADDED -> binding.radioGroupSortBy.check(R.id.radio_date_added)
-            SortBy.TITLE -> binding.radioGroupSortBy.check(R.id.radio_title)
-            SortBy.AUTHOR -> binding.radioGroupSortBy.check(R.id.radio_author)
-            SortBy.RATING -> binding.radioGroupSortBy.check(R.id.radio_rating)
+//        when (currentState.sortBy) {
+//            SortBy.DATE_ADDED -> binding.radioGroupSortBy.check(R.id.radio_date_added)
+//            SortBy.TITLE -> binding.radioGroupSortBy.check(R.id.radio_title)
+//            SortBy.AUTHOR -> binding.radioGroupSortBy.check(R.id.radio_author)
+//            SortBy.RATING -> binding.radioGroupSortBy.check(R.id.radio_rating)
+//        }
+        val sortByChipId = when (currentState.sortBy) {
+            SortBy.DATE_ADDED -> R.id.chip_sort_date
+            SortBy.TITLE -> R.id.chip_sort_title
+            SortBy.AUTHOR -> R.id.chip_sort_author
+            SortBy.RATING -> R.id.chip_sort_rating
         }
+        binding.chipGroupSortBy.check(sortByChipId)
 
         // Pre-check the correct "Order" radio button
+//        if (currentState.order == SortOrder.ASCENDING) {
+//            binding.radioGroupOrder.check(R.id.radio_ascending)
+//        } else {
+//            binding.radioGroupOrder.check(R.id.radio_descending)
+//        }
+
+//        binding.switchSortOrder.isChecked = (currentState.order == SortOrder.DESCENDING)
+//        binding.switchSortOrder.text = if (binding.switchSortOrder.isChecked) "Sort Descending" else "Sort Ascending"
+//
+//        // Optional: Update switch text when toggled for better UX
+//        binding.switchSortOrder.setOnCheckedChangeListener { _, isChecked ->
+//            binding.switchSortOrder.text = if (isChecked) "Sort Descending" else "Sort Ascending"
+//        }
         if (currentState.order == SortOrder.ASCENDING) {
-            binding.radioGroupOrder.check(R.id.radio_ascending)
+            binding.toggleButtonGroupOrder.check(R.id.button_order_asc)
         } else {
-            binding.radioGroupOrder.check(R.id.radio_descending)
+            binding.toggleButtonGroupOrder.check(R.id.button_order_desc)
         }
 
         binding.buttonApplyFilters.setOnClickListener {
             // Get values from all filter AND sort fields
             val author = binding.filterAuthor.text.toString()
             val tag = binding.filterTag.text.toString()
-            val sortBy = when (binding.radioGroupSortBy.checkedRadioButtonId) {
-                R.id.radio_title -> SortBy.TITLE
-                R.id.radio_author -> SortBy.AUTHOR
-                R.id.radio_rating -> SortBy.RATING
-                R.id.radio_date_added -> SortBy.DATE_ADDED
-                else -> SortBy.TITLE // Default case
+//            val sortBy = when (binding.radioGroupSortBy.checkedRadioButtonId) {
+//                R.id.radio_title -> SortBy.TITLE
+//                R.id.radio_author -> SortBy.AUTHOR
+//                R.id.radio_rating -> SortBy.RATING
+//                R.id.radio_date_added -> SortBy.DATE_ADDED
+//                else -> SortBy.TITLE // Default case
+//            }
+            val sortBy = when (binding.chipGroupSortBy.checkedChipId) {
+                R.id.chip_sort_date -> SortBy.DATE_ADDED
+                R.id.chip_sort_title -> SortBy.TITLE
+                R.id.chip_sort_author -> SortBy.AUTHOR
+                R.id.chip_sort_rating -> SortBy.RATING
+                else -> SortBy.DATE_ADDED // Sensible default
             }
-            val order = when (binding.radioGroupOrder.checkedRadioButtonId) {
-                R.id.radio_ascending -> SortOrder.ASCENDING
-                R.id.radio_descending -> SortOrder.DESCENDING
-                else -> SortOrder.ASCENDING // Default case
+//            val order = if (binding.switchSortOrder.isChecked) {
+//                SortOrder.DESCENDING
+//            } else {
+//                SortOrder.ASCENDING
+//            }
+            val order = when (binding.toggleButtonGroupOrder.checkedButtonId) {
+                R.id.button_order_asc -> SortOrder.ASCENDING
+                else -> SortOrder.DESCENDING // Default
             }
             val selectedFormat = when (binding.filterChipGroupFormat.checkedChipId) {
                 R.id.chip_format_paperback -> BookFormat.PAPERBACK

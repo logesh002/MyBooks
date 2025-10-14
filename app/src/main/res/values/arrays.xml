@@ -11,4 +11,8 @@
         <item>LIGHT</item>
         <item>DARK</item>
     </string-array>
+    <string-array name="add_book_options">
+        <item>Add Manually</item>
+        <item>Search Online</item>
+    </string-array>
 </resources>

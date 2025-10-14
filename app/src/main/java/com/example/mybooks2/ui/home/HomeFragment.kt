@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bookapp.ui.AddBook2
 import com.example.mybooks2.R
 import com.example.mybooks2.databinding.FragmentHomeBinding
+import com.example.mybooks2.ui.OnlineSearch.SearchOnlineActivity
 import com.example.mybooks2.ui.addBook.AddBook
 import com.example.mybooks2.ui.addBook2.AddBook2ViewModel
 import com.example.mybooks2.ui.addBook2.BookFormat
@@ -118,8 +119,9 @@ class HomeFragment : Fragment() {
 
 
         fab.setOnClickListener {
-            val intent = Intent(requireActivity(), AddBook2::class.java)
-            addBookLauncher.launch(intent)
+//            val intent = Intent(requireActivity(), AddBook2::class.java)
+//            addBookLauncher.launch(intent)
+            showAddBookOptionsDialog()
         }
 
         onBackPressedCallback = object : OnBackPressedCallback(false) {
@@ -196,6 +198,27 @@ class HomeFragment : Fragment() {
                 viewModel.deleteSelectedItems()
             }
         }
+    }
+
+    private fun showAddBookOptionsDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Add a new book")
+            .setItems(R.array.add_book_options) { dialog, which ->
+                when (which) {
+                    0 -> {
+                        // Option 0: "Add Manually"
+                        val intent = Intent(requireActivity(), AddBook2::class.java)
+                        addBookLauncher.launch(intent)
+                    }
+                    1 -> {
+                        // Option 1: "Search Online"
+                        // TODO: Create a new SearchOnlineActivity
+                        val intent = Intent(requireActivity(), SearchOnlineActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+            }
+            .show()
     }
     private fun setupToolbar() {
         // Required to have the fragment manage the menu

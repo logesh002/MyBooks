@@ -54,6 +54,7 @@ data class BookFormState(
     var endDate:Long?=null,
     val format: BookFormat = BookFormat.PAPERBACK,
     var coverImagePath: String?=null,
+    val currentBookTags: Set<String> = emptySet(),
 
 )
 enum class ReadingStatus {
@@ -433,7 +434,8 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
                     rating = loadedBook.personalRating?: 0.0f,
                     review = loadedBook.review ?: "",
                     coverImageUri = coverUri,
-                    format = loadedBook.format
+                    format = loadedBook.format,
+                    currentBookTags = loadedTags
                 )
 
                 _bookFormState.postValue(initialStateFromDb)
@@ -518,25 +520,40 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
     // Holds the tags for the current book being added/edited
     val currentBookTags = MutableLiveData<MutableSet<String>>(mutableSetOf())
 
+//    fun addTag(tag: String) {
+//        println(tag)
+//        val cleanTag = tag.trim()
+//        if (cleanTag.isNotBlank()) {
+//            val updatedTags = currentBookTags.value ?: mutableSetOf()
+//            updatedTags.add(cleanTag)
+//            currentBookTags.value = updatedTags
+//        }
+//    }
+//
+//    fun removeTag(tag: String) {
+//        val updatedTags = currentBookTags.value ?: mutableSetOf()
+//        updatedTags.remove(tag)
+//        currentBookTags.value = updatedTags
+//    }
+
     fun addTag(tag: String) {
-        println(tag)
         val cleanTag = tag.trim()
         if (cleanTag.isNotBlank()) {
-            val updatedTags = currentBookTags.value ?: mutableSetOf()
-            updatedTags.add(cleanTag)
-            currentBookTags.value = updatedTags
+            val currentTags = _bookFormState.value?.currentBookTags ?: emptySet()
+            // Create a new set with the added tag
+            val updatedTags = currentTags + cleanTag
+            _bookFormState.value = _bookFormState.value?.copy(currentBookTags = updatedTags)
         }
     }
 
     fun removeTag(tag: String) {
-        val updatedTags = currentBookTags.value ?: mutableSetOf()
-        updatedTags.remove(tag)
-        currentBookTags.value = updatedTags
+        val currentTags = _bookFormState.value?.currentBookTags ?: emptySet()
+        // Create a new set without the removed tag
+        val updatedTags = currentTags - tag
+        _bookFormState.value = _bookFormState.value?.copy(currentBookTags = updatedTags)
     }
 
-    fun onFormatChanged(bookFormat: BookFormat){
 
-    }
     fun resetSaveSuccess() {
         _saveSuccess.value = null
     }

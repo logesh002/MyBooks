@@ -67,6 +67,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:5.0.5")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
     // See Add the KSP plugin to your project
     ksp(libs.androidx.room.compiler)

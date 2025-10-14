@@ -1,6 +1,7 @@
 package com.example.bookapp.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Rect
@@ -12,21 +13,28 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowInsetsController
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import androidx.activity.addCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isGone
+import androidx.core.view.updatePadding
+import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import com.example.mybooks2.R
 import com.example.mybooks2.databinding.AddBook2Binding
 import com.example.mybooks2.ui.addBook2.AddBook2ViewModel
+import com.example.mybooks2.ui.addBook2.BookFormat
+import com.example.mybooks2.ui.addBook2.DiscardChangesDialogFragment
 import com.example.mybooks2.ui.addBook2.ReadingStatus
+import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -35,17 +43,6 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.Boolean
-import kotlin.getValue
-import kotlin.let
-import kotlin.toString
-import androidx.core.view.isGone
-import androidx.core.view.updatePadding
-import androidx.core.widget.NestedScrollView
-import coil.load
-import com.example.mybooks2.ui.addBook2.BookFormat
-import com.google.android.material.chip.Chip
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
 class AddBook2 : AppCompatActivity() {
@@ -167,6 +164,14 @@ class AddBook2 : AppCompatActivity() {
             handleCloseAttempt()
         }
 
+        supportFragmentManager.setFragmentResultListener(DiscardChangesDialogFragment.REQUEST_KEY, this) { _, bundle ->
+            val confirmed = bundle.getBoolean(DiscardChangesDialogFragment.RESULT_KEY)
+            if (confirmed) {
+                // The user tapped "Discard" in the dialog, so now we close the activity.
+                finish()
+            }
+        }
+
     }
 
     private fun scrollToShowView(scrollView: View, viewToScrollTo: View) {
@@ -200,18 +205,23 @@ class AddBook2 : AppCompatActivity() {
         return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 
+//    private fun showDiscardChangesDialog() {
+//        MaterialAlertDialogBuilder(this)
+//            .setTitle("Discard changes?")
+//            .setMessage("You have unsaved changes. Are you sure you want to discard them?")
+//            .setNegativeButton("Cancel") { dialog, which ->
+//                // Do nothing, just close the dialog
+//            }
+//            .setPositiveButton("Discard") { dialog, which ->
+//                // User confirmed, close the activity
+//                finish()
+//            }
+//            .show()
+//    }
     private fun showDiscardChangesDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Discard changes?")
-            .setMessage("You have unsaved changes. Are you sure you want to discard them?")
-            .setNegativeButton("Cancel") { dialog, which ->
-                // Do nothing, just close the dialog
-            }
-            .setPositiveButton("Discard") { dialog, which ->
-                // User confirmed, close the activity
-                finish()
-            }
-            .show()
+        // Show the DialogFragment instead of building the dialog directly.
+        DiscardChangesDialogFragment.newInstance()
+            .show(supportFragmentManager, DiscardChangesDialogFragment.TAG)
     }
 
     private fun setupTags() {
@@ -235,9 +245,9 @@ class AddBook2 : AppCompatActivity() {
         }
 
         // 3. Observe the current book's tags and update the ChipGroup
-        viewModel.currentBookTags.observe(this) { tags ->
-            updateTagsChipGroup(tags.toSet())
-        }
+//        viewModel.currentBookTags.observe(this) { tags ->
+//            updateTagsChipGroup(tags.toSet())
+//        }
     }
 
     private fun addTagFromInput() {
@@ -246,16 +256,36 @@ class AddBook2 : AppCompatActivity() {
         binding.autoCompleteTags.setText("") // Clear the input
     }
 
-    private fun updateTagsChipGroup(tags: Set<kotlin.String>) {
-        binding.chipGroupTags.removeAllViews()
-        for (tag in tags) {
-            val chip = Chip(this)
-            chip.text = tag
-            chip.isCloseIconVisible = true
-            chip.setOnCloseIconClickListener {
-                viewModel.removeTag(tag.toString())
+//    private fun updateTagsChipGroup(tags: Set<kotlin.String>) {
+//        binding.chipGroupTags.removeAllViews()
+//        for (tag in tags) {
+//            val chip = Chip(this)
+//            chip.text = tag
+//            chip.isCloseIconVisible = true
+//            chip.setOnCloseIconClickListener {
+//                viewModel.removeTag(tag.toString())
+//            }
+//            binding.chipGroupTags.addView(chip)
+//        }
+//    }
+    private fun updateTagsChipGroup(tags: Set<String>) {
+        // To prevent an infinite loop, check if the UI is already up-to-date
+        val currentChips = (0 until binding.chipGroupTags.childCount).map {
+            (binding.chipGroupTags.getChildAt(it) as Chip).text.toString()
+        }.toSet()
+
+        if (currentChips != tags) {
+            binding.chipGroupTags.removeAllViews()
+            tags.forEach { tagName ->
+                val chip = Chip(this).apply {
+                    text = tagName
+                    isCloseIconVisible = true
+                    setOnCloseIconClickListener {
+                        viewModel.removeTag(tagName)
+                    }
+                }
+                binding.chipGroupTags.addView(chip)
             }
-            binding.chipGroupTags.addView(chip)
         }
     }
     fun isDarkTheme(): Boolean {
@@ -322,7 +352,7 @@ class AddBook2 : AppCompatActivity() {
         }
 
         binding.cancelButton.setOnClickListener {
-            finish()
+            handleCloseAttempt()
         }
 
         binding.saveButton.setOnClickListener {
@@ -331,7 +361,17 @@ class AddBook2 : AppCompatActivity() {
             }
         }
     }
+    fun hideKeyboard() {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
     private fun showDatePicker(isStartDate: Boolean) {
+
+        hideKeyboard()
+
         val title = if (isStartDate) "Select Start Date" else "Select Finish Date"
 
         val dateValidator = DateValidatorPointBackward.now()
@@ -587,6 +627,7 @@ private fun setupObservers() {
         if (binding.autoCompleteFormat.text.toString() != state.format.displayName) {
             binding.autoCompleteFormat.setText(state.format.displayName, false)
         }
+        updateTagsChipGroup(state.currentBookTags)
     }
 
     viewModel.validationError.observe(this) { errors ->

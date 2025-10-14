@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:orientation="vertical">
 
-    <View
-        android:layout_width="32dp"
-        android:layout_height="4dp"
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/drag_handle" />
+        android:text="Sort and Filter"
+        android:textAppearance="?attr/textAppearanceTitleLarge" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="0.8">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,52 +29,57 @@
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
             android:paddingBottom="24dp">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sort and Filter"
-        android:textAppearance="?attr/textAppearanceTitleLarge"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="Author">
-        <AutoCompleteTextView
-            android:id="@+id/filter_author"
-            android:layout_width="match_parent"
-            android:imeOptions="flagNoExtractUi"
-            android:layout_height="wrap_content"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
+            <!-- Filter Section -->
+            <TextView
+                style="?attr/textAppearanceTitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="Filter by" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Tag">
-        <AutoCompleteTextView
-            android:id="@+id/filter_tag"
-            android:layout_width="match_parent"
-            android:imeOptions="flagNoExtractUi"
-            android:layout_height="wrap_content"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Author">
+
+                <AutoCompleteTextView
+                    android:id="@+id/filter_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Tag">
+
+                <AutoCompleteTextView
+                    android:id="@+id/filter_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                style="?attr/textAppearanceLabelLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Format"
-                android:textAppearance="?attr/textAppearanceTitleMedium"/>
+                android:layout_marginBottom="8dp"
+                android:text="Format" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/filter_chip_group_format"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                app:selectionRequired="true"
                 app:singleSelection="true">
 
                 <com.google.android.material.chip.Chip
@@ -78,8 +87,8 @@
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Any"
-                    android:checked="true"/>
+                    android:checked="true"
+                    android:text="Any" />
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_format_paperback"
                     style="@style/Widget.Material3.Chip.Filter"
@@ -98,44 +107,130 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Audiobook"/>
+                <!-- Other format chips -->
             </com.google.android.material.chip.ChipGroup>
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sort by" android:textAppearance="?attr/textAppearanceTitleMedium" android:layout_marginTop="16dp"/>
-    <RadioGroup android:id="@+id/radio_group_sort_by" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp">
-        <RadioButton android:id="@+id/radio_date_added" android:text="Date Added" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-        <RadioButton android:id="@+id/radio_title" android:text="Title" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-        <RadioButton android:id="@+id/radio_author" android:text="Author" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-        <RadioButton android:id="@+id/radio_rating" android:text="Rating" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-    </RadioGroup>
+            <!-- Divider for visual separation -->
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp" />
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Order" android:textAppearance="?attr/textAppearanceTitleMedium" android:layout_marginTop="16dp"/>
-    <RadioGroup android:id="@+id/radio_group_order" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp">
-        <RadioButton android:id="@+id/radio_descending" android:text="Descending" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-        <RadioButton android:id="@+id/radio_ascending" android:text="Ascending" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-    </RadioGroup>
+            <!-- Sort Section -->
+            <TextView
+                style="?attr/textAppearanceTitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Sort by" />
+
+<!--            <RadioGroup-->
+<!--                android:id="@+id/radio_group_sort_by"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
+<!--                <RadioButton android:id="@+id/radio_date_added" android:text="Date Added" android:layout_width="wrap_content" android:layout_height="wrap_content"/>-->
+<!--                <RadioButton android:id="@+id/radio_title" android:text="Title" android:layout_width="wrap_content" android:layout_height="wrap_content"/>-->
+<!--                <RadioButton android:id="@+id/radio_author" android:text="Author" android:layout_width="wrap_content" android:layout_height="wrap_content" />-->
+<!--                <RadioButton android:id="@+id/radio_rating" android:text="Rating" android:layout_width="wrap_content" android:layout_height="wrap_content"/>-->
+
+<!--                &lt;!&ndash; Sort RadioButtons &ndash;&gt;-->
+<!--            </RadioGroup>-->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_sort_by"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_sort_date"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date Added" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_sort_title"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Title" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_sort_author"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Author" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_sort_rating"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rating" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <TextView
+                style="?attr/textAppearanceLabelLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="Order" />
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_button_group_order"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <Button
+                    android:id="@+id/button_order_desc"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Descending" />
+
+                <Button
+                    android:id="@+id/button_order_asc"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ascending" />
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Action Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="24dp">
+
         <Button
             android:id="@+id/button_clear_filters"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="Clear"/>
+            android:text="Clear" />
+
         <Button
             android:id="@+id/button_apply_filters"
             style="@style/Widget.Material3.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:text="Apply"/>
+            android:text="Apply" />
     </LinearLayout>
 </LinearLayout>
