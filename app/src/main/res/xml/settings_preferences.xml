@@ -1,0 +1,42 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Appearance">
+
+        <ListPreference
+            app:key="theme_preference"
+            app:title="Theme"
+            app:summary="Choose your app's theme"
+            app:entries="@array/theme_entries"
+            app:entryValues="@array/theme_values"
+            app:defaultValue="SYSTEM" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Data Management">
+
+        <Preference
+            app:key="reset_database"
+            app:title="Reset Database"
+            app:summary="Deletes all saved books and tags. This action cannot be undone." />
+
+        <Preference
+            app:key="export_data"
+            app:title="Export Library to CSV"
+            app:summary="Save all your books to a CSV file." />
+
+        <Preference
+            app:key="import_data"
+            app:title="Import Library from CSV"
+            app:summary="Load books from a previously exported CSV file." />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="About">
+
+        <Preference
+            app:key="app_version"
+            app:title="App Version" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

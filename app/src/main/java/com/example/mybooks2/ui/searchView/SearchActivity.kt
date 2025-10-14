@@ -1,0 +1,171 @@
+package com.example.mybooks2.ui.searchView
+
+import android.content.Context
+import android.content.Intent
+import android.content.res.Configuration
+import android.os.Build
+import android.os.Bundle
+import android.view.Menu
+import android.view.View
+import android.view.WindowInsetsController
+import android.view.inputmethod.InputMethodManager
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
+import com.example.bookapp.ui.AddBook2
+import com.example.mybooks2.R
+import com.example.mybooks2.databinding.ActivitySearchBinding
+import com.example.mybooks2.ui.detailScreen.DetailActivity
+import com.example.mybooks2.ui.home.HomeViewModel
+import com.google.android.material.appbar.MaterialToolbar
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+class SearchActivity : AppCompatActivity() {
+
+    val viewModel by viewModels<SearchViewModel> { SearchViewModel.Companion.factory }
+    private lateinit var searchAdapter: SearchResultAdapter // You'll need to create this simple adapter
+    private lateinit var binding: ActivitySearchBinding // Use ViewBinding
+
+    private var searchJob: Job? = null
+    private lateinit var searchResultsRecyclerView: RecyclerView
+    override fun onCreate(savedInstanceState: Bundle?) {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        super.onCreate(savedInstanceState)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val toolbar = binding.toolbar
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { finish() }
+
+        searchResultsRecyclerView = binding.recyclerViewSearchResults
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Apply padding to the root to handle the status and navigation bars
+            v.updatePadding(
+                left = systemBarInsets.left,
+                top = systemBarInsets.top,
+                right = systemBarInsets.right
+            )
+
+            // Apply the keyboard's height as bottom padding to the RecyclerView
+            binding.recyclerViewSearchResults.updatePadding(bottom = imeInsets.bottom)
+
+
+            insets
+        }
+
+        val window = window
+        val decorView = window.decorView
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val controller = decorView.windowInsetsController
+            if (controller != null) {
+                if (!isDarkTheme()) {
+                    controller.setSystemBarsAppearance(
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    )
+                }
+            }
+        }
+
+        setupRecyclerView()
+        setupSearch()
+        observeViewModel()
+        binding.editTextSearch.requestFocus()
+        showKeyboard(binding.editTextSearch)
+    }
+    fun isDarkTheme(): Boolean {
+        return (resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    private fun setupSearch() {
+        println("sadasd")
+        binding.editTextSearch.addTextChangedListener { editable ->
+            // Debounce the search to avoid querying on every keystroke
+            println(editable.toString())
+                println("sdfs")
+            searchJob?.cancel()
+            searchJob = lifecycleScope.launch {
+
+                delay(300L) // Wait for 300ms of no typing
+                viewModel.search(editable.toString())
+            }
+        }
+    }
+    private fun showKeyboard(view: View) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        menuInflater.inflate(R.menu.search_menu, menu)
+//        val searchItem = menu.findItem(R.id.action_search)
+//        val searchView = searchItem.actionView as SearchView
+//
+//        searchView.isIconified = false // Open the search view immediately
+//        searchView.queryHint = "Search by title, author, or ISBN..."
+//
+//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                return false
+//            }
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                viewModel.search(newText.orEmpty())
+//                return true
+//            }
+//        })
+//        return true
+//    }
+
+//    private fun setupRecyclerView() {
+//        searchAdapter = SearchResultAdapter { book -> /* Handle item click */ }
+//        findViewById<RecyclerView>(R.id.recycler_view_search_results).adapter = searchAdapter
+//    }
+    private fun setupRecyclerView() {
+    val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+
+    // Create an instance of the adapter and define what happens when an item is clicked
+        searchAdapter = SearchResultAdapter { book ->
+            // When a search result is tapped, open the AddBookActivity in edit mode
+            val intent = Intent(this, DetailActivity::class.java).apply {
+                putExtra("EXTRA_BOOK_ID", book.id)
+            }
+            startActivity(intent)
+        }
+        searchResultsRecyclerView.adapter = searchAdapter
+    searchResultsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
+                imm.hideSoftInputFromWindow(binding.root.windowToken,0)
+            }
+        }
+    })
+    }
+
+    private fun observeViewModel() {
+        viewModel.searchResults.observe(this) { results ->
+            println(results)
+            searchAdapter.submitList(results)
+        }
+    }
+}

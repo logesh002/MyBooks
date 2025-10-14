@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.statistics.DashboardFragment">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat"
+        app:title="@string/app_name"
+        >
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
+        android:layout_marginTop="?actionBarSize"
+        android:layout_marginBottom="100dp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your Reading Stats"
+                android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                android:layout_marginBottom="16dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Material3.CardView.Filled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                        <TextView
+                            android:id="@+id/text_total_books_read"
+                            tools:text="128"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:textAppearance="?attr/textAppearanceDisplayMedium"/>
+                        <TextView android:text="Books Read" android:layout_height="wrap_content"
+                            android:layout_width="wrap_content" android:textAppearance="?attr/textAppearanceLabelMedium"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                        <TextView android:id="@+id/text_total_pages_read" android:layout_height="wrap_content"
+                            android:layout_width="wrap_content" tools:text="35,102" android:textAppearance="?attr/textAppearanceDisplayMedium"/>
+                        <TextView android:text="Pages Read"  android:layout_height="wrap_content"
+                            android:layout_width="wrap_content" android:textAppearance="?attr/textAppearanceLabelMedium"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Material3.CardView.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView android:text="Reading Habits"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:textAppearance="?attr/textAppearanceTitleMedium" android:layout_marginBottom="8dp"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/text_books_in_progress" tools:text="Currently reading: 3 books" android:textAppearance="?attr/textAppearanceBodyLarge" android:layout_marginTop="8dp"/>
+                    <TextView android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/text_avg_rating" tools:text="Average rating: 4.2 stars" android:textAppearance="?attr/textAppearanceBodyLarge" android:layout_marginTop="8dp"/>
+                    <TextView android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/text_avg_time"
+                        tools:text="Average time to finish: 7 days"
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        android:layout_marginTop="8dp"/>
+
+                    <TextView android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/text_favorite_tag"
+                        tools:text="Average time to finish: 7 days"
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        android:layout_marginTop="8dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+<!--            <com.google.android.material.card.MaterialCardView-->
+<!--                style="@style/Widget.Material3.CardView.Outlined"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="16dp">-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:padding="16dp">-->
+<!--                <TextView android:text="Book format breakdown"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:textAppearance="?attr/textAppearanceTitleMedium" android:layout_marginBottom="8dp"/>-->
+
+<!--                    <TextView-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:id="@+id/text_format_breakdown"-->
+<!--                        tools:text="Formats: Paperback (15), E-book (10)"-->
+<!--                        android:textAppearance="?attr/textAppearanceBodyLarge"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        />-->
+<!--                </LinearLayout>-->
+
+<!--            </com.google.android.material.card.MaterialCardView>-->
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Material3.CardView.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView android:text="Publication year by decade"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:textAppearance="?attr/textAppearanceTitleMedium" android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/text_books_by_decade"
+                        tools:text="Formats: Paperback (15), E-book (10)"
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        android:layout_marginTop="8dp"
+                        />
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Material3.CardView.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Format Breakdown"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"/>
+
+                    <com.github.mikephil.charting.charts.PieChart
+                        android:id="@+id/pie_chart_format"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:layout_marginTop="8dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Material3.CardView.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Monthly Reading"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"/>
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/bar_chart_monthly"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:layout_marginTop="8dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Material3.CardView.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reading Extremes"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:layout_marginBottom="16dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/layout_longest_book"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="8dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Longest Book (by pages)"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp"
+                            android:textAppearance="?attr/textAppearanceLabelLarge"/>
+                        <TextView android:id="@+id/text_longest_book_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="A Game of Thrones" android:textAppearance="?attr/textAppearanceBodyLarge"/>
+                        <TextView android:id="@+id/text_longest_book_value" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="864 pages"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_shortest_book"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="12dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="8dp">
+                        <TextView android:text="Shortest Book (by pages)"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp"
+                            android:textAppearance="?attr/textAppearanceLabelLarge"/>
+                        <TextView android:id="@+id/text_shortest_book_title" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="The Little Prince" android:textAppearance="?attr/textAppearanceBodyLarge"/>
+                        <TextView android:id="@+id/text_shortest_book_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="96 pages"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_longest_book_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="12dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="8dp">
+                        <TextView android:text="Longest Book (by time)"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp"
+                            android:textAppearance="?attr/textAppearanceLabelLarge"/>
+                        <TextView android:id="@+id/text_longest_time_book_title" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="The Little Prince" android:textAppearance="?attr/textAppearanceBodyLarge"/>
+                        <TextView android:id="@+id/text_longest_time_book_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="96 pages"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/layout_shortest_book_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="12dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="8dp">
+                        <TextView android:text="Shortest Book (by pages)"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp"
+                            android:textAppearance="?attr/textAppearanceLabelLarge"/>
+                        <TextView android:id="@+id/text_shortest_time_book_title" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="The Little Prince" android:textAppearance="?attr/textAppearanceBodyLarge"/>
+                        <TextView android:id="@+id/text_shortest_time_book_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="96 pages"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

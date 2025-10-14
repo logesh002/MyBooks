@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/home_fragment"
+    android:paddingBottom="96dp"
+    tools:context=".ui.home.HomeFragment">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat"
+
+        app:title="@string/app_name"
+        >
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="center_vertical"-->
+<!--            >-->
+<!--            <ImageButton-->
+<!--                android:id="@+id/btn_edit_detail"-->
+<!--                android:layout_width="50dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:background="?attr/selectableItemBackgroundBorderless"-->
+<!--                android:src="@drawable/ic_notifications_black_24dp"-->
+<!--                app:tint="?attr/colorOnSurface"-->
+<!--                android:paddingHorizontal="8dp"-->
+<!--                />-->
+<!--            <ImageButton-->
+<!--                android:id="@+id/btn_delete_detail"-->
+<!--                android:layout_width="50dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:background="?attr/selectableItemBackgroundBorderless"-->
+<!--                android:src="@drawable/ic_dashboard_black_24dp"-->
+<!--                app:tint="?attr/colorOnSurface"-->
+<!--                android:paddingHorizontal="8dp"-->
+<!--                />-->
+<!--        </LinearLayout>-->
+    </com.google.android.material.appbar.MaterialToolbar>
+<!--    <androidx.viewpager.widget.ViewPager-->
+<!--        xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--        android:id="@+id/pager"-->
+<!--        android:layout_marginTop="?attr/actionBarSize"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent" >-->
+<!--        <com.google.android.material.tabs.TabLayout-->
+<!--            android:id="@+id/tab_layout"-->
+<!--            style="@style/ChipTabLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="30dp"-->
+<!--            app:tabIndicatorHeight="30dp"-->
+<!--            app:tabMode="scrollable"-->
+<!--            android:minWidth="80dp"-->
+<!--            app:tabGravity="fill"-->
+<!--            app:tabIndicatorGravity="center"-->
+<!--            android:minHeight="?attr/actionBarSize"-->
+
+<!--            />-->
+<!--    </androidx.viewpager.widget.ViewPager>-->
+<!--    <com.google.android.material.chip.ChipGroup-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"-->
+<!--        android:paddingHorizontal="12dp"-->
+<!--        android:id="@+id/chip_group"-->
+<!--        app:singleSelection="true"-->
+<!--        >-->
+<!--        <com.google.android.material.chip.Chip-->
+<!--            android:id="@+id/chipOption1"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Option 1"-->
+<!--            style="@style/Widget.Material3.Chip.Suggestion" /> &lt;!&ndash; For Choice Chip style &ndash;&gt;-->
+
+<!--        <com.google.android.material.chip.Chip-->
+<!--            android:id="@+id/chipOption2"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Option 2"-->
+<!--            style="@style/Widget.Material3.Chip.Suggestion" />-->
+
+<!--        <com.google.android.material.chip.Chip-->
+<!--            android:id="@+id/chipOption3"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Option 3"-->
+<!--            style="@style/Widget.Material3.Chip.Suggestion" />-->
+
+<!--    </com.google.android.material.chip.ChipGroup>-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <HorizontalScrollView
+            android:id="@+id/horizontal_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_in_progress"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="In progress"
+                    android:checked="true" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_finished"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Completed" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_to_be_read"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="To be read" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_dropped"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dropped" />
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_books"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            tools:listitem="@layout/grid_item_book" />
+
+    </LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Add new book"
+        android:src="@drawable/outline_add_24"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
