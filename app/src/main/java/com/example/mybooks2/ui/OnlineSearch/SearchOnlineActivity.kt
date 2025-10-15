@@ -76,6 +76,13 @@ class SearchOnlineActivity : AppCompatActivity() {
         setupRecyclerView()
         setupSearch()
         observeViewModel()
+
+        binding.editTextSearchOnline.requestFocus()
+        showKeyboard(binding.editTextSearchOnline)
+    }
+    private fun showKeyboard(view: View) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
     fun isDarkTheme(): Boolean {
         return (resources.configuration.uiMode and

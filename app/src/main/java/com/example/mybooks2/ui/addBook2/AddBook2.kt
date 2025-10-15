@@ -34,6 +34,7 @@ import com.example.mybooks2.ui.addBook2.AddBook2ViewModel
 import com.example.mybooks2.ui.addBook2.BookFormat
 import com.example.mybooks2.ui.addBook2.DiscardChangesDialogFragment
 import com.example.mybooks2.ui.addBook2.ReadingStatus
+import com.example.mybooks2.ui.detailScreen.DetailActivity
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
@@ -48,6 +49,9 @@ import java.util.Locale
 class AddBook2 : AppCompatActivity() {
 
     private lateinit var binding: AddBook2Binding
+
+    private var wasOpenedFromSearch = false
+
     val viewModel by viewModels<AddBook2ViewModel> { AddBook2ViewModel.Companion.factory }
 
     private val pickImageLauncher = registerForActivityResult(
@@ -126,6 +130,8 @@ class AddBook2 : AppCompatActivity() {
                 val prefillYear = intent.getIntExtra("EXTRA_PREFILL_YEAR", 0)
                 val prefillCover = intent.getStringExtra("EXTRA_PREFILL_COVER_URL")
                 val prefillPages = intent.getIntExtra("EXTRA_PREFILL_PAGES", 0)
+
+                wasOpenedFromSearch = true
 
                 viewModel.prefillData(prefillTitle, prefillAuthor, prefillIsbn, prefillYear,prefillCover,prefillPages)
             }
@@ -520,14 +526,24 @@ private fun setupObservers() {
 
     viewModel.saveSuccess.observe(this) { success ->
         success?.let {
-            val resultIntent = Intent()
-            resultIntent.putExtra("EXTRA_SAVED_BOOK_ID", it)
-            resultIntent.putExtra("EXTRA_TITLE", viewModel.bookFormState.value.title)
-            resultIntent.putExtra("EXTRA_AUTHOR", viewModel.bookFormState.value.author)
+            if (wasOpenedFromSearch) {
 
-            setResult(Activity.RESULT_OK,resultIntent)
-            finish()
-            viewModel.resetSaveSuccess()
+                val intent = Intent(this, DetailActivity::class.java).apply {
+                    putExtra("EXTRA_BOOK_ID", it)
+                }
+                startActivity(intent)
+                finish()
+            }
+            else {
+                val resultIntent = Intent()
+                resultIntent.putExtra("EXTRA_SAVED_BOOK_ID", it)
+                resultIntent.putExtra("EXTRA_TITLE", viewModel.bookFormState.value.title)
+                resultIntent.putExtra("EXTRA_AUTHOR", viewModel.bookFormState.value.author)
+
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish()
+                viewModel.resetSaveSuccess()
+            }
         }
     }
     viewModel.showValidationErrorEvent.observe(this) { event ->
