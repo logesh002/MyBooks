@@ -148,7 +148,7 @@
                     android:layout_height="wrap_content"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="textCapWords"
-                    android:maxLength="255"
+                    android:maxLength="250"
                     android:maxLines="2" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -417,8 +417,8 @@
                     android:inputType="textMultiLine"
                     android:imeOptions="flagNoExtractUi"
                     android:minLines="3"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="5000"
+                    android:maxLines="20"
+                    android:maxLength="5000"
                     android:gravity="top" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -523,6 +523,8 @@
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="textMultiLine"
                     android:minLines="3"
+                    android:maxLines="20"
+                    android:maxLength="5000"
                     android:gravity="top" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -545,6 +547,8 @@
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="textMultiLine"
                     android:minLines="3"
+                    android:maxLength="5000"
+                    android:maxLines="20"
                     android:gravity="top" />
 
             </com.google.android.material.textfield.TextInputLayout>

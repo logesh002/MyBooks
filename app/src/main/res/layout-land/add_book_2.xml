@@ -494,7 +494,9 @@
                         android:gravity="top"
                         android:imeOptions="flagNoExtractUi"
                         android:inputType="textMultiLine"
-                        android:minLines="3" />
+                        android:minLines="3"
+                        android:maxLines="5"
+                        />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -514,7 +516,9 @@
                         android:gravity="top"
                         android:imeOptions="flagNoExtractUi"
                         android:inputType="textMultiLine"
-                        android:minLines="3" />
+                        android:minLines="3"
+                        android:maxLines="5"
+                        />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout

@@ -239,8 +239,12 @@
                         <TextView android:id="@+id/text_longest_book_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            tools:text="A Game of Thrones" android:textAppearance="?attr/textAppearanceBodyLarge"/>
-                        <TextView android:id="@+id/text_longest_book_value" android:layout_width="wrap_content"
+                            android:maxLines="3"
+                            android:ellipsize="end"
+                            tools:text="A Game of Thrones"
+                            android:textAppearance="?attr/textAppearanceBodyLarge"/>
+                        <TextView android:id="@+id/text_longest_book_value"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             tools:text="864 pages"
                             android:textAppearance="?attr/textAppearanceBodyMedium"
@@ -263,9 +267,13 @@
                             android:textStyle="bold"
                             android:layout_marginBottom="4dp"
                             android:textAppearance="?attr/textAppearanceLabelLarge"/>
-                        <TextView android:id="@+id/text_shortest_book_title" android:layout_width="wrap_content"
+                        <TextView android:id="@+id/text_shortest_book_title"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            tools:text="The Little Prince" android:textAppearance="?attr/textAppearanceBodyLarge"/>
+                            android:maxLines="3"
+                            android:ellipsize="end"
+                            tools:text="The Little Prince"
+                            android:textAppearance="?attr/textAppearanceBodyLarge"/>
                         <TextView android:id="@+id/text_shortest_book_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -290,9 +298,13 @@
                             android:textStyle="bold"
                             android:layout_marginBottom="4dp"
                             android:textAppearance="?attr/textAppearanceLabelLarge"/>
-                        <TextView android:id="@+id/text_longest_time_book_title" android:layout_width="wrap_content"
+                        <TextView android:id="@+id/text_longest_time_book_title"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            tools:text="The Little Prince" android:textAppearance="?attr/textAppearanceBodyLarge"/>
+                            android:maxLines="3"
+                            android:ellipsize="end"
+                            tools:text="The Little Prince"
+                            android:textAppearance="?attr/textAppearanceBodyLarge"/>
                         <TextView android:id="@+id/text_longest_time_book_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -316,9 +328,13 @@
                             android:textStyle="bold"
                             android:layout_marginBottom="4dp"
                             android:textAppearance="?attr/textAppearanceLabelLarge"/>
-                        <TextView android:id="@+id/text_shortest_time_book_title" android:layout_width="wrap_content"
+                        <TextView android:id="@+id/text_shortest_time_book_title"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            tools:text="The Little Prince" android:textAppearance="?attr/textAppearanceBodyLarge"/>
+                            android:maxLines="3"
+                            android:ellipsize="end"
+                            tools:text="The Little Prince"
+                            android:textAppearance="?attr/textAppearanceBodyLarge"/>
                         <TextView android:id="@+id/text_shortest_time_book_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

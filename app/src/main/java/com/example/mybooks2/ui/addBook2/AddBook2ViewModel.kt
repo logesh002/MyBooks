@@ -417,7 +417,8 @@ class AddBook2ViewModel(val bookDao: BookDao,
                     coverImageUri = coverUri,
                     format = loadedBook.format,
                     currentBookTags = loadedTags,
-                    addDate = loadedBook.addedDate
+                    addDate = loadedBook.addedDate,
+                    notes = loadedBook.notes?:""
                 )
 
                 _bookFormState.postValue(initialStateFromDb)

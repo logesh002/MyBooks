@@ -34,6 +34,8 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.setting.SettingsActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:screenOrientation="portrait"
             android:exported="false"
             />
         <activity
