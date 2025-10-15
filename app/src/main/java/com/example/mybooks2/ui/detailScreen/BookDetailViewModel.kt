@@ -49,7 +49,6 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
                 currentPage = 0,
                 startDate = System.currentTimeMillis(),
                 finishedDate = null,
-                personalRating = null,
                 timesRead = currentBook.timesRead + 1
             )
             bookDao.updateBook(updatedBook)

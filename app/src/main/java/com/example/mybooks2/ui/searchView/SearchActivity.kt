@@ -11,6 +11,8 @@ import android.view.WindowInsetsController
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -37,6 +39,9 @@ class SearchActivity : AppCompatActivity() {
     val viewModel by viewModels<SearchViewModel> { SearchViewModel.Companion.factory }
     private lateinit var searchAdapter: SearchResultAdapter
     private lateinit var binding: ActivitySearchBinding
+
+    private lateinit var detailLauncher: ActivityResultLauncher<Intent>
+
 
     private var searchJob: Job? = null
     private lateinit var searchResultsRecyclerView: RecyclerView
@@ -68,7 +73,6 @@ class SearchActivity : AppCompatActivity() {
 
             binding.recyclerViewSearchResults.updatePadding(bottom = imeInsets.bottom)
 
-
             insets
         }
 
@@ -86,11 +90,24 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
+        detailLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+
+            val currentQuery = binding.editTextSearch.text.toString()
+            if (currentQuery.isNotBlank()) {
+                viewModel.search(currentQuery, force = true)
+            }
+        }
+
         setupRecyclerView()
         setupSearch()
         observeViewModel()
         binding.editTextSearch.requestFocus()
         showKeyboard(binding.editTextSearch)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
     }
     fun isDarkTheme(): Boolean {
         return (resources.configuration.uiMode and
@@ -129,10 +146,15 @@ class SearchActivity : AppCompatActivity() {
     val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
         searchAdapter = SearchResultAdapter { book ->
+//            val intent = Intent(this, DetailActivity::class.java).apply {
+//                putExtra("EXTRA_BOOK_ID", book.id)
+//            }
+//            startActivity(intent)
+
             val intent = Intent(this, DetailActivity::class.java).apply {
                 putExtra("EXTRA_BOOK_ID", book.id)
             }
-            startActivity(intent)
+            detailLauncher.launch(intent)
         }
         searchResultsRecyclerView.adapter = searchAdapter
     searchResultsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener(){

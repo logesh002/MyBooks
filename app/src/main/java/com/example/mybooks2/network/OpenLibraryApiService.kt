@@ -9,6 +9,6 @@ interface OpenLibraryApiService {
     suspend fun searchBooks(
         @Query("q") query: String,
         @Query("fields") fields: String = "key,title,author_name,isbn,first_publish_year,cover_i,number_of_pages_median",
-        @Query("limit") limit: Int = 20
+        @Query("limit") limit: Int = 30
     ): OpenLibrarySearchResponse
 }

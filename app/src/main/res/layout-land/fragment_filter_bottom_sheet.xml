@@ -30,7 +30,6 @@
             android:paddingEnd="24dp"
             android:paddingBottom="24dp">
 
-            <!-- Filter Section -->
             <TextView
                 style="?attr/textAppearanceTitleMedium"
                 android:layout_width="wrap_content"
@@ -109,17 +108,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Audiobook"/>
-                <!-- Other format chips -->
             </com.google.android.material.chip.ChipGroup>
 
-            <!-- Divider for visual separation -->
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="16dp" />
 
-            <!-- Sort Section -->
             <TextView
                 style="?attr/textAppearanceTitleMedium"
                 android:layout_width="wrap_content"
@@ -127,17 +123,6 @@
                 android:layout_marginBottom="8dp"
                 android:text="Sort by" />
 
-<!--            <RadioGroup-->
-<!--                android:id="@+id/radio_group_sort_by"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content">-->
-<!--                <RadioButton android:id="@+id/radio_date_added" android:text="Date Added" android:layout_width="wrap_content" android:layout_height="wrap_content"/>-->
-<!--                <RadioButton android:id="@+id/radio_title" android:text="Title" android:layout_width="wrap_content" android:layout_height="wrap_content"/>-->
-<!--                <RadioButton android:id="@+id/radio_author" android:text="Author" android:layout_width="wrap_content" android:layout_height="wrap_content" />-->
-<!--                <RadioButton android:id="@+id/radio_rating" android:text="Rating" android:layout_width="wrap_content" android:layout_height="wrap_content"/>-->
-
-<!--                &lt;!&ndash; Sort RadioButtons &ndash;&gt;-->
-<!--            </RadioGroup>-->
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_group_sort_by"
                 android:layout_width="match_parent"
@@ -174,13 +159,6 @@
                     android:text="Rating" />
             </com.google.android.material.chip.ChipGroup>
 
-<!--            <com.google.android.material.materialswitch.MaterialSwitch-->
-<!--                android:id="@+id/switch_sort_order"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:checked="true"-->
-<!--                android:text="Sort Descending" />-->
             <TextView
                 style="?attr/textAppearanceLabelLarge"
                 android:layout_width="wrap_content"
@@ -215,7 +193,6 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Action Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

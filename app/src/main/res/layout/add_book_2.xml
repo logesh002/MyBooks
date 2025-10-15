@@ -35,7 +35,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Cover Image -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/coverImageCard"
                 android:layout_width="match_parent"
@@ -53,14 +52,6 @@
                     android:orientation="vertical"
                     android:gravity="center"
                     android:background="?attr/colorSurfaceVariant">
-
-<!--                    <ImageView-->
-<!--                        android:id="@+id/coverImageView"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:scaleType="centerCrop"-->
-<!--                        android:visibility="gone"-->
-<!--                        tools:visibility="visible" />-->
 
                     <LinearLayout
                         android:id="@+id/addCoverLayout"
@@ -140,7 +131,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Title -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/titleInputLayout"
                 android:layout_width="match_parent"
@@ -163,7 +153,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Subtitle -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/subtitleInputLayout"
                 android:layout_width="match_parent"
@@ -186,7 +175,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Author -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/authorInputLayout"
                 android:layout_width="match_parent"
@@ -209,7 +197,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Reading Status -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -311,27 +298,6 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-<!--            <TextView-->
-<!--                android:id="@+id/rating_tv"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Rating"-->
-<!--                android:textSize="12sp"-->
-<!--                android:textColor="?attr/colorOnSurfaceVariant"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:layout_marginBottom="8dp" />-->
-
-<!--            <RatingBar-->
-<!--                android:id="@+id/rating_bar"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="center_horizontal"-->
-<!--                android:numStars="5"-->
-<!--                android:layout_marginBottom="8dp"-->
-<!--                android:stepSize="1.0" />-->
-
-
-
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/rating_card"
                 android:layout_width="match_parent"
@@ -383,7 +349,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
 
-            <!-- Number of Pages and Publication Year -->
             <LinearLayout
                 android:id="@+id/pageAndYearLayout"
                 android:layout_width="match_parent"
@@ -434,7 +399,6 @@
 
             </LinearLayout>
 
-            <!-- Description -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/descriptionInputLayout"
                 android:layout_width="match_parent"
@@ -459,7 +423,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- ISBN -->
             <LinearLayout
                 android:id="@+id/isbn_ll"
                 android:layout_width="match_parent"
@@ -491,31 +454,6 @@
 
 
 
-            <!-- Tags -->
-
-<!--            <com.google.android.material.textfield.TextInputLayout-->
-<!--                android:id="@+id/input_layout_tags"-->
-<!--                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="12dp"-->
-<!--                app:startIconDrawable="@drawable/outline_nest_tag_24"-->
-<!--                android:hint="Add a tag...">-->
-
-<!--                <AutoCompleteTextView-->
-<!--                    android:id="@+id/auto_complete_tags"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:imeOptions="actionDone"-->
-<!--                    android:inputType="text"-->
-<!--                    android:maxLines="1"-->
-<!--                    android:completionThreshold="1"-->
-<!--                    android:layout_height="wrap_content" />-->
-<!--            </com.google.android.material.textfield.TextInputLayout>-->
-<!--            <com.google.android.material.chip.ChipGroup-->
-<!--                android:id="@+id/chip_group_tags"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="8dp"/>-->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -567,7 +505,6 @@
             </com.google.android.material.card.MaterialCardView>
 
 
-            <!-- My Review -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/reviewInputLayout"
                 android:layout_width="match_parent"
@@ -590,7 +527,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Notes -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/notesInputLayout"
                 android:layout_width="match_parent"
@@ -614,7 +550,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
 
-            <!-- Action Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

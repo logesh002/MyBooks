@@ -202,6 +202,9 @@ class DashboardFragment : Fragment() {
         pieChart.setEntryLabelTextSize(12f)
         pieChart.setEntryLabelColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onSurface))
 
+        //pieChart.legend.isEnabled = false
+        pieChart.legend.textColor = ContextCompat.getColor(requireContext(), R.color.md_theme_onSurface)
+
         pieChart.invalidate()
     }
     private fun setupMonthlyChart(entries: List<BarEntry>) {

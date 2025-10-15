@@ -2,6 +2,7 @@ package com.example.mybooks2.ui.detailScreen
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.RatingBar
 import androidx.core.os.bundleOf
@@ -19,7 +20,7 @@ class RatingDialogFragment : DialogFragment() {
         val ratingBar = dialogView.findViewById<RatingBar>(R.id.dialog_rating_bar)
         val reviewEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_review)
 
-        // Pre-populate the fields with data passed from the activity
+        Log.d("rating", arguments?.getFloat(ARG_RATING).toString() )
         ratingBar.rating = arguments?.getFloat(ARG_RATING) ?: 0f
         reviewEditText.setText(arguments?.getString(ARG_REVIEW) ?: "")
 

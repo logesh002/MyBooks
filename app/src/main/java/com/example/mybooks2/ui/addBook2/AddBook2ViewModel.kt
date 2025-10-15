@@ -54,7 +54,8 @@ data class BookFormState(
     val format: BookFormat = BookFormat.PAPERBACK,
     var coverImagePath: String?=null,
     val currentBookTags: Set<String> = emptySet(),
-    val isCoverLoading: Boolean = false
+    val isCoverLoading: Boolean = false,
+    val addDate: Long? = null
 )
 enum class ReadingStatus {
     FINISHED, IN_PROGRESS, FOR_LATER, UNFINISHED
@@ -392,7 +393,7 @@ class AddBook2ViewModel(val bookDao: BookDao,
             }
             val book = bookWithTags.book
             val loadedTags = bookWithTags.tags.map { it.name }.toMutableSet()
-            currentBookTags.postValue(loadedTags)
+           // currentBookTags.postValue(loadedTags)
             book.let { loadedBook ->
                 val coverUri = loadedBook.coverImagePath?.let { path ->
                     if (path.isNotEmpty()) File(path).toUri() else null
@@ -415,7 +416,8 @@ class AddBook2ViewModel(val bookDao: BookDao,
                     review = loadedBook.review ?: "",
                     coverImageUri = coverUri,
                     format = loadedBook.format,
-                    currentBookTags = loadedTags
+                    currentBookTags = loadedTags,
+                    addDate = loadedBook.addedDate
                 )
 
                 _bookFormState.postValue(initialStateFromDb)
@@ -452,7 +454,7 @@ class AddBook2ViewModel(val bookDao: BookDao,
 
                 try {
                     val bookId =
-                        bookDao.saveBookWithTags(book, tagNames = currentBookTags.value.toSet())
+                        bookDao.saveBookWithTags(book, tagNames = bookData.currentBookTags.toSet())
                     _saveSuccess.postValue(bookId)
 
                 } catch (e: SQLiteConstraintException) {
@@ -484,14 +486,13 @@ class AddBook2ViewModel(val bookDao: BookDao,
             tags = tags,
             coverImagePath = coverImagePath,
             year = publicationYear.toIntOrNull(),
-            format = format
+            format = format,
+            addedDate = addDate?:System.currentTimeMillis()
         )
     }
     val allTags: LiveData<List<String>> = bookDao.getAllTags().map { tags ->
         tags.map { it.name }
     }.asLiveData()
-
-    val currentBookTags = MutableLiveData<MutableSet<String>>(mutableSetOf())
 
     fun addTag(tag: String) {
         val cleanTag = tag.trim()
@@ -592,6 +593,5 @@ open class Event<out T>(private val content: T) {
             content
         }
     }
-
     fun peekContent(): T = content
 }

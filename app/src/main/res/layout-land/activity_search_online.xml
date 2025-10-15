@@ -55,7 +55,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- TextView to show when there are no results -->
         <TextView
             android:id="@+id/text_view_no_results"
             android:layout_width="wrap_content"

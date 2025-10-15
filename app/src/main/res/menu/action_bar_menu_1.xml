@@ -16,13 +16,6 @@
         android:iconTint="?attr/colorOnPrimary"
         app:showAsAction="always"
         />
-<!--    <item-->
-<!--        android:id="@+id/sort"-->
-<!--        android:icon="@drawable/outline_sort_24"-->
-<!--        android:title="Sort"-->
-<!--        android:iconTint="?attr/colorOnPrimary"-->
-<!--        app:showAsAction="never"-->
-<!--        />-->
     <item
         android:id="@+id/action_filter"
         android:icon="@drawable/outline_filter_list_24"

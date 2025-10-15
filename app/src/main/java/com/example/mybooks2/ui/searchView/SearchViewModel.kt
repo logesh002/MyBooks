@@ -16,8 +16,16 @@ class SearchViewModel(private val bookDao: BookDao) : ViewModel() {
 
     private val _searchResults = MutableLiveData<List<Book>>()
     val searchResults: LiveData<List<Book>> = _searchResults
+    private var lastQuery: String? = null
 
-    fun search(query: String) {
+
+    fun search(query: String, force: Boolean = false) {
+
+        if (!force && query == lastQuery) {
+            return
+        }
+
+        lastQuery = query
         if (query.isBlank()) {
             _searchResults.value = emptyList()
             return
