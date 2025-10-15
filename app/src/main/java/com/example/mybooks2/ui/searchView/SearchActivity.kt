@@ -146,10 +146,6 @@ class SearchActivity : AppCompatActivity() {
     val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
         searchAdapter = SearchResultAdapter { book ->
-//            val intent = Intent(this, DetailActivity::class.java).apply {
-//                putExtra("EXTRA_BOOK_ID", book.id)
-//            }
-//            startActivity(intent)
 
             val intent = Intent(this, DetailActivity::class.java).apply {
                 putExtra("EXTRA_BOOK_ID", book.id)

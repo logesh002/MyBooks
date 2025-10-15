@@ -160,7 +160,6 @@ class DetailActivity : AppCompatActivity() {
                 Log.d("toolbar","gone")
                 binding.gradientBackground.visibility = View.GONE
             } else {
-                // Expanded or expanding: Show the gradient background.
                 binding.gradientBackground.visibility = View.VISIBLE
             }
         })
@@ -261,7 +260,7 @@ class DetailActivity : AppCompatActivity() {
 
         if (!book.coverImagePath.isNullOrEmpty()) {
 
-            appBarLayoutParams.height = (300 * resources.displayMetrics.density).toInt() // Convert 300dp to pixels
+            appBarLayoutParams.height = (300 * resources.displayMetrics.density).toInt()
 
             binding.imageViewCoverLarge.visibility = View.VISIBLE
 
@@ -443,7 +442,7 @@ class DetailActivity : AppCompatActivity() {
                 val swatch = it.lightMutedSwatch ?: it.mutedSwatch ?: it.lightVibrantSwatch
 
                 if (swatch != null) {
-                    val topColor = ColorUtils.setAlphaComponent(swatch.rgb, 250) // 70% opacity
+                    val topColor = ColorUtils.setAlphaComponent(swatch.rgb, 255)
                     val finalColor = ColorUtils.compositeColors(topColor, surfaceColor)
 
                     val gradient = GradientDrawable(
@@ -469,14 +468,6 @@ class DetailActivity : AppCompatActivity() {
         binding.collapsingToolbarLayout.statusBarScrim = ColorDrawable(surfaceColor)
     }
 
-
-    fun manipulateColor(color: Int, factor: Float): Int {
-        val a = Color.alpha(color)
-        val r = Math.round(Color.red(color) * factor)
-        val g = Math.round(Color.green(color) * factor)
-        val b = Math.round(Color.blue(color) * factor)
-        return Color.argb(a, Math.min(r, 255), Math.min(g, 255), Math.min(b, 255))
-    }
     private fun populateTags(tags: List<Tag>) {
         binding.chipGroupTags.removeAllViews()
         tags.forEach { tag ->
@@ -545,7 +536,6 @@ class DetailActivity : AppCompatActivity() {
                 true
             }
             R.id.action_delete -> {
-              //  showDeleteConfirmationDialog()
                 launchDeleteConfirmationDialog()
                 true
             }
@@ -571,7 +561,7 @@ class DetailActivity : AppCompatActivity() {
         val authorText = shareView.findViewById<TextView>(R.id.share_text_author)
         val ratingBar = shareView.findViewById<RatingBar>(R.id.share_rating_bar)
 
-        val reviewText = shareView.findViewById<TextView>(R.id.share_text_review) // Find the new TextView
+        val reviewText = shareView.findViewById<TextView>(R.id.share_text_review)
 
         titleText.text = book.title
         authorText.text = "by ${book.author}"

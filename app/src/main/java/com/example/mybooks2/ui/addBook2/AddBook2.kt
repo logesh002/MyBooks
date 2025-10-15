@@ -212,7 +212,7 @@ class AddBook2 : AppCompatActivity() {
     private fun addTagFromInput() {
         val newTag = binding.autoCompleteTags.text.toString()
         viewModel.addTag(newTag)
-        binding.autoCompleteTags.setText("") // Clear the input
+        binding.autoCompleteTags.setText("")
     }
 
     private fun updateTagsChipGroup(tags: Set<String>) {

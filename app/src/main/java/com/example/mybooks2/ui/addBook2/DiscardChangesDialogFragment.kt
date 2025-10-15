@@ -13,7 +13,7 @@ class DiscardChangesDialogFragment : DialogFragment() {
         return MaterialAlertDialogBuilder(requireContext())
             .setTitle("Discard changes?")
             .setMessage("You have unsaved changes. Are you sure you want to discard them?")
-            .setNegativeButton("Cancel", null) // Does nothing, just dismisses
+            .setNegativeButton("Cancel", null)
             .setPositiveButton("Discard") { _, _ ->
                 setFragmentResult(REQUEST_KEY, bundleOf(RESULT_KEY to true))
             }

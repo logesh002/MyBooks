@@ -25,9 +25,7 @@
         <activity
             android:name=".ui.searchView.SearchActivity"
             android:exported="false"
-             /> <!-- <activity -->
-        <!-- android:name=".ui.addBook.AddBook" -->
-        <!-- android:exported="false" /> -->
+             />
         <activity
             android:name="com.example.bookapp.ui.AddBook2"
             android:exported="false"

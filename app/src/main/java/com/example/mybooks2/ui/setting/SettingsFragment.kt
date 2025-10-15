@@ -36,7 +36,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    // Launcher for opening an existing file (Import)
     private val importLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
              viewModel.importFromCsv(it)

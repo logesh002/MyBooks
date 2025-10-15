@@ -15,7 +15,6 @@ import com.google.android.material.textfield.TextInputEditText
 class RatingDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        // Inflate the custom layout
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_rating, null)
         val ratingBar = dialogView.findViewById<RatingBar>(R.id.dialog_rating_bar)
         val reviewEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_review)
@@ -31,7 +30,6 @@ class RatingDialogFragment : DialogFragment() {
                 val rating = ratingBar.rating
                 val review = reviewEditText.text.toString()
 
-                // Send the result back to the activity
                 setFragmentResult(REQUEST_KEY, bundleOf(
                     RESULT_RATING to rating,
                     RESULT_REVIEW to review
@@ -49,7 +47,6 @@ class RatingDialogFragment : DialogFragment() {
         private const val ARG_RATING = "arg_rating"
         private const val ARG_REVIEW = "arg_review"
 
-        // Factory function to create a new instance with arguments
         fun newInstance(currentRating: Float, currentReview: String): RatingDialogFragment {
             return RatingDialogFragment().apply {
                 arguments = bundleOf(

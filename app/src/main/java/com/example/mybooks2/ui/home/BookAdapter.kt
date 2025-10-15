@@ -67,7 +67,7 @@ class BookAdapter(private val onItemClicked: (Book) -> Unit,
         cardView.isActivated = isSelected
 
         if (isSelected) {
-            cardView.strokeWidth = holder.itemView.context.resources.getDimensionPixelSize(R.dimen.selected_card_stroke_width) // Define this in dimens.xml
+            cardView.strokeWidth = holder.itemView.context.resources.getDimensionPixelSize(R.dimen.selected_card_stroke_width)
             cardView.strokeColor = ContextCompat.getColor(holder.itemView.context, R.color.your_selection_border_color)
         } else {
             cardView.strokeWidth = 0

@@ -110,14 +110,7 @@ class SearchOnlineActivity : AppCompatActivity() {
     }
 
     private fun setupSearch() {
-//        binding.editTextSearchOnline.addTextChangedListener { editable ->
-//            searchJob?.cancel()
-//            binding.textViewNoResults.visibility=View.GONE
-//            searchJob = lifecycleScope.launch {
-//                delay(500L)
-//                viewModel.search(editable.toString())
-//            }
-//        }
+
         binding.editTextSearchOnline.setOnEditorActionListener { textView, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 searchJob?.cancel()

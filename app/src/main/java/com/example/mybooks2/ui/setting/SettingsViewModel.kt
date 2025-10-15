@@ -14,7 +14,6 @@ import com.example.mybooks2.data.BookDao
 import com.example.mybooks2.model.Book
 import com.example.mybooks2.ui.addBook2.Event
 import com.example.mybooks2.ui.addBook2.ReadingStatus
-import com.example.mybooks2.ui.detailScreen.BookDetailViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -31,7 +30,7 @@ class SettingsViewModel(
     fun exportToCsv(uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val booksWithTags = bookDao.getAllBooksWithTags().first() // Get the current list
+                val booksWithTags = bookDao.getAllBooksWithTags().first()
 
                 val csvBuilder = StringBuilder()
                 csvBuilder.append("title,author,isbn,status,rating,startDate,finishDate,review,tags\n")
@@ -71,11 +70,14 @@ class SettingsViewModel(
             try {
                 context.contentResolver.openInputStream(uri)?.use { inputStream ->
                     val reader = BufferedReader(InputStreamReader(inputStream))
-                    reader.readLine() // Skip the header row
+                    reader.readLine()
 
                     var line: String?
+                    val csvSplitRegex = Regex(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")
+
                     while (reader.readLine().also { line = it } != null) {
-                        val tokens = line!!.split(",") // Simple CSV parsing
+                     //   val tokens = line!!.split(",")
+                        val tokens = line!!.split(csvSplitRegex)
 
                         if (tokens.size >= 9) {
                             val isbn = tokens[2].removeSurrounding("\"").ifEmpty { null }

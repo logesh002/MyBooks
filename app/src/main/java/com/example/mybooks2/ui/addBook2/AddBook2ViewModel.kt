@@ -304,7 +304,7 @@ class AddBook2ViewModel(val bookDao: BookDao,
             var sum = 0
             for (i in 0 until 12) {
                 val digit = isbn[i].digitToInt()
-                sum += if (i % 2 == 0) digit else digit * 3 // Multiply alternate digits by 1 and 3
+                sum += if (i % 2 == 0) digit else digit * 3
             }
 
             val checksum = (10 - (sum % 10)) % 10
@@ -358,7 +358,7 @@ class AddBook2ViewModel(val bookDao: BookDao,
             viewIdToScrollTo?.let {
                 _scrollToErrorEvent.value = Event(it)
             }
-            _showValidationErrorEvent.value = Event(Unit) // Trigger the Snackbar
+            _showValidationErrorEvent.value = Event(Unit)
 
         }
     }
@@ -393,7 +393,6 @@ class AddBook2ViewModel(val bookDao: BookDao,
             }
             val book = bookWithTags.book
             val loadedTags = bookWithTags.tags.map { it.name }.toMutableSet()
-           // currentBookTags.postValue(loadedTags)
             book.let { loadedBook ->
                 val coverUri = loadedBook.coverImagePath?.let { path ->
                     if (path.isNotEmpty()) File(path).toUri() else null

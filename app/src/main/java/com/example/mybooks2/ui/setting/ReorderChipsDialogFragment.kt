@@ -18,13 +18,11 @@ import java.util.*
 
 class ReorderChipsDialogFragment : DialogFragment() {
 
-    // ... (Your adapter and ViewHolder classes go here - see below)
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_reorder_chips, null)
         val recyclerView = dialogView.findViewById<RecyclerView>(R.id.reorder_recycler_view)
 
-        // --- Setup RecyclerView ---
         val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val defaultOrder = resources.getStringArray(R.array.status_values).toList()
         val savedOrderStr = prefs.getString("chip_order_preference", defaultOrder.joinToString(","))
@@ -34,7 +32,6 @@ class ReorderChipsDialogFragment : DialogFragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // --- Setup Drag and Drop ---
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 val fromPosition = viewHolder.adapterPosition
@@ -47,25 +44,21 @@ class ReorderChipsDialogFragment : DialogFragment() {
         })
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
-        // --- Build the Dialog ---
         return MaterialAlertDialogBuilder(requireContext())
             .setView(dialogView)
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Save") { _, _ ->
-                // Save the new order as a comma-separated string
                 prefs.edit().putString("chip_order_preference", currentOrderList.joinToString(",")).apply()
             }
             .create()
     }
 
-    // --- Adapter and ViewHolder for the RecyclerView ---
     class ReorderAdapter(private val items: List<String>) : RecyclerView.Adapter<ReorderAdapter.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
             ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_reorder, parent, false))
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val statusValue = items[position]
-            // Convert enum name to user-friendly text
             val statusText = statusValue.replace("_", " ").toLowerCase(Locale.ROOT).capitalize(Locale.ROOT)
             holder.textView.text = statusText
         }
