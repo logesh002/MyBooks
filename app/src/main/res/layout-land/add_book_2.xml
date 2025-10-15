@@ -78,6 +78,11 @@
                                 android:textColor="?attr/colorOnSurfaceVariant"
                                 android:textSize="16sp" />
                         </LinearLayout>
+                        <ProgressBar
+                            android:id="@+id/cover_image_progress_bar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 

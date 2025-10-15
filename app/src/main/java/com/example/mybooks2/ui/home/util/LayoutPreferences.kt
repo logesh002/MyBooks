@@ -1,4 +1,4 @@
-package com.example.mybooks2.ui.home
+package com.example.mybooks2.ui.home.util
 import android.content.Context
 import android.content.SharedPreferences
 enum class LayoutMode {

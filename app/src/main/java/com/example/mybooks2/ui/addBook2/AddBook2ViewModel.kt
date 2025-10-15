@@ -6,10 +6,9 @@ import android.database.sqlite.SQLiteConstraintException
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.core.net.toUri
-import androidx.core.text.isDigitsOnly
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,11 +25,9 @@ import com.example.mybooks2.MyBooksApplication
 import com.example.mybooks2.R
 import com.example.mybooks2.data.BookDao
 import com.example.mybooks2.model.Book
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -57,7 +54,7 @@ data class BookFormState(
     val format: BookFormat = BookFormat.PAPERBACK,
     var coverImagePath: String?=null,
     val currentBookTags: Set<String> = emptySet(),
-
+    val isCoverLoading: Boolean = false
 )
 enum class ReadingStatus {
     FINISHED, IN_PROGRESS, FOR_LATER, UNFINISHED
@@ -80,7 +77,7 @@ data class ValidationError(
 
 class AddBook2ViewModel(val bookDao: BookDao,
                         val application: MyBooksApplication,
-                        private val prefs: SharedPreferences) : ViewModel() {
+                        prefs: SharedPreferences) : ViewModel() {
 
     private val defaultStatusName = prefs.getString("default_status_preference", "FOR_LATER")
     private val defaultFormatName = prefs.getString("default_format_preference", "PAPERBACK")
@@ -142,9 +139,6 @@ class AddBook2ViewModel(val bookDao: BookDao,
     fun updateRating(rating: Float) {
         _bookFormState.value = _bookFormState.value?.copy(rating = rating)
     }
-    fun onCoverImageSelected(uri: Uri?) {
-        _bookFormState.value = _bookFormState.value?.copy(coverImageUri = uri)
-    }
 
     fun updateNumberOfPages(pages: String) {
         _bookFormState.value = _bookFormState.value?.copy(numberOfPages = pages)
@@ -167,10 +161,6 @@ class AddBook2ViewModel(val bookDao: BookDao,
         validateIsbn(isbn)
     }
 
-
-    fun updateTags(tags: String) {
-        _bookFormState.value = _bookFormState.value?.copy(tags = tags)
-    }
 
     fun updateReview(review: String) {
         if (review.length <= 5000) {
@@ -247,18 +237,15 @@ class AddBook2ViewModel(val bookDao: BookDao,
         _validationError.value = when {
 
             year.isNotBlank() && year.toIntOrNull() == null -> {
-                println(year)
                 currentError.copy(yearError = "Invalid year",)
             }
             year.isNotBlank() && (year.toIntOrNull() ?: 0) > currentYear -> {
                 currentError.copy(yearError = "Year cannot be in future",)
             }
             year.isNotBlank() && (year.toIntOrNull() ?: 0) < 1000 -> {
-                println(" year $year")
                 currentError.copy(yearError = "Invalid year",)
             }
             else -> {
-                println(" year $year else")
                 currentError.copy(yearError = null)
             }
         }
@@ -283,7 +270,6 @@ class AddBook2ViewModel(val bookDao: BookDao,
             else -> "ISBN must be 10 or 13 characters"
         }
         )
-        println(validationError.value)
     }
 
     /**
@@ -473,7 +459,7 @@ class AddBook2ViewModel(val bookDao: BookDao,
                     _showIsbnExistsError.postValue(Event(Unit))
 
                 } catch (e: Exception) {
-                    println(e)
+                    Log.e("Exception",e.toString())
                     _saveSuccess.postValue(null)
                 }
             }
@@ -481,7 +467,6 @@ class AddBook2ViewModel(val bookDao: BookDao,
     }
 
     private fun BookFormState.toBook(): Book {
-        println("test book state")
         return Book(
             id = currentBookId?:0L,
             title = title,
@@ -567,6 +552,7 @@ class AddBook2ViewModel(val bookDao: BookDao,
         _bookFormState.value = initialTextState
 
         if (!coverUrl.isNullOrBlank()) {
+            _bookFormState.value = _bookFormState.value?.copy(isCoverLoading = true)
             viewModelScope.launch {
                 val imageLoader = ImageLoader(application)
                 val request = ImageRequest.Builder(application)
@@ -583,8 +569,11 @@ class AddBook2ViewModel(val bookDao: BookDao,
 
                     savedPath?.let {
                         val localUri = File(it).toUri()
-                        _bookFormState.postValue(_bookFormState.value?.copy(coverImageUri = localUri))
+                        _bookFormState.postValue(_bookFormState.value?.copy(coverImageUri = localUri, isCoverLoading = false))
                     }
+                }
+                else{
+                    _bookFormState.postValue(_bookFormState.value?.copy(isCoverLoading = false))
                 }
             }
         }

@@ -9,18 +9,15 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import com.example.mybooks2.R
 import com.example.mybooks2.databinding.FragmentDashboardBinding
 import com.example.mybooks2.ui.addBook2.BookFormat
 import com.example.mybooks2.ui.detailScreen.DetailActivity
-import com.example.mybooks2.ui.home.HomeViewModel
 import com.example.mybooks2.ui.setting.SettingsActivity
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -69,7 +66,7 @@ class DashboardFragment : Fragment() {
         }
 
         viewModel.totalPagesRead.observe(viewLifecycleOwner) { total ->
-            binding.textTotalPagesRead.text = String.format("%,d", total ?: 0)
+            binding.textTotalPagesRead.text = formatLargeNumber(total?:0)
         }
 
         viewModel.booksInProgress.observe(viewLifecycleOwner) { count ->
@@ -200,7 +197,7 @@ class DashboardFragment : Fragment() {
         pieChart.data = pieData
 
         pieChart.description.isEnabled = false
-        pieChart.isDrawHoleEnabled = true // Creates a donut chart
+        pieChart.isDrawHoleEnabled = true
         pieChart.setHoleColor(Color.TRANSPARENT)
         pieChart.setEntryLabelTextSize(12f)
         pieChart.setEntryLabelColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onSurface))
@@ -231,6 +228,13 @@ class DashboardFragment : Fragment() {
         barChart.axisLeft.axisMinimum = 0f
 
         barChart.invalidate()
+    }
+    private fun formatLargeNumber(number: Long): String {
+        return when {
+            number < 1000 -> number.toString()
+            number < 1_000_000 -> String.format("%.1fk", number / 1000.0)
+            else -> String.format("%.1fM", number / 1_000_000.0)
+        }
     }
     private fun setupToolbar() {
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.myToolbar)

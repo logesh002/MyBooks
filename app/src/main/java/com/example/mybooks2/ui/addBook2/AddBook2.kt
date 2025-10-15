@@ -192,7 +192,6 @@ class AddBook2 : AppCompatActivity() {
 
     private fun setupTags() {
         viewModel.allTags.observe(this) { tags ->
-            println("tags sd"+tags)
             val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, tags)
             binding.autoCompleteTags.setAdapter(adapter)
         }
@@ -477,6 +476,23 @@ private fun setupObservers() {
             binding.autoCompleteFormat.setText(state.format.displayName, false)
         }
         updateTagsChipGroup(state.currentBookTags)
+
+        if (state.isCoverLoading) {
+            binding.coverImageProgressBar.visibility = View.VISIBLE
+            binding.addCoverLayout.visibility = View.GONE
+            binding.coverImageCard.visibility = View.VISIBLE
+            binding.imageCl.visibility = View.GONE
+        } else if (state.coverImageUri != null) {
+            binding.coverImageProgressBar.visibility = View.GONE
+            binding.coverImageCard.visibility = View.GONE
+            binding.imageCl.visibility = View.VISIBLE
+            binding.imageViewPreview.load(state.coverImageUri)
+        } else {
+            binding.coverImageProgressBar.visibility = View.GONE
+            binding.addCoverLayout.visibility = View.VISIBLE
+            binding.coverImageCard.visibility = View.VISIBLE
+            binding.imageCl.visibility = View.GONE
+        }
     }
 
     viewModel.validationError.observe(this) { errors ->

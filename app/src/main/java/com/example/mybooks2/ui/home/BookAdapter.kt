@@ -7,7 +7,6 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +15,7 @@ import com.example.mybooks2.R
 import com.example.mybooks2.model.Book
 import com.example.mybooks2.ui.addBook2.BookFormat
 import com.example.mybooks2.ui.addBook2.ReadingStatus
+import com.example.mybooks2.ui.home.util.LayoutMode
 import com.google.android.material.card.MaterialCardView
 import java.io.File
 

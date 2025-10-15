@@ -81,7 +81,6 @@ interface BookDao {
     suspend fun saveBookWithTags(book: Book, tagNames: Set<String>): Long {
         val bookId = if (book.id == 0L) insertBook(book)
         else {
-            println("update")
             updateBook(book)
             book.id
         }

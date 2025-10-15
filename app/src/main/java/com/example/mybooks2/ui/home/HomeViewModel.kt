@@ -1,6 +1,5 @@
 package com.example.mybooks2.ui.home
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -19,10 +18,13 @@ import com.example.mybooks2.data.BookDao
 import com.example.mybooks2.model.Book
 import com.example.mybooks2.model.BookWithTags
 import com.example.mybooks2.model.Tag
-import com.example.mybooks2.ui.addBook2.AddBook2ViewModel
 import com.example.mybooks2.ui.addBook2.BookFormat
 import com.example.mybooks2.ui.addBook2.Event
 import com.example.mybooks2.ui.addBook2.ReadingStatus
+import com.example.mybooks2.ui.home.util.LayoutMode
+import com.example.mybooks2.ui.home.util.LayoutPreferences
+import com.example.mybooks2.ui.home.util.SortBy
+import com.example.mybooks2.ui.home.util.SortOrder
 import kotlinx.coroutines.launch
 
 
@@ -49,7 +51,6 @@ class HomeViewModel(val bookDao: BookDao,
 
 
     val allAuthors: LiveData<List<String>> = bookDao.getAllAuthors().asLiveData()
-    val allTagNames: LiveData<List<Tag>> = bookDao.getAllTags().asLiveData()
 
     private val _layoutMode = MutableLiveData<LayoutMode>()
     val layoutMode: LiveData<LayoutMode> = _layoutMode
@@ -84,15 +85,7 @@ class HomeViewModel(val bookDao: BookDao,
         prefs.registerOnSharedPreferenceChangeListener(this)
     }
 
-    data class BookFilters(
-        val status: String = "In progress",
-        val author: String? = null,
-        val tag: String? = null
-    )
-
     val allTags: LiveData<List<Tag>> = bookDao.getAllTags().asLiveData()
-
-
 
     private fun update() {
         val books = allBooksWithTags.value ?: return
@@ -143,8 +136,6 @@ class HomeViewModel(val bookDao: BookDao,
                 }
             }
         }
-        Log.d("List",sortedList.toString())
-
         _booksToShow.value = sortedList.map { it.book }
     }
 
@@ -162,8 +153,6 @@ class HomeViewModel(val bookDao: BookDao,
         _layoutMode.value = newMode
         layoutPreferences.saveLayoutMode(newMode)
     }
-
-
 
     private val _selectedItems = MutableLiveData<Set<Long>>(emptySet())
     val selectedItems: LiveData<Set<Long>> = _selectedItems

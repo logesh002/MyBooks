@@ -147,7 +147,6 @@ class SearchActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.searchResults.observe(this) { results ->
-            println(results)
             searchAdapter.submitList(results)
         }
     }

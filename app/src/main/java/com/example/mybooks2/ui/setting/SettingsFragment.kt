@@ -3,6 +3,7 @@ package com.example.mybooks2.ui.setting
 import android.app.Application
 import android.os.Bundle
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -12,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import coil.Coil
+import com.bumptech.glide.Glide
 import com.example.mybooks2.MyBooksApplication
 import com.example.mybooks2.R
 import com.example.mybooks2.data.AppDatabase
@@ -20,6 +23,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.getValue
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -101,13 +105,47 @@ class SettingsFragment : PreferenceFragmentCompat() {
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Reset") { _, _ ->
 
-                val database = (requireActivity().application as MyBooksApplication).database
-                lifecycleScope.launch(Dispatchers.IO) {
-                    database.clearAllTables()
-                }
-                Toast.makeText(requireContext(), "Database has been reset.", Toast.LENGTH_SHORT).show()
+                val progressDialog = MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Resetting Database")
+                    .setMessage("Please wait...")
+                    .setView(ProgressBar(requireContext()))
+                    .setCancelable(false)
+                    .show()
 
+
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val database = AppDatabase.getDatabase(requireContext().applicationContext)
+                        database.clearAllTables()
+                        clearCoverImages()
+                        clearImageCache()
+                    }
+                    withContext(Dispatchers.Main) {
+                        progressDialog.dismiss()
+                        Toast.makeText(requireContext(), "Database has been reset. Please restart the app", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
             .show()
+    }
+    private fun clearImageCache() {
+        activity?.let {
+            Glide.get(it.applicationContext).clearDiskCache()
+        }
+
+        val imageLoader = Coil.imageLoader(requireContext())
+        imageLoader.diskCache?.clear()
+        imageLoader.memoryCache?.clear()
+    }
+    private fun clearCoverImages() {
+        val directory = requireContext().filesDir
+        if (directory.isDirectory) {
+            val files = directory.listFiles()
+            files?.forEach { file ->
+                if (file.name.startsWith("cover_")) {
+                    file.delete()
+                }
+            }
+        }
     }
 }

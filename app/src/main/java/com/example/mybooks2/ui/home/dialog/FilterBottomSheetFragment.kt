@@ -1,23 +1,23 @@
-package com.example.mybooks2.ui.home
+package com.example.mybooks2.ui.home.dialog
 
+import android.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ArrayAdapter
-import com.example.mybooks2.R
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import com.example.mybooks2.databinding.ActivitySearchBinding
 import com.example.mybooks2.databinding.FragmentFilterBottomSheetBinding
 import com.example.mybooks2.ui.addBook2.BookFormat
+import com.example.mybooks2.ui.home.HomeViewModel
+import com.example.mybooks2.ui.home.util.SortBy
+import com.example.mybooks2.ui.home.util.SortOrder
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlin.getValue
 
 class FilterBottomSheetFragment : BottomSheetDialogFragment() {
-    private val viewModel: HomeViewModel by activityViewModels { HomeViewModel.factory }
+    private val viewModel: HomeViewModel by activityViewModels { HomeViewModel.Companion.factory }
     private lateinit var binding: FragmentFilterBottomSheetBinding
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,7 +33,7 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
 
         viewModel.allAuthors.observe(viewLifecycleOwner) { authors ->
             val adapter =
-                ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, authors)
+                ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, authors)
             binding.filterAuthor.setAdapter(adapter)
 
             val maxDropdownHeight = (240 * resources.displayMetrics.density).toInt()
@@ -46,7 +46,7 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
             }
         }
         viewModel.allTags.observe(viewLifecycleOwner) { tags ->
-            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, tags)
+            val adapter = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, tags)
             binding.filterTag.setAdapter(adapter)
 
             val maxDropdownHeight = (240 * resources.displayMetrics.density).toInt()
@@ -59,33 +59,32 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
             }
         }
         val currentState = viewModel.getCurrentQueryState()
-        println("current $currentState")
         binding.filterAuthor.setText(currentState.author, false)
         binding.filterTag.setText(currentState.tag, false)
 
 
         val chipIdToCheck = when (currentState.format) {
-            BookFormat.PAPERBACK -> R.id.chip_format_paperback
-            BookFormat.EBOOK -> R.id.chip_format_ebook
-            BookFormat.AUDIOBOOK -> R.id.chip_format_audiobook
-            else -> R.id.chip_format_any
+            BookFormat.PAPERBACK -> com.example.mybooks2.R.id.chip_format_paperback
+            BookFormat.EBOOK -> com.example.mybooks2.R.id.chip_format_ebook
+            BookFormat.AUDIOBOOK -> com.example.mybooks2.R.id.chip_format_audiobook
+            else -> com.example.mybooks2.R.id.chip_format_any
         }
         binding.filterChipGroupFormat.check(chipIdToCheck)
 
 
         val sortByChipId = when (currentState.sortBy) {
-            SortBy.DATE_ADDED -> R.id.chip_sort_date
-            SortBy.TITLE -> R.id.chip_sort_title
-            SortBy.AUTHOR -> R.id.chip_sort_author
-            SortBy.RATING -> R.id.chip_sort_rating
+            SortBy.DATE_ADDED -> com.example.mybooks2.R.id.chip_sort_date
+            SortBy.TITLE -> com.example.mybooks2.R.id.chip_sort_title
+            SortBy.AUTHOR -> com.example.mybooks2.R.id.chip_sort_author
+            SortBy.RATING -> com.example.mybooks2.R.id.chip_sort_rating
         }
         binding.chipGroupSortBy.check(sortByChipId)
 
 
         if (currentState.order == SortOrder.ASCENDING) {
-            binding.toggleButtonGroupOrder.check(R.id.button_order_asc)
+            binding.toggleButtonGroupOrder.check(com.example.mybooks2.R.id.button_order_asc)
         } else {
-            binding.toggleButtonGroupOrder.check(R.id.button_order_desc)
+            binding.toggleButtonGroupOrder.check(com.example.mybooks2.R.id.button_order_desc)
         }
 
         binding.buttonApplyFilters.setOnClickListener {
@@ -93,20 +92,20 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
             val tag = binding.filterTag.text.toString()
 
             val sortBy = when (binding.chipGroupSortBy.checkedChipId) {
-                R.id.chip_sort_date -> SortBy.DATE_ADDED
-                R.id.chip_sort_title -> SortBy.TITLE
-                R.id.chip_sort_author -> SortBy.AUTHOR
-                R.id.chip_sort_rating -> SortBy.RATING
+                com.example.mybooks2.R.id.chip_sort_date -> SortBy.DATE_ADDED
+                com.example.mybooks2.R.id.chip_sort_title -> SortBy.TITLE
+                com.example.mybooks2.R.id.chip_sort_author -> SortBy.AUTHOR
+                com.example.mybooks2.R.id.chip_sort_rating -> SortBy.RATING
                 else -> SortBy.DATE_ADDED
             }
             val order = when (binding.toggleButtonGroupOrder.checkedButtonId) {
-                R.id.button_order_asc -> SortOrder.ASCENDING
+                com.example.mybooks2.R.id.button_order_asc -> SortOrder.ASCENDING
                 else -> SortOrder.DESCENDING
             }
             val selectedFormat = when (binding.filterChipGroupFormat.checkedChipId) {
-                R.id.chip_format_paperback -> BookFormat.PAPERBACK
-                R.id.chip_format_ebook -> BookFormat.EBOOK
-                R.id.chip_format_audiobook -> BookFormat.AUDIOBOOK
+                com.example.mybooks2.R.id.chip_format_paperback -> BookFormat.PAPERBACK
+                com.example.mybooks2.R.id.chip_format_ebook -> BookFormat.EBOOK
+                com.example.mybooks2.R.id.chip_format_audiobook -> BookFormat.AUDIOBOOK
                 else -> null
             }
 

@@ -28,6 +28,7 @@
                     android:id="@+id/edit_text_search_online"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="Search by title or ISBN..."
                     android:imeOptions="actionSearch|flagNoExtractUi"
                     android:inputType="text"
                     android:maxLines="1" />

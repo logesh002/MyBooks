@@ -55,14 +55,30 @@
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
                             android:textAppearance="?attr/textAppearanceDisplayMedium"/>
-                        <TextView android:text="Books Read" android:layout_height="wrap_content"
-                            android:layout_width="wrap_content" android:textAppearance="?attr/textAppearanceLabelMedium"/>
+                        <TextView android:text="Books Read"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"/>
                     </LinearLayout>
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:id="@+id/text_total_pages_read" android:layout_height="wrap_content"
-                            android:layout_width="wrap_content" tools:text="35,102" android:textAppearance="?attr/textAppearanceDisplayMedium"/>
-                        <TextView android:text="Pages Read"  android:layout_height="wrap_content"
-                            android:layout_width="wrap_content" android:textAppearance="?attr/textAppearanceLabelMedium"/>
+                    <LinearLayout android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/text_total_pages_read"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:maxLines="1"
+                            app:autoSizeTextType="uniform"
+                            app:autoSizeMinTextSize="12sp"
+                            app:autoSizeStepGranularity="2sp"
+                            tools:text="1,255,102"
+                            android:textAppearance="?attr/textAppearanceDisplayMedium"/>
+                        <TextView android:text="Pages Read"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"/>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

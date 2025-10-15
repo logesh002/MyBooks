@@ -12,12 +12,14 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowInsetsController
 import android.widget.ImageView
 import android.widget.RatingBar
@@ -30,9 +32,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
@@ -60,7 +64,8 @@ import java.util.concurrent.TimeUnit
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.mybooks2.ui.addBook2.BookFormat
-import com.example.mybooks2.ui.home.DeleteConfirmationDialogFragment
+import com.example.mybooks2.ui.home.dialog.DeleteConfirmationDialogFragment
+import com.google.android.material.color.MaterialColors
 import java.io.FileOutputStream
 
 class DetailActivity : AppCompatActivity() {
@@ -84,10 +89,18 @@ class DetailActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = ""
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
 
+            insets
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.appBar) { view, insets ->
+            val topInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = topInset
+            }
             insets
         }
         val window = window
@@ -123,23 +136,60 @@ class DetailActivity : AppCompatActivity() {
                 }
             }
         }
+
         observeViewModel()
         setupListeners()
+        setupAppBarScrollListener()
 
         supportFragmentManager.setFragmentResultListener(DeleteBookDialogFragment.REQUEST_KEY, this) { _, bundle ->
             val confirmed = bundle.getBoolean(DeleteBookDialogFragment.RESULT_KEY)
             if (confirmed) {
                 viewModel.deleteBook()
-               // finish()
             }
         }
         supportFragmentManager.setFragmentResultListener(RatingDialogFragment.REQUEST_KEY, this) { _, bundle ->
             val rating = bundle.getFloat(RatingDialogFragment.RESULT_RATING)
             val review = bundle.getString(RatingDialogFragment.RESULT_REVIEW) ?: ""
 
-            // The user tapped "Save" in the dialog, so now we call the ViewModel
             viewModel.saveFinishedDetails(rating, review)
         }
+        binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val totalScrollRange = appBarLayout.totalScrollRange
+
+            if (Math.abs(verticalOffset) >= totalScrollRange) {
+                Log.d("toolbar","gone")
+                binding.gradientBackground.visibility = View.GONE
+            } else {
+                // Expanded or expanding: Show the gradient background.
+                binding.gradientBackground.visibility = View.VISIBLE
+            }
+        })
+    }
+    private var currentBookTitle: String? = null
+    private var isImagePresent: Boolean = false
+
+
+    private fun setupAppBarScrollListener() {
+        var isTitleVisible = false
+
+
+        binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            if (!isImagePresent) {
+                return@OnOffsetChangedListener
+            }
+
+            if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
+                if (!isTitleVisible) {
+                    binding.collapsingToolbarLayout.title = currentBookTitle
+                    isTitleVisible = true
+                }
+            } else {
+                if (isTitleVisible) {
+                    binding.collapsingToolbarLayout.title = ""
+                    isTitleVisible = false
+                }
+            }
+        })
     }
 
     private var hasLoadedInitialData = false
@@ -169,14 +219,14 @@ class DetailActivity : AppCompatActivity() {
 
 
     private fun updateUi(bookWithTags: BookWithTags) {
-        println("updateUI")
         val book = bookWithTags.book
+
+        currentBookTitle = book.title
+        isImagePresent = !book.coverImagePath.isNullOrEmpty()
+        binding.collapsingToolbarLayout.title = ""
 
         val appBarLayoutParams = binding.appBar.layoutParams as CoordinatorLayout.LayoutParams
         val collapsingToolbarLayoutParams = binding.collapsingToolbarLayout.layoutParams as AppBarLayout.LayoutParams
-
-        binding.collapsingToolbarLayout.title = ""
-        binding.toolbar.title = ""
 
         binding.contentForLater.visibility = View.GONE
         binding.contentFinished.visibility = View.GONE
@@ -243,21 +293,22 @@ class DetailActivity : AppCompatActivity() {
             binding.appBar.setExpanded(true, false)
             val params = binding.collapsingToolbarLayout.layoutParams as AppBarLayout.LayoutParams
             params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-            binding.toolbar.title = ""
-            binding.toolbarTitleCustom.visibility = View.INVISIBLE
-            appBarLayoutParams.topMargin = statusBarHeight
             binding.toolbar.updatePadding(top=20)
+
+            binding.collapsingToolbarLayout.title = ""
+            binding.toolbarTitleCustom.visibility = View.GONE
         } else {
             appBarLayoutParams.height = getToolbarHeight()
 
             binding.appBar.setBackgroundColor(Color.TRANSPARENT)
             binding.collapsingToolbarLayout.setContentScrimColor(Color.TRANSPARENT)
             binding.collapsingToolbarLayout.statusBarScrim = null
-            appBarLayoutParams.topMargin = statusBarHeight
             binding.appBar.elevation = 0f
 
-            binding.toolbar.title = book.title
             binding.collapsingToolbarLayout.title = ""
+            binding.toolbar.title=""
+            binding.toolbarTitleCustom.visibility = View.VISIBLE
+            binding.toolbarTitleCustom.text = book.title
 
             binding.imageViewCoverLarge.visibility = View.GONE
 
@@ -384,38 +435,38 @@ class DetailActivity : AppCompatActivity() {
 
     }
 
-
     private fun extractAndApplyDominantColor(bitmap: Bitmap) {
         Palette.from(bitmap).generate { palette ->
             palette?.let {
-                val defaultColor = ContextCompat.getColor(this, R.color.md_theme_primaryContainer)
+                val surfaceColor = MaterialColors.getColor(binding.root, com.google.android.material.R.attr.colorSurface)
 
-                val mutedColor = it.getMutedColor(defaultColor)
-                val darkMutedColor = it.getDarkMutedColor(mutedColor)
+                val swatch = it.lightMutedSwatch ?: it.mutedSwatch ?: it.lightVibrantSwatch
 
-                val gradient = GradientDrawable(
-                    GradientDrawable.Orientation.TOP_BOTTOM,
-                    intArrayOf(darkMutedColor, mutedColor)
-                )
+                if (swatch != null) {
+                    val topColor = ColorUtils.setAlphaComponent(swatch.rgb, 250) // 70% opacity
+                    val finalColor = ColorUtils.compositeColors(topColor, surfaceColor)
 
-                binding.collapsingToolbarLayout.background = gradient
+                    val gradient = GradientDrawable(
+                        GradientDrawable.Orientation.TOP_BOTTOM,
+                        intArrayOf(finalColor, Color.TRANSPARENT)
+                    )
 
-                binding.collapsingToolbarLayout.contentScrim = ColorDrawable(darkMutedColor)
-                binding.collapsingToolbarLayout.statusBarScrim = ColorDrawable(darkMutedColor)
+                    binding.gradientBackground.background = gradient
+                    binding.collapsingToolbarLayout.contentScrim = ColorDrawable(surfaceColor)
+                    binding.collapsingToolbarLayout.statusBarScrim = ColorDrawable(finalColor)
+
+                } else {
+                    resetAppBarColors()
+                }
             }
         }
     }
 
-
     private fun resetAppBarColors() {
-        val defaultPrimaryColor = ContextCompat.getColor(this, R.color.md_theme_primaryContainer) // Or a different default
-        val defaultSurfaceColor =ContextCompat.getColor(this, R.color.md_theme_surface)
-
-
-        binding.collapsingToolbarLayout.background = ColorDrawable(defaultSurfaceColor)
-
-        binding.collapsingToolbarLayout.contentScrim = ColorDrawable(defaultPrimaryColor)
-        binding.collapsingToolbarLayout.statusBarScrim = ColorDrawable(defaultPrimaryColor)
+        val surfaceColor = MaterialColors.getColor(binding.root, com.google.android.material.R.attr.colorSurface)
+        binding.gradientBackground.background = ColorDrawable(surfaceColor)
+        binding.collapsingToolbarLayout.contentScrim = ColorDrawable(surfaceColor)
+        binding.collapsingToolbarLayout.statusBarScrim = ColorDrawable(surfaceColor)
     }
 
 
@@ -456,27 +507,6 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun showRatingDialog() {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_rating, null)
-        val ratingBar = dialogView.findViewById<RatingBar>(R.id.dialog_rating_bar)
-
-        val reviewEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_review)
-
-        val currentBook = viewModel.bookDetails.value?.book
-        ratingBar.rating = currentBook?.personalRating?.toFloat() ?: 0f
-        reviewEditText.setText(currentBook?.review ?: "")
-
-        MaterialAlertDialogBuilder(this)
-            .setView(dialogView)
-            .setNegativeButton("Skip", null)
-            .setPositiveButton("Save") { _, _ ->
-                val rating = ratingBar.rating
-                val review = reviewEditText.text.toString()
-                viewModel.saveFinishedDetails(rating, review)
-            }
-            .show()
-    }
-
     fun isDarkTheme(): Boolean {
         return (resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
@@ -494,18 +524,6 @@ class DetailActivity : AppCompatActivity() {
 
     }
 
-    private fun showDeleteConfirmationDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Delete Book?")
-            .setMessage("Are you sure you want to permanently delete this book? This action cannot be undone.")
-            .setNegativeButton("Cancel", null) // Does nothing, just dismisses the dialog
-            .setPositiveButton("Delete") { _, _ ->
-                // User confirmed the deletion
-                viewModel.deleteBook()
-                finish() // Close the detail screen and go back to the list
-            }
-            .show()
-    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.detail_menu, menu)

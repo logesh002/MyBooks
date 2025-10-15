@@ -2,7 +2,6 @@ package com.example.mybooks2.ui.home
 
 import android.app.Activity
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,19 +10,12 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioGroup
-import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,11 +25,16 @@ import com.example.mybooks2.databinding.FragmentHomeBinding
 import com.example.mybooks2.ui.OnlineSearch.SearchOnlineActivity
 import com.example.mybooks2.ui.addBook2.BookFormat
 import com.example.mybooks2.ui.detailScreen.DetailActivity
+import com.example.mybooks2.ui.home.dialog.AddBookOptionsBottomSheet
+import com.example.mybooks2.ui.home.dialog.DeleteConfirmationDialogFragment
+import com.example.mybooks2.ui.home.dialog.FilterBottomSheetFragment
+import com.example.mybooks2.ui.home.util.LayoutMode
+import com.example.mybooks2.ui.home.util.SortBy
+import com.example.mybooks2.ui.home.util.SortOrder
 import com.example.mybooks2.ui.searchView.SearchActivity
 import com.example.mybooks2.ui.setting.SettingsActivity
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlin.getValue
@@ -158,7 +155,7 @@ class HomeFragment : Fragment() {
                     currentState.copy(
                         author = if (author.isNullOrBlank()) null else author,
                         tag = if (tag.isNullOrBlank()) null else tag,
-                        format = format, // The 'null' from the "Any" chip is now applied correctly
+                        format = format,
                         sortBy = sortBy ?: currentState.sortBy,
                         order = order ?: currentState.order
                     )
@@ -185,23 +182,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun showAddBookOptionsDialog() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Add a new book")
-            .setItems(R.array.add_book_options) { dialog, which ->
-                when (which) {
-                    0 -> {
-                        val intent = Intent(requireActivity(), AddBook2::class.java)
-                        addBookLauncher.launch(intent)
-                    }
-                    1 -> {
-                        val intent = Intent(requireActivity(), SearchOnlineActivity::class.java)
-                        startActivity(intent)
-                    }
-                }
-            }
-            .show()
-    }
     private fun setupToolbar() {
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.myToolbar)
         setHasOptionsMenu(true)
@@ -215,7 +195,6 @@ class HomeFragment : Fragment() {
         Log.d("order",savedOrderStr)
         binding.chipGroupFilter.removeAllViews()
 
-        // A map to easily get the display text for each status
         val statusTextMap = mapOf(
             "IN_PROGRESS" to "In progress",
             "FINISHED" to "Finished",
@@ -411,7 +390,6 @@ class HomeFragment : Fragment() {
                 true
             }
             else -> {
-                println(item)
                 super.onOptionsItemSelected(item)
             }
         }

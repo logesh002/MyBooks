@@ -1,16 +1,12 @@
-package com.example.mybooks2.ui.home
+package com.example.mybooks2.ui.home.dialog
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
-import com.example.bookapp.ui.AddBook2
-import com.example.mybooks2.MainActivity
 import com.example.mybooks2.databinding.BottomSheetAddOptionsBinding
-import com.example.mybooks2.ui.OnlineSearch.SearchOnlineActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class AddBookOptionsBottomSheet : BottomSheetDialogFragment() {

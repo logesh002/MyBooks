@@ -1,4 +1,4 @@
-package com.example.mybooks2.ui.home
+package com.example.mybooks2.ui.home.util
 
 enum class SortBy {
     TITLE,

@@ -1,7 +1,6 @@
 package com.example.mybooks2.ui.statistics
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.asLiveData
@@ -11,8 +10,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mybooks2.MyBooksApplication
 import com.example.mybooks2.data.BookDao
 import com.example.mybooks2.model.Book
-import com.example.mybooks2.ui.home.HomeViewModel
-import com.example.mybooks2.ui.home.LayoutPreferences
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.PieEntry
 import kotlinx.coroutines.flow.map

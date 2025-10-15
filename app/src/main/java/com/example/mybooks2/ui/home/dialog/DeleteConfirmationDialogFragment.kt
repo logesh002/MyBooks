@@ -1,4 +1,4 @@
-package com.example.mybooks2.ui.home
+package com.example.mybooks2.ui.home.dialog
 
 import android.app.Dialog
 import android.os.Bundle
