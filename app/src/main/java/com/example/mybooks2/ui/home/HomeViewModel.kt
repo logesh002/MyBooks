@@ -1,5 +1,8 @@
 package com.example.mybooks2.ui.home
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,13 +12,16 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.preference.PreferenceManager
 import com.example.mybooks2.MyBooksApplication
+import com.example.mybooks2.R
 import com.example.mybooks2.data.BookDao
 import com.example.mybooks2.model.Book
 import com.example.mybooks2.model.BookWithTags
 import com.example.mybooks2.model.Tag
 import com.example.mybooks2.ui.addBook2.AddBook2ViewModel
 import com.example.mybooks2.ui.addBook2.BookFormat
+import com.example.mybooks2.ui.addBook2.Event
 import com.example.mybooks2.ui.addBook2.ReadingStatus
 import kotlinx.coroutines.launch
 
@@ -29,16 +35,17 @@ data class QueryState(
     val format: BookFormat? = null
 )
 class HomeViewModel(val bookDao: BookDao,
-                    private val layoutPreferences: LayoutPreferences
-) : ViewModel() {
+                    private val layoutPreferences: LayoutPreferences,
+                    val application: MyBooksApplication,
+                    private val prefs: SharedPreferences,
+) : ViewModel(), SharedPreferences.OnSharedPreferenceChangeListener  {
 
-    private val allBooks: LiveData<List<Book>> = bookDao.getAllBooks().asLiveData()
 
     private val allBooksWithTags: LiveData<List<BookWithTags>> = bookDao.getAllBooksWithTags().asLiveData()
-    private val _queryState = MutableLiveData(QueryState())
-    private val currentFilter = MutableLiveData("In progress")
+    private val _queryState: MutableLiveData<QueryState>
 
-    private val _filteredBooks = MediatorLiveData<List<Book>>()
+    private val _chipOrderChangedEvent = MutableLiveData<Event<Unit>>()
+    val chipOrderChangedEvent: LiveData<Event<Unit>> = _chipOrderChangedEvent
 
 
     val allAuthors: LiveData<List<String>> = bookDao.getAllAuthors().asLiveData()
@@ -48,24 +55,35 @@ class HomeViewModel(val bookDao: BookDao,
     val layoutMode: LiveData<LayoutMode> = _layoutMode
 
 
-    val booksToShow: LiveData<List<Book>> = MediatorLiveData<List<Book>>().apply {
-        addSource(allBooksWithTags) { update() }
-        addSource(_queryState) { update() }
-    }
-    val filteredBooks: LiveData<List<Book>> = _filteredBooks
-
-    private val _filters = MutableLiveData(BookFilters())
-    private val _sortState = MutableLiveData(SortState())
-
-
-
+    private val _booksToShow = MediatorLiveData<List<Book>>()
+    val booksToShow: LiveData<List<Book>> = _booksToShow
 
 
     init {
-        _filteredBooks.addSource(allBooks) { updateFilteredBooks() }
-        _layoutMode.value = layoutPreferences.getLayoutMode()
+        val defaultOrder = application.resources.getStringArray(R.array.status_values).joinToString(",")
 
+        val savedOrderStr = prefs.getString("chip_order_preference", defaultOrder) ?: defaultOrder
+        val statusOrder = savedOrderStr.split(",")
+
+
+
+        val statusTextMap = mapOf(
+            "IN_PROGRESS" to "In progress",
+            "FINISHED" to "Finished",
+            "FOR_LATER" to "To be read",
+            "UNFINISHED" to "Dropped"
+        )
+        val initialStatus = if (statusOrder.isNotEmpty()) statusTextMap[statusOrder.first()]?:"In progress" else "In progress"
+
+        _queryState = MutableLiveData(QueryState(status = initialStatus))
+
+        _booksToShow.addSource(allBooksWithTags) { update() }
+        _booksToShow.addSource(_queryState) { update() }
+
+        _layoutMode.value = layoutPreferences.getLayoutMode()
+        prefs.registerOnSharedPreferenceChangeListener(this)
     }
+
     data class BookFilters(
         val status: String = "In progress",
         val author: String? = null,
@@ -125,8 +143,9 @@ class HomeViewModel(val bookDao: BookDao,
                 }
             }
         }
+        Log.d("List",sortedList.toString())
 
-        (booksToShow as MediatorLiveData).value = sortedList.map { it.book }
+        _booksToShow.value = sortedList.map { it.book }
     }
 
     fun updateQuery(updater: (QueryState) -> QueryState) {
@@ -145,31 +164,7 @@ class HomeViewModel(val bookDao: BookDao,
     }
 
 
-    private fun updateFilteredBooks() {
-        val books = allBooks.value ?: return
-        val filter = currentFilter.value ?: "In progress"
-        val sortState = _sortState.value ?: SortState()
 
-        val filtered = applyFilter (books,filter)
-
-        val sorted = when (sortState.sortBy) {
-            SortBy.TITLE -> if (sortState.order == SortOrder.ASCENDING) filtered.sortedBy { it.title } else filtered.sortedByDescending { it.title }
-            SortBy.AUTHOR -> if (sortState.order == SortOrder.ASCENDING) filtered.sortedBy { it.author } else filtered.sortedByDescending { it.author }
-            SortBy.RATING -> if (sortState.order == SortOrder.ASCENDING) filtered.sortedBy { it.personalRating } else filtered.sortedByDescending { it.personalRating }
-            SortBy.DATE_ADDED -> if (sortState.order == SortOrder.ASCENDING) filtered.sortedBy { it.addedDate } else filtered.sortedByDescending { it.addedDate }
-        }
-        _filteredBooks.value = sorted
-    }
-
-    private fun applyFilter(books: List<Book>?, filter: String?): List<Book> {
-        val bookList = books ?: return emptyList()
-        return when (filter) {
-            "In progress" -> bookList.filter { it.status == ReadingStatus.IN_PROGRESS }
-            "Finished" -> bookList.filter { it.status == ReadingStatus.FINISHED }
-            "To be read" -> bookList.filter { it.status == ReadingStatus.FOR_LATER }
-            else -> bookList.filter { it.status == ReadingStatus.UNFINISHED }
-        }
-    }
     private val _selectedItems = MutableLiveData<Set<Long>>(emptySet())
     val selectedItems: LiveData<Set<Long>> = _selectedItems
 
@@ -202,11 +197,29 @@ class HomeViewModel(val bookDao: BookDao,
         }
     }
 
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        if (key == "chip_order_preference") {
+            _chipOrderChangedEvent.value = Event(Unit)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        prefs.unregisterOnSharedPreferenceChangeListener(this)
+    }
+
     companion object {
         val factory = viewModelFactory {
             initializer {
                 val application = this[APPLICATION_KEY] as MyBooksApplication
-                HomeViewModel(application.database.bookDao(), LayoutPreferences(application.applicationContext))
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
+
+                HomeViewModel(
+                    application.database.bookDao(),
+                    LayoutPreferences(application.applicationContext),
+                    application,
+                    prefs = sharedPreferences,
+                )
             }
         }
     }

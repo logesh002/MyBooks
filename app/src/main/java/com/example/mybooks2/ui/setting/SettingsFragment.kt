@@ -70,6 +70,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             importLauncher.launch("text/*")
             true
         }
+        findPreference<Preference>("chip_order_preference")?.setOnPreferenceClickListener {
+            ReorderChipsDialogFragment().show(parentFragmentManager, "ReorderChipsDialog")
+            true
+        }
 
         val versionPreference: Preference? = findPreference("app_version")
         try {

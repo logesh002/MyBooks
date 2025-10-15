@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import android.view.WindowInsetsController
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -104,6 +105,19 @@ class SearchActivity : AppCompatActivity() {
                 delay(300L) // Wait for 300ms of no typing
                 viewModel.search(editable.toString())
             }
+        }
+        binding.editTextSearch.setOnEditorActionListener { textView, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                searchJob?.cancel()
+                viewModel.search(textView.text.toString())
+
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(textView.windowToken, 0)
+                textView.clearFocus()
+
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
         }
     }
     private fun showKeyboard(view: View) {

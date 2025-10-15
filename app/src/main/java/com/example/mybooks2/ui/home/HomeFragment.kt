@@ -2,7 +2,9 @@ package com.example.mybooks2.ui.home
 
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -22,6 +24,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bookapp.ui.AddBook2
@@ -204,10 +207,50 @@ class HomeFragment : Fragment() {
         setHasOptionsMenu(true)
     }
     private fun setupFilterChips() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val defaultOrder = resources.getStringArray(R.array.status_values)
+        val savedOrderStr = prefs.getString("chip_order_preference", defaultOrder.joinToString(","))
+        val statusOrder = savedOrderStr!!.split(",")
+
+        Log.d("order",savedOrderStr)
+        binding.chipGroupFilter.removeAllViews()
+
+        // A map to easily get the display text for each status
+        val statusTextMap = mapOf(
+            "IN_PROGRESS" to "In progress",
+            "FINISHED" to "Finished",
+            "FOR_LATER" to "To be read",
+            "UNFINISHED" to "Dropped"
+        )
+        val statusIdMap = mapOf(
+            "IN_PROGRESS" to R.id.chip_in_progress,
+            "FINISHED" to R.id.chip_finished,
+            "FOR_LATER" to R.id.chip_to_be_read,
+            "UNFINISHED" to R.id.chip_dropped
+        )
+        val inflater = LayoutInflater.from(requireContext())
+
+
+        statusOrder.forEach { statusValue ->
+            val chip = inflater.inflate(R.layout.chip_filter, binding.chipGroupFilter, false) as Chip
+            chip.id = statusIdMap[statusValue] ?: View.generateViewId()
+            chip.text = statusTextMap[statusValue]
+            binding.chipGroupFilter.addView(chip)
+        }
+
+        val firstChipId = if (statusOrder.isNotEmpty()) statusIdMap[statusOrder.first()] else null
+        val scroll = binding.horizontalScroll
+
+        firstChipId?.let {
+            binding.chipGroupFilter.check(it)
+        }
+
+        scroll.post {
+            scroll.smoothScrollTo(0, 0)
+        }
         binding.chipGroupFilter.setOnCheckedStateChangeListener { group, checkedIds ->
             val selectedChipId = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
 
-            val scroll = binding.horizontalScroll
             val filter = when (selectedChipId) {
                 R.id.chip_in_progress -> "In progress"
                 R.id.chip_finished -> "Finished"
@@ -222,7 +265,7 @@ class HomeFragment : Fragment() {
                 val isScrollable = scroll.width < group.width
 
                 if (isScrollable) {
-                    if (selectedChipId == R.id.chip_in_progress) {
+                    if (selectedChipId == firstChipId) {
                         scroll.smoothScrollTo(0, 0)
                     } else {
                         scroll.smoothScrollTo(group.width, 0)
@@ -271,6 +314,11 @@ class HomeFragment : Fragment() {
                 toolbar?.title = "${selectedIds.size} selected"
             } else {
                 toolbar?.title = getString(R.string.app_name)
+            }
+        }
+        viewModel.chipOrderChangedEvent.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let {
+                setupFilterChips()
             }
         }
 

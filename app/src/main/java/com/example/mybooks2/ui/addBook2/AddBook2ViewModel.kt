@@ -1,6 +1,7 @@
 package com.example.mybooks2.ui.addBook2
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.database.sqlite.SQLiteConstraintException
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -17,6 +18,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.preference.PreferenceManager
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
@@ -76,9 +78,18 @@ data class ValidationError(
     val isbnError: String?=null
 )
 
-class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplication) : ViewModel() {
+class AddBook2ViewModel(val bookDao: BookDao,
+                        val application: MyBooksApplication,
+                        private val prefs: SharedPreferences) : ViewModel() {
 
-    private val _bookFormState = MutableLiveData(BookFormState())
+    private val defaultStatusName = prefs.getString("default_status_preference", "FOR_LATER")
+    private val defaultFormatName = prefs.getString("default_format_preference", "PAPERBACK")
+
+
+    private val _bookFormState = MutableLiveData(BookFormState(
+        status = ReadingStatus.valueOf(defaultStatusName ?: "FOR_LATER"),
+        format = BookFormat.valueOf(defaultFormatName ?: "PAPERBACK")
+    ))
     val bookFormState: LiveData<BookFormState> = _bookFormState
 
     private val _showValidationErrorEvent = MutableLiveData<Event<Unit>>()
@@ -520,7 +531,9 @@ class AddBook2ViewModel(val bookDao: BookDao, val application: MyBooksApplicatio
         val factory = viewModelFactory {
             initializer {
                 val application = this[APPLICATION_KEY] as MyBooksApplication
-                AddBook2ViewModel(application.database.bookDao(),application)
+                val prefs = PreferenceManager.getDefaultSharedPreferences(application)
+
+                AddBook2ViewModel(application.database.bookDao(),application,prefs)
             }
         }
     }

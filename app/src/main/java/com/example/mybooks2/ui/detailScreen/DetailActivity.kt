@@ -1,5 +1,6 @@
 package com.example.mybooks2.ui.detailScreen
 
+import DeleteBookDialogFragment
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
@@ -59,6 +60,7 @@ import java.util.concurrent.TimeUnit
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.mybooks2.ui.addBook2.BookFormat
+import com.example.mybooks2.ui.home.DeleteConfirmationDialogFragment
 import java.io.FileOutputStream
 
 class DetailActivity : AppCompatActivity() {
@@ -128,26 +130,38 @@ class DetailActivity : AppCompatActivity() {
             val confirmed = bundle.getBoolean(DeleteBookDialogFragment.RESULT_KEY)
             if (confirmed) {
                 viewModel.deleteBook()
+               // finish()
             }
+        }
+        supportFragmentManager.setFragmentResultListener(RatingDialogFragment.REQUEST_KEY, this) { _, bundle ->
+            val rating = bundle.getFloat(RatingDialogFragment.RESULT_RATING)
+            val review = bundle.getString(RatingDialogFragment.RESULT_REVIEW) ?: ""
+
+            // The user tapped "Save" in the dialog, so now we call the ViewModel
+            viewModel.saveFinishedDetails(rating, review)
         }
     }
 
+    private var hasLoadedInitialData = false
 
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.bookDetails.collect { bookWithTags ->
                 if (bookWithTags == null) {
-                    return@collect
+                    if (hasLoadedInitialData) {
+                        finish()
+                    }
+                } else {
+                    hasLoadedInitialData = true
+                    val book = bookWithTags.book
+
+                    if (previousStatus != null && previousStatus != ReadingStatus.FINISHED && book.status == ReadingStatus.FINISHED) {
+                        launchRatingDialog()
+                    }
+                    previousStatus = book.status
+
+                    updateUi(bookWithTags)
                 }
-
-                val book = bookWithTags.book
-
-                if (previousStatus!=null && previousStatus != ReadingStatus.FINISHED && book.status == ReadingStatus.FINISHED) {
-                    showRatingDialog()
-                }
-                previousStatus = book.status
-
-                updateUi(bookWithTags)
             }
         }
     }
@@ -206,7 +220,7 @@ class DetailActivity : AppCompatActivity() {
 
 
             Glide.with(this)
-                .asBitmap() // Request a Bitmap to extract colors
+                .asBitmap()
                 .load(File(book.coverImagePath))
                 .error(R.drawable.outline_book_24)
                 .into(object : CustomTarget<Bitmap>() {
@@ -454,7 +468,7 @@ class DetailActivity : AppCompatActivity() {
 
         MaterialAlertDialogBuilder(this)
             .setView(dialogView)
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton("Skip", null)
             .setPositiveButton("Save") { _, _ ->
                 val rating = ratingBar.rating
                 val review = reviewEditText.text.toString()
@@ -466,6 +480,18 @@ class DetailActivity : AppCompatActivity() {
     fun isDarkTheme(): Boolean {
         return (resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    }
+    private fun launchRatingDialog() {
+        val currentBook = viewModel.bookDetails.value?.book
+        val currentRating = currentBook?.personalRating?.toFloat() ?: 0f
+        val currentReview = currentBook?.review ?: ""
+
+        RatingDialogFragment.newInstance(currentRating, currentReview)
+            .show(supportFragmentManager, RatingDialogFragment.TAG)
+    }
+    private fun launchDeleteConfirmationDialog(){
+        DeleteBookDialogFragment.newInstance().show(supportFragmentManager, DeleteBookDialogFragment.TAG)
+
     }
 
     private fun showDeleteConfirmationDialog() {
@@ -501,7 +527,8 @@ class DetailActivity : AppCompatActivity() {
                 true
             }
             R.id.action_delete -> {
-                showDeleteConfirmationDialog()
+              //  showDeleteConfirmationDialog()
+                launchDeleteConfirmationDialog()
                 true
             }
             R.id.action_share -> {

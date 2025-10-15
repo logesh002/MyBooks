@@ -20,7 +20,6 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
     val bookDetails: StateFlow<BookWithTags?> = _bookDetails
 
     fun loadBook(bookId: Long) {
-        println("load detail")
         viewModelScope.launch {
             bookDao.getBookWithTags(bookId).collect {
                 _bookDetails.value = it

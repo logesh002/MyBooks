@@ -15,4 +15,29 @@
         <item>Add Manually</item>
         <item>Search Online</item>
     </string-array>
+
+    <string-array name="status_entries">
+        <item>To be read</item>
+        <item>In progress</item>
+        <item>Finished</item>
+        <item>Dropped</item>
+    </string-array>
+    <string-array name="status_values">
+        <item>FOR_LATER</item>
+        <item>IN_PROGRESS</item>
+        <item>FINISHED</item>
+        <item>UNFINISHED</item>
+    </string-array>
+
+    <string-array name="format_entries">
+        <item>Paperback/Hardcover</item>
+        <item>E-book</item>
+        <item>Audiobook</item>
+    </string-array>
+
+    <string-array name="format_values">
+        <item>PAPERBACK</item>
+        <item>EBOOK</item>
+        <item>AUDIOBOOK</item>
+    </string-array>
 </resources>

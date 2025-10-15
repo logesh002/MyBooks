@@ -31,6 +31,35 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="Defaults">
+
+        <ListPreference
+            app:key="default_status_preference"
+            app:title="Default status for new books"
+            app:summary="Sets the initial status when adding a new book."
+            app:entries="@array/status_entries"
+            app:entryValues="@array/status_values"
+            app:defaultValue="FOR_LATER" />
+
+        <ListPreference
+            app:key="default_format_preference"
+            app:title="Default format for new books"
+            app:summary="Sets the initial format when adding a new book."
+            app:entries="@array/format_entries"
+            app:entryValues="@array/format_values"
+            app:defaultValue="PAPERBACK" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Home Screen">
+
+        <Preference
+            app:key="chip_order_preference"
+            app:title="Home screen filter order"
+            app:summary="Set the display order for the status filter chips." />
+
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="About">
 
         <Preference
