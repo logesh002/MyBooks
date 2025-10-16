@@ -14,9 +14,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -24,13 +22,11 @@ import android.view.WindowInsetsController
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.ViewCompat
@@ -40,21 +36,16 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
-import coil.load
 import com.bumptech.glide.Glide
-import com.example.bookapp.ui.AddBook2
+import com.example.mybooks2.ui.addBook2.AddBook2
 import com.example.mybooks2.R
 import com.example.mybooks2.databinding.ActivityDetailBinding
-import com.example.mybooks2.databinding.AddBook2Binding
 import com.example.mybooks2.model.BookWithTags
 import com.example.mybooks2.model.Tag
-import com.example.mybooks2.ui.addBook2.AddBook2ViewModel
 import com.example.mybooks2.ui.addBook2.ReadingStatus
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.chip.Chip
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
@@ -64,7 +55,6 @@ import java.util.concurrent.TimeUnit
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.mybooks2.ui.addBook2.BookFormat
-import com.example.mybooks2.ui.home.dialog.DeleteConfirmationDialogFragment
 import com.google.android.material.color.MaterialColors
 import java.io.FileOutputStream
 

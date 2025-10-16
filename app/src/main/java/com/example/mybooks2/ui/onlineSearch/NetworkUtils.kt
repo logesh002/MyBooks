@@ -1,4 +1,4 @@
-package com.example.mybooks2.ui.OnlineSearch
+package com.example.mybooks2.ui.onlineSearch
 
 import android.Manifest
 import android.content.Context

@@ -1,7 +1,5 @@
-package com.example.bookapp.ui
+package com.example.mybooks2.ui.addBook2
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Rect
@@ -30,10 +28,6 @@ import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.example.mybooks2.R
 import com.example.mybooks2.databinding.AddBook2Binding
-import com.example.mybooks2.ui.addBook2.AddBook2ViewModel
-import com.example.mybooks2.ui.addBook2.BookFormat
-import com.example.mybooks2.ui.addBook2.DiscardChangesDialogFragment
-import com.example.mybooks2.ui.addBook2.ReadingStatus
 import com.example.mybooks2.ui.detailScreen.DetailActivity
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.CalendarConstraints
@@ -540,7 +534,7 @@ private fun setupObservers() {
                 resultIntent.putExtra("EXTRA_TITLE", viewModel.bookFormState.value.title)
                 resultIntent.putExtra("EXTRA_AUTHOR", viewModel.bookFormState.value.author)
 
-                setResult(Activity.RESULT_OK, resultIntent)
+                setResult(RESULT_OK, resultIntent)
                 finish()
                 viewModel.resetSaveSuccess()
             }

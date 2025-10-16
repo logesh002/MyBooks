@@ -1,4 +1,4 @@
-package com.example.mybooks2.ui.OnlineSearch
+package com.example.mybooks2.ui.onlineSearch
 
 import android.content.Context
 import android.os.Bundle
@@ -15,11 +15,9 @@ import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import com.example.bookapp.ui.AddBook2
-import com.example.mybooks2.ui.addBook2.AddBook2ViewModel
+import com.example.mybooks2.ui.addBook2.AddBook2
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -121,7 +119,10 @@ class SearchOnlineActivity : AppCompatActivity() {
         binding.editTextSearchOnline.setOnEditorActionListener { textView, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 searchJob?.cancel()
-                viewModel.search(textView.text.toString())
+                searchJob = lifecycleScope.launch {
+                    delay(100L)
+                    viewModel.search(textView.text.toString())
+                }
 
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(textView.windowToken, 0)
@@ -135,13 +136,14 @@ class SearchOnlineActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.searchResults.observe(this) { results ->
+            searchAdapter.submitList(results)
             if(results.isEmpty()){
                 binding.textViewNoResults.visibility=View.VISIBLE
             }
             else{
                 binding.textViewNoResults.visibility=View.GONE
+                binding.recyclerViewOnlineResults.scrollToPosition(0)
             }
-            searchAdapter.submitList(results)
         }
 
         viewModel.isLoading.observe(this) { isLoading ->

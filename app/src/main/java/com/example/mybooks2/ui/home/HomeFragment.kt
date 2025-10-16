@@ -19,10 +19,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.bookapp.ui.AddBook2
+import com.example.mybooks2.ui.addBook2.AddBook2
 import com.example.mybooks2.R
 import com.example.mybooks2.databinding.FragmentHomeBinding
-import com.example.mybooks2.ui.OnlineSearch.SearchOnlineActivity
+import com.example.mybooks2.ui.onlineSearch.SearchOnlineActivity
 import com.example.mybooks2.ui.addBook2.BookFormat
 import com.example.mybooks2.ui.detailScreen.DetailActivity
 import com.example.mybooks2.ui.home.dialog.AddBookOptionsBottomSheet

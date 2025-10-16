@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.OnlineSearch.SearchOnlineActivity"
+            android:name=".ui.onlineSearch.SearchOnlineActivity"
             android:exported="false" />
         <activity
             android:name=".ui.detailScreen.DetailActivity"
@@ -27,7 +27,7 @@
             android:exported="false"
              />
         <activity
-            android:name="com.example.bookapp.ui.AddBook2"
+            android:name=".ui.addBook2.AddBook2"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity

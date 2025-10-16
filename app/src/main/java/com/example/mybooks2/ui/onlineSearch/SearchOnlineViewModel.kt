@@ -1,4 +1,4 @@
-package com.example.mybooks2.ui.OnlineSearch
+package com.example.mybooks2.ui.onlineSearch
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -11,7 +11,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mybooks2.MyBooksApplication
 import com.example.mybooks2.model.BookDoc
 import com.example.mybooks2.network.ApiClient
-import com.example.mybooks2.ui.addBook2.AddBook2ViewModel
 import com.example.mybooks2.ui.addBook2.Event
 import kotlinx.coroutines.launch
 
