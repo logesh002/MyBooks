@@ -19,6 +19,7 @@ import java.util.*
 class ReorderChipsDialogFragment : DialogFragment() {
 
 
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_reorder_chips, null)
         val recyclerView = dialogView.findViewById<RecyclerView>(R.id.reorder_recycler_view)
@@ -54,12 +55,18 @@ class ReorderChipsDialogFragment : DialogFragment() {
     }
 
     class ReorderAdapter(private val items: List<String>) : RecyclerView.Adapter<ReorderAdapter.ViewHolder>() {
+        val statusTextMap = mapOf(
+            "IN_PROGRESS" to "In progress",
+            "FINISHED" to "Finished",
+            "FOR_LATER" to "To be read",
+            "UNFINISHED" to "Dropped"
+        )
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
             ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_reorder, parent, false))
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val statusValue = items[position]
-            val statusText = statusValue.replace("_", " ").toLowerCase(Locale.ROOT).capitalize(Locale.ROOT)
+           val statusText = statusTextMap[statusValue] ?: statusValue
             holder.textView.text = statusText
         }
 

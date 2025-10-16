@@ -348,7 +348,7 @@ class AddBook2ViewModel(val bookDao: BookDao,
             val viewIdToScrollTo = when {
                 errors.titleError != null -> R.id.titleInputLayout
                 errors.authorError != null -> R.id.authorInputLayout
-                errors.pagesError != null -> R.id.pagesInputLayout
+                errors.pagesError != null -> R.id.pageAndYearLayout
                 errors.yearError != null -> R.id.pageAndYearLayout
                 errors.dateError != null -> R.id.duration_text_view
                 errors.isbnError != null -> R.id.isbn_ll

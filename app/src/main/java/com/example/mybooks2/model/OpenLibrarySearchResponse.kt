@@ -16,8 +16,8 @@ data class BookDoc(
     val isbn: List<String>?,
     @SerializedName("cover_i")
     val coverId: Int?,
-    @SerializedName("number_of_pages_median") // ADD THIS
-    val numberOfPages: Int? // ADD THIS
+    @SerializedName("number_of_pages_median")
+    val numberOfPages: Int?
 ){
     fun getCoverUrl(size: String = "M"): String? {
         return coverId?.let {

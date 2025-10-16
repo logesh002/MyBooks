@@ -76,7 +76,6 @@ class SettingsViewModel(
                     val csvSplitRegex = Regex(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")
 
                     while (reader.readLine().also { line = it } != null) {
-                     //   val tokens = line!!.split(",")
                         val tokens = line!!.split(csvSplitRegex)
 
                         if (tokens.size >= 9) {

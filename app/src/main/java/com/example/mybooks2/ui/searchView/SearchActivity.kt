@@ -119,7 +119,7 @@ class SearchActivity : AppCompatActivity() {
             searchJob?.cancel()
             searchJob = lifecycleScope.launch {
 
-                delay(300L) // Wait for 300ms of no typing
+                delay(300L)
                 viewModel.search(editable.toString())
             }
         }

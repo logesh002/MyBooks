@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.example.mybooks2.R // Use your project's R file
+import com.example.mybooks2.R
 import com.example.mybooks2.model.BookDoc
 
 class SearchOnlineAdapter(private val onItemClicked: (BookDoc) -> Unit) :
@@ -32,13 +32,13 @@ class SearchOnlineAdapter(private val onItemClicked: (BookDoc) -> Unit) :
     class BookDocViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val titleTextView: TextView = itemView.findViewById(R.id.text_view_title)
         private val authorTextView: TextView = itemView.findViewById(R.id.text_view_author)
-        private val coverImageView: ImageView = itemView.findViewById(R.id.cover_image_view) // Assuming you added this
+        private val coverImageView: ImageView = itemView.findViewById(R.id.cover_image_view)
 
         fun bind(bookDoc: BookDoc) {
             titleTextView.text = bookDoc.title ?: "No Title"
             authorTextView.text = bookDoc.authorName?.joinToString(", ") ?: "Unknown Author"
 
-            val coverUrl = bookDoc.getCoverUrl("M") // Get medium-sized image
+            val coverUrl = bookDoc.getCoverUrl("M")
             coverImageView.load(coverUrl) {
                 placeholder(R.drawable.outline_book_24)
                 error(R.drawable.outline_book_24)

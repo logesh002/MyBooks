@@ -24,7 +24,7 @@ class BookAdapter(private val onItemClicked: (Book) -> Unit,
     ListAdapter<Book, RecyclerView.ViewHolder>(DiffCallback) {
 
 
-    private var currentLayoutMode: LayoutMode = LayoutMode.GRID // Default to Grid
+    private var currentLayoutMode: LayoutMode = LayoutMode.GRID
 
     private val VIEW_TYPE_GRID = 0
     private val VIEW_TYPE_LIST = 1
@@ -73,7 +73,6 @@ class BookAdapter(private val onItemClicked: (Book) -> Unit,
             cardView.strokeWidth = 0
         }
 
-        // Handle clicks
         holder.itemView.setOnClickListener {
             if (isSelectionModeActive) {
                 onItemLongClicked(book)

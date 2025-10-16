@@ -210,8 +210,8 @@ class DashboardFragment : Fragment() {
         val barChart = binding.barChartMonthly
 
         val dataSet = BarDataSet(entries, "Books Read")
-        dataSet.color = ContextCompat.getColor(requireContext(), R.color.md_theme_primary) // Use your theme's color
-        dataSet.valueTextColor = ContextCompat.getColor(requireContext(), R.color.md_theme_onSurface) // Use)
+        dataSet.color = ContextCompat.getColor(requireContext(), R.color.md_theme_primary)
+        dataSet.valueTextColor = ContextCompat.getColor(requireContext(), R.color.md_theme_onSurface)
 
 
         barChart.data = BarData(dataSet)
