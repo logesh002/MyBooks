@@ -54,6 +54,7 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.example.mybooks2.model.Book
 import com.example.mybooks2.ui.addBook2.BookFormat
 import com.google.android.material.color.MaterialColors
 import java.io.FileOutputStream
@@ -191,7 +192,10 @@ class DetailActivity : AppCompatActivity() {
                         finish()
                     }
                 } else {
-                    hasLoadedInitialData = true
+                    if (!hasLoadedInitialData) {
+                        setupLayoutForBook(bookWithTags.book)
+                        hasLoadedInitialData = true
+                    }
                     val book = bookWithTags.book
 
                     if (previousStatus != null && previousStatus != ReadingStatus.FINISHED && book.status == ReadingStatus.FINISHED) {
@@ -212,10 +216,14 @@ class DetailActivity : AppCompatActivity() {
 
         currentBookTitle = book.title
         isImagePresent = !book.coverImagePath.isNullOrEmpty()
-        binding.collapsingToolbarLayout.title = ""
-
-        val appBarLayoutParams = binding.appBar.layoutParams as CoordinatorLayout.LayoutParams
-        val collapsingToolbarLayoutParams = binding.collapsingToolbarLayout.layoutParams as AppBarLayout.LayoutParams
+      //  binding.collapsingToolbarLayout.title = ""
+        if (isImagePresent) {
+          //  binding.collapsingToolbarLayout.title = book.title
+            binding.toolbar.title = ""
+        } else {
+            binding.toolbar.title = book.title
+            binding.collapsingToolbarLayout.title = ""
+        }
 
         binding.contentForLater.visibility = View.GONE
         binding.contentFinished.visibility = View.GONE
@@ -248,66 +256,7 @@ class DetailActivity : AppCompatActivity() {
             binding.divider.visibility = View.GONE
         }
 
-        if (!book.coverImagePath.isNullOrEmpty()) {
-
-            appBarLayoutParams.height = (300 * resources.displayMetrics.density).toInt()
-
-            binding.imageViewCoverLarge.visibility = View.VISIBLE
-
-
-            binding.appBar.elevation = 4 * resources.displayMetrics.density
-
-
-            Glide.with(this)
-                .asBitmap()
-                .load(File(book.coverImagePath))
-                .error(R.drawable.outline_book_24)
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        binding.imageViewCoverLarge.setImageBitmap(resource)
-                        extractAndApplyDominantColor(resource)
-                    }
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        binding.imageViewCoverLarge.setImageDrawable(placeholder)
-                        resetAppBarColors()
-                    }
-                    override fun onLoadFailed(errorDrawable: Drawable?) {
-                        super.onLoadFailed(errorDrawable)
-                        binding.imageViewCoverLarge.setImageDrawable(errorDrawable)
-                        resetAppBarColors()
-                    }
-                })
-
-
-            binding.appBar.setExpanded(true, false)
-            val params = binding.collapsingToolbarLayout.layoutParams as AppBarLayout.LayoutParams
-            params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-            binding.toolbar.updatePadding(top=20)
-
-            binding.collapsingToolbarLayout.title = ""
-            binding.toolbarTitleCustom.visibility = View.GONE
-        } else {
-            appBarLayoutParams.height = getToolbarHeight()
-
-            binding.appBar.setBackgroundColor(Color.TRANSPARENT)
-            binding.collapsingToolbarLayout.setContentScrimColor(Color.TRANSPARENT)
-            binding.collapsingToolbarLayout.statusBarScrim = null
-            binding.appBar.elevation = 0f
-
-            binding.collapsingToolbarLayout.title = ""
-            binding.toolbar.title=""
-            binding.toolbarTitleCustom.visibility = View.VISIBLE
-            binding.toolbarTitleCustom.text = book.title
-
-            binding.imageViewCoverLarge.visibility = View.GONE
-
-            binding.appBar.setExpanded(false, false)
-            val params = binding.collapsingToolbarLayout.layoutParams as AppBarLayout.LayoutParams
-            params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL
-
-        }
-        binding.appBar.layoutParams = appBarLayoutParams
-        binding.collapsingToolbarLayout.layoutParams = collapsingToolbarLayoutParams
+        //setupLayoutForBook(book)
 
 
         binding.textViewTitle.text = book.title
@@ -422,6 +371,81 @@ class DetailActivity : AppCompatActivity() {
 
         shareMenuItem?.isVisible = (book.status == ReadingStatus.FINISHED)
 
+    }
+
+    private fun setupLayoutForBook(
+        book: Book
+    ) {
+        val appBarLayoutParams = binding.appBar.layoutParams as CoordinatorLayout.LayoutParams
+        val collapsingToolbarLayoutParams = binding.collapsingToolbarLayout.layoutParams as AppBarLayout.LayoutParams
+
+
+        if (!book.coverImagePath.isNullOrEmpty()) {
+
+            appBarLayoutParams.height = (300 * resources.displayMetrics.density).toInt()
+
+            binding.imageViewCoverLarge.visibility = View.VISIBLE
+
+
+            binding.appBar.elevation = 4 * resources.displayMetrics.density
+
+
+            Glide.with(this)
+                .asBitmap()
+                .load(File(book.coverImagePath))
+                .error(R.drawable.outline_book_24)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap>?
+                    ) {
+                        binding.imageViewCoverLarge.setImageBitmap(resource)
+                        extractAndApplyDominantColor(resource)
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        binding.imageViewCoverLarge.setImageDrawable(placeholder)
+                        resetAppBarColors()
+                    }
+
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        super.onLoadFailed(errorDrawable)
+                        binding.imageViewCoverLarge.setImageDrawable(errorDrawable)
+                        resetAppBarColors()
+                    }
+                })
+
+
+            binding.appBar.setExpanded(true, false)
+            val params = binding.collapsingToolbarLayout.layoutParams as AppBarLayout.LayoutParams
+            params.scrollFlags =
+                AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+            binding.toolbar.updatePadding(top = 20)
+
+            binding.collapsingToolbarLayout.title = ""
+            binding.toolbarTitleCustom.visibility = View.GONE
+        } else {
+            appBarLayoutParams.height = getToolbarHeight()
+
+            binding.appBar.setBackgroundColor(Color.TRANSPARENT)
+            binding.collapsingToolbarLayout.setContentScrimColor(Color.TRANSPARENT)
+            binding.collapsingToolbarLayout.statusBarScrim = null
+            binding.appBar.elevation = 0f
+
+            binding.collapsingToolbarLayout.title = ""
+            binding.toolbar.title = ""
+            binding.toolbarTitleCustom.visibility = View.VISIBLE
+            binding.toolbarTitleCustom.text = book.title
+
+            binding.imageViewCoverLarge.visibility = View.GONE
+
+            binding.appBar.setExpanded(false, false)
+            val params = binding.collapsingToolbarLayout.layoutParams as AppBarLayout.LayoutParams
+            params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL
+
+        }
+        binding.appBar.layoutParams = appBarLayoutParams
+        binding.collapsingToolbarLayout.layoutParams = collapsingToolbarLayoutParams
     }
 
     private fun extractAndApplyDominantColor(bitmap: Bitmap) {
