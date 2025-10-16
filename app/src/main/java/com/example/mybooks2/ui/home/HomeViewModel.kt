@@ -109,9 +109,9 @@ class HomeViewModel(val bookDao: BookDao,
         val sortedList = when (query.sortBy) {
             SortBy.TITLE -> {
                 if (query.order == SortOrder.ASCENDING) {
-                    filteredList.sortedBy { it.book.title }
+                    filteredList.sortedBy { it.book.title.lowercase() }
                 } else {
-                    filteredList.sortedByDescending { it.book.title }
+                    filteredList.sortedByDescending { it.book.title.lowercase() }
                 }
             }
             SortBy.AUTHOR -> {
