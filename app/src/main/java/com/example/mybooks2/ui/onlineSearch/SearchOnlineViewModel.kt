@@ -14,43 +14,90 @@ import com.example.mybooks2.network.ApiClient
 import com.example.mybooks2.ui.addBook2.Event
 import kotlinx.coroutines.launch
 
+
 class SearchOnlineViewModel(val application: MyBooksApplication) : ViewModel() {
 
+    enum class SearchScreenState { IDLE, LOADING, SUCCESS, ERROR, NO_RESULTS }
+
+    private val _screenState = MutableLiveData<SearchScreenState>(SearchScreenState.IDLE)
+    val screenState: LiveData<SearchScreenState> = _screenState
     private val _searchResults = MutableLiveData<List<BookDoc>>()
     val searchResults: LiveData<List<BookDoc>> = _searchResults
 
     private val _isLoading = MutableLiveData<Boolean>(false)
     val isLoading: LiveData<Boolean> = _isLoading
-    private var lastQuery: String? = null
+     var lastQuery: String? = null
 
     private val _errorMessage = MutableLiveData<Event<String>>()
     val errorMessage: LiveData<Event<String>> = _errorMessage
-    fun search(query: String) {
-        if (!NetworkUtils.isNetworkAvailable(application)) {
-            _errorMessage.value = Event("No internet connection")
-            return
-        }
+//    fun search(query: String) {
+//        if (!NetworkUtils.isNetworkAvailable(application)) {
+//            _errorMessage.value = Event("No internet connection")
+//            return
+//        }
+//        val sanitizedQuery = query.trim().replace(Regex("\\s+"), " ")
+//
+//        if (sanitizedQuery == lastQuery) {
+//            return
+//        }
+//        lastQuery = sanitizedQuery
+//
+//        if (sanitizedQuery.isBlank()) {
+//            _searchResults.value = emptyList()
+//            return
+//        }
+//        _isLoading.value = true
+//        _screenState.postValue(SearchScreenState.LOADING)
+//        viewModelScope.launch {
+//            try {
+//                val response = ApiClient.apiService.searchBooks(query)
+//                if (response.docs.isEmpty()) {
+//                    _screenState.postValue(SearchScreenState.NO_RESULTS)
+//                } else {
+//                    _searchResults.postValue(response.docs)
+//                    _screenState.postValue(SearchScreenState.SUCCESS)
+//                }
+//            } catch (e: Exception) {
+//                _screenState.postValue(SearchScreenState.ERROR)
+//            }
+//        }
+//    }
+
+    fun search(query: String, force: Boolean = false) {
         val sanitizedQuery = query.trim().replace(Regex("\\s+"), " ")
 
-        if (sanitizedQuery == lastQuery) {
+        if (!force && sanitizedQuery == lastQuery) {
             return
         }
         lastQuery = sanitizedQuery
 
         if (sanitizedQuery.isBlank()) {
             _searchResults.value = emptyList()
+            _screenState.value = SearchScreenState.IDLE
             return
         }
-        _isLoading.value = true
+
+        if (!NetworkUtils.isNetworkAvailable(application)) {
+            _errorMessage.value = Event("No internet connection") // You can still use this for a specific message
+            _screenState.value = SearchScreenState.ERROR
+            return
+        }
+
+        _screenState.value = SearchScreenState.LOADING
         viewModelScope.launch {
             try {
                 val response = ApiClient.apiService.searchBooks(sanitizedQuery)
-                _searchResults.postValue(response.docs)
+                if (response.docs.isEmpty()) {
+                    _searchResults.postValue(emptyList())
+                    _screenState.postValue(SearchScreenState.NO_RESULTS)
+                } else {
+                    _searchResults.postValue(response.docs)
+                    _screenState.postValue(SearchScreenState.SUCCESS)
+                }
             } catch (e: Exception) {
-                Log.d("Exceptions",e.toString())
-                _errorMessage.postValue(Event("Failed to fetch results"))
-            } finally {
-                _isLoading.postValue(false)
+                _searchResults.postValue(emptyList())
+                _screenState.postValue(SearchScreenState.ERROR)
+                e.printStackTrace()
             }
         }
     }

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowInsetsController
 import android.view.inputmethod.EditorInfo
@@ -158,6 +159,15 @@ class SearchActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.searchResults.observe(this) { results ->
             searchAdapter.submitList(results)
+            if(results.isEmpty()){
+                binding.textViewNoResults.visibility=View.VISIBLE
+                binding.recyclerViewSearchResults.visibility=View.GONE
+            }
+            else{
+                binding.textViewNoResults.visibility=View.GONE
+                binding.recyclerViewSearchResults.visibility=View.VISIBLE
+               // binding.recyclerViewOnlineResults.scrollToPosition(0)
+            }
         }
     }
 }

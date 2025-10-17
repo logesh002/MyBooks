@@ -219,9 +219,9 @@ class DetailActivity : AppCompatActivity() {
       //  binding.collapsingToolbarLayout.title = ""
         if (isImagePresent) {
           //  binding.collapsingToolbarLayout.title = book.title
-            binding.toolbar.title = ""
+          //  binding.toolbar.title = ""
         } else {
-            binding.toolbar.title = book.title
+        //    binding.toolbar.title = book.title
             binding.collapsingToolbarLayout.title = ""
         }
 

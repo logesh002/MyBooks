@@ -254,6 +254,9 @@ class AddBook2 : AppCompatActivity() {
             if(binding.imageCl.isGone)
             pickImageLauncher.launch("image/*")
         }
+        binding.imageCl.setOnClickListener {
+            pickImageLauncher.launch("image/*")
+        }
         binding.fabDeleteImage.setOnClickListener {
             viewModel.updateCoverImage(null)
             binding.imageCl.visibility=View.GONE

@@ -7,6 +7,7 @@ import com.example.mybooks2.databinding.ActivitySearchOnlineBinding
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
+import android.os.Looper
 import android.view.View
 import android.view.WindowInsetsController
 import android.view.inputmethod.EditorInfo
@@ -15,6 +16,7 @@ import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mybooks2.ui.addBook2.AddBook2
@@ -22,6 +24,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import android.os.Handler
 
 class SearchOnlineActivity : AppCompatActivity() {
 
@@ -79,8 +82,12 @@ class SearchOnlineActivity : AppCompatActivity() {
         showKeyboard(binding.editTextSearchOnline)
     }
     private fun showKeyboard(view: View) {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+        if (view.requestFocus()) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+            }, 100)
+        }
     }
     fun isDarkTheme(): Boolean {
         return (resources.configuration.uiMode and
@@ -115,12 +122,18 @@ class SearchOnlineActivity : AppCompatActivity() {
     }
 
     private fun setupSearch() {
+        binding.editTextSearchOnline.addTextChangedListener { editable ->
+            searchJob?.cancel()
+            searchJob = lifecycleScope.launch {
+                delay(800L)
+                viewModel.search(editable.toString())
+            }
+        }
 
         binding.editTextSearchOnline.setOnEditorActionListener { textView, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 searchJob?.cancel()
                 searchJob = lifecycleScope.launch {
-                    delay(100L)
                     viewModel.search(textView.text.toString())
                 }
 
@@ -132,29 +145,46 @@ class SearchOnlineActivity : AppCompatActivity() {
             }
             return@setOnEditorActionListener false
         }
+
+        binding.buttonRetry.setOnClickListener {
+            viewModel.search(viewModel.lastQuery ?: "", force = true)
+        }
     }
 
     private fun observeViewModel() {
+        viewModel.screenState.observe(this) { state ->
+            binding.progressBar.visibility = if (state == SearchOnlineViewModel.SearchScreenState.LOADING) View.VISIBLE else View.GONE
+            binding.recyclerViewOnlineResults.visibility = if (state == SearchOnlineViewModel.SearchScreenState.SUCCESS) View.VISIBLE else View.GONE
+            binding.textViewNoResults.visibility = if (state == SearchOnlineViewModel.SearchScreenState.NO_RESULTS) View.VISIBLE else View.GONE
+            binding.layoutError.visibility = if (state == SearchOnlineViewModel.SearchScreenState.ERROR) View.VISIBLE else View.GONE
+
+            if(state == SearchOnlineViewModel.SearchScreenState.ERROR){
+                hideKeyboard()
+            }
+        }
+
+
         viewModel.searchResults.observe(this) { results ->
-            searchAdapter.submitList(results)
-            if(results.isEmpty()){
-                binding.textViewNoResults.visibility=View.VISIBLE
-            }
-            else{
-                binding.textViewNoResults.visibility=View.GONE
-                binding.recyclerViewOnlineResults.scrollToPosition(0)
+            searchAdapter.submitList(results) {
+                if (results.isNotEmpty()) {
+                    binding.recyclerViewOnlineResults.scrollToPosition(0)
+                }
             }
         }
 
-        viewModel.isLoading.observe(this) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-
-            binding.recyclerViewOnlineResults.visibility =if (isLoading) View.GONE else View.VISIBLE
-        }
         viewModel.errorMessage.observe(this) { event ->
+
             event.getContentIfNotHandled()?.let { message ->
+                hideKeyboard()
                 Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
             }
+        }
+    }
+    fun hideKeyboard() {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 }
