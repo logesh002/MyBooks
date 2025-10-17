@@ -70,14 +70,12 @@ dependencies {
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
-    // See Add the KSP plugin to your project
+
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
     ksp(libs.androidx.room.compiler)
 
-    // If this project only uses Java source, use the Java annotationProcessor
-    // No additional plugins are necessary
     annotationProcessor(libs.androidx.room.compiler)
 
-    // optional - Kotlin Extensions and Coroutines support for Room
     implementation(libs.androidx.room.ktx)
 }

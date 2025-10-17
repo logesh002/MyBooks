@@ -98,13 +98,14 @@ class SearchOnlineActivity : AppCompatActivity() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
         searchAdapter = SearchOnlineAdapter { bookDoc ->
+            val year = bookDoc.volumeInfo?.publishedDate?.split("-")?.firstOrNull()
             val intent = Intent(this, AddBook2::class.java).apply {
-                putExtra("EXTRA_PREFILL_TITLE", bookDoc.title)
-                putExtra("EXTRA_PREFILL_AUTHOR", bookDoc.authorName?.firstOrNull())
-                putExtra("EXTRA_PREFILL_ISBN", bookDoc.isbn?.firstOrNull())
-                putExtra("EXTRA_PREFILL_YEAR", bookDoc.firstPublishYear)
-                putExtra("EXTRA_PREFILL_COVER_URL", bookDoc.getCoverUrl("L"))
-                putExtra("EXTRA_PREFILL_PAGES", bookDoc.numberOfPages)
+                putExtra("EXTRA_PREFILL_TITLE", bookDoc.volumeInfo?.title)
+                putExtra("EXTRA_PREFILL_AUTHOR", bookDoc.volumeInfo?.authors?.firstOrNull())
+                putExtra("EXTRA_PREFILL_ISBN", bookDoc.volumeInfo?.industryIdentifiers?.get(0)?.identifier)
+                putExtra("EXTRA_PREFILL_YEAR", year?.toIntOrNull())
+                putExtra("EXTRA_PREFILL_COVER_URL", bookDoc.volumeInfo?.imageLinks?.thumbnail?.replace("http://", "https://"))
+                putExtra("EXTRA_PREFILL_PAGES", bookDoc.volumeInfo?.pageCount)
             }
             startActivity(intent)
             finish()
@@ -125,7 +126,7 @@ class SearchOnlineActivity : AppCompatActivity() {
         binding.editTextSearchOnline.addTextChangedListener { editable ->
             searchJob?.cancel()
             searchJob = lifecycleScope.launch {
-                delay(800L)
+                delay(600L)
                 viewModel.search(editable.toString())
             }
         }

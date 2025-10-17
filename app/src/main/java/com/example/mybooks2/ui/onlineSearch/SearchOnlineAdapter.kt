@@ -1,5 +1,6 @@
 package com.example.mybooks2.ui.onlineSearch
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.mybooks2.R
 import com.example.mybooks2.model.BookDoc
+import com.example.mybooks2.model.VolumeItem
 
-class SearchOnlineAdapter(private val onItemClicked: (BookDoc) -> Unit) :
-    ListAdapter<BookDoc, SearchOnlineAdapter.BookDocViewHolder>(DiffCallback) {
+class SearchOnlineAdapter(private val onItemClicked: (VolumeItem) -> Unit) :
+    ListAdapter<VolumeItem, SearchOnlineAdapter.BookDocViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookDocViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -34,12 +36,13 @@ class SearchOnlineAdapter(private val onItemClicked: (BookDoc) -> Unit) :
         private val authorTextView: TextView = itemView.findViewById(R.id.text_view_author)
         private val coverImageView: ImageView = itemView.findViewById(R.id.cover_image_view)
 
-        fun bind(bookDoc: BookDoc) {
-            titleTextView.text = bookDoc.title ?: "No Title"
-            authorTextView.text = bookDoc.authorName?.joinToString(", ") ?: "Unknown Author"
+        fun bind(bookDoc: VolumeItem) {
+            titleTextView.text = bookDoc.volumeInfo?.title ?: "No Title"
+            authorTextView.text = bookDoc.volumeInfo?.authors?.joinToString(", ") ?: "Unknown Author"
 
-            val coverUrl = bookDoc.getCoverUrl("M")
-            coverImageView.load(coverUrl) {
+            val coverUrl = bookDoc.volumeInfo?.imageLinks?.smallThumbnail
+            val secureCoverUrl = coverUrl?.replace("http://", "https://")
+            coverImageView.load(secureCoverUrl) {
                 placeholder(R.drawable.outline_book_24)
                 error(R.drawable.outline_book_24)
             }
@@ -47,12 +50,12 @@ class SearchOnlineAdapter(private val onItemClicked: (BookDoc) -> Unit) :
     }
 
     companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<BookDoc>() {
-            override fun areItemsTheSame(oldItem: BookDoc, newItem: BookDoc): Boolean {
-                return oldItem.title == newItem.title && oldItem.authorName == newItem.authorName
+        private val DiffCallback = object : DiffUtil.ItemCallback<VolumeItem>() {
+            override fun areItemsTheSame(oldItem: VolumeItem, newItem: VolumeItem): Boolean {
+                return oldItem.volumeInfo?.title == newItem.volumeInfo?.title && oldItem.volumeInfo?.authors == newItem.volumeInfo?.authors
             }
 
-            override fun areContentsTheSame(oldItem: BookDoc, newItem: BookDoc): Boolean {
+            override fun areContentsTheSame(oldItem: VolumeItem, newItem: VolumeItem): Boolean {
                 return oldItem == newItem
             }
         }
