@@ -10,7 +10,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mybooks2.MyBooksApplication
 import com.example.mybooks2.model.BookDoc
+import com.example.mybooks2.model.VolumeItem
 import com.example.mybooks2.network.ApiClient
+import com.example.mybooks2.network.ApiClientGoogle
 import com.example.mybooks2.ui.addBook2.Event
 import kotlinx.coroutines.launch
 
@@ -19,10 +21,12 @@ class SearchOnlineViewModel(val application: MyBooksApplication) : ViewModel() {
 
     enum class SearchScreenState { IDLE, LOADING, SUCCESS, ERROR, NO_RESULTS }
 
+    private val API_KEY ="***REMOVED***"
+
     private val _screenState = MutableLiveData<SearchScreenState>(SearchScreenState.IDLE)
     val screenState: LiveData<SearchScreenState> = _screenState
-    private val _searchResults = MutableLiveData<List<BookDoc>>()
-    val searchResults: LiveData<List<BookDoc>> = _searchResults
+    private val _searchResults = MutableLiveData<List<VolumeItem>>()
+    val searchResults: LiveData<List<VolumeItem>> = _searchResults
 
     private val _isLoading = MutableLiveData<Boolean>(false)
     val isLoading: LiveData<Boolean> = _isLoading
@@ -86,12 +90,13 @@ class SearchOnlineViewModel(val application: MyBooksApplication) : ViewModel() {
         _screenState.value = SearchScreenState.LOADING
         viewModelScope.launch {
             try {
-                val response = ApiClient.apiService.searchBooks(sanitizedQuery)
-                if (response.docs.isEmpty()) {
-                    _searchResults.postValue(emptyList())
+              //  val response = ApiClient.apiService.searchBooks(sanitizedQuery)
+                val response = ApiClientGoogle.googleBooksApiService.searchVolumes(query, API_KEY)
+                if (response.items.isNullOrEmpty()) {
+                    _searchResults.postValue(emptyList()) // Assuming _searchResults is now LiveData<List<VolumeItem>>
                     _screenState.postValue(SearchScreenState.NO_RESULTS)
                 } else {
-                    _searchResults.postValue(response.docs)
+                    _searchResults.postValue(response.items)
                     _screenState.postValue(SearchScreenState.SUCCESS)
                 }
             } catch (e: Exception) {
