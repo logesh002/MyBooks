@@ -98,14 +98,14 @@ class SearchOnlineActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
-        searchAdapter = SearchOnlineAdapter { bookDoc ->
+        searchAdapter = SearchOnlineAdapter { unifiedResult ->
             val intent = Intent(this, AddBook2::class.java).apply {
-                putExtra("EXTRA_PREFILL_TITLE", bookDoc.title)
-                putExtra("EXTRA_PREFILL_AUTHOR", bookDoc.authorName?.firstOrNull())
-                putExtra("EXTRA_PREFILL_ISBN", bookDoc.isbn?.firstOrNull())
-                putExtra("EXTRA_PREFILL_YEAR", bookDoc.firstPublishYear)
-                putExtra("EXTRA_PREFILL_COVER_URL", bookDoc.getCoverUrl("L"))
-                putExtra("EXTRA_PREFILL_PAGES", bookDoc.numberOfPages)
+                putExtra("EXTRA_PREFILL_TITLE", unifiedResult.title)
+                putExtra("EXTRA_PREFILL_AUTHOR", unifiedResult.authors)
+                putExtra("EXTRA_PREFILL_ISBN", unifiedResult.isbn)
+                putExtra("EXTRA_PREFILL_YEAR", unifiedResult.year)
+                putExtra("EXTRA_PREFILL_COVER_URL", unifiedResult.coverUrl)
+                putExtra("EXTRA_PREFILL_PAGES", unifiedResult.pages)
             }
             startActivity(intent)
             finish()
@@ -126,8 +126,8 @@ class SearchOnlineActivity : AppCompatActivity() {
         binding.editTextSearchOnline.addTextChangedListener { editable ->
             searchJob?.cancel()
             searchJob = lifecycleScope.launch {
-                delay(800L)
-                viewModel.search(editable.toString())
+                delay(600L)
+                viewModel.searchNew(editable.toString())
             }
         }
 
@@ -135,7 +135,7 @@ class SearchOnlineActivity : AppCompatActivity() {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 searchJob?.cancel()
                 searchJob = lifecycleScope.launch {
-                    viewModel.search(textView.text.toString())
+                    viewModel.searchNew(textView.text.toString())
                 }
 
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -148,7 +148,7 @@ class SearchOnlineActivity : AppCompatActivity() {
         }
 
         binding.buttonRetry.setOnClickListener {
-            viewModel.search(viewModel.lastQuery ?: "", force = true)
+            viewModel.searchNew(viewModel.lastQuery ?: "", force = true)
         }
 
         binding.layoutError.setOnClickListener {
@@ -171,7 +171,14 @@ class SearchOnlineActivity : AppCompatActivity() {
         }
 
 
-        viewModel.searchResults.observe(this) { results ->
+//        viewModel.searchResults.observe(this) { results ->
+//            searchAdapter.submitList(results) {
+//                if (results.isNotEmpty()) {
+//                    binding.recyclerViewOnlineResults.scrollToPosition(0)
+//                }
+//            }
+//        }
+        viewModel.unifiedSearchResults.observe(this) { results ->
             searchAdapter.submitList(results) {
                 if (results.isNotEmpty()) {
                     binding.recyclerViewOnlineResults.scrollToPosition(0)
