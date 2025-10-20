@@ -59,6 +59,17 @@
             app:summary="Set the display order for the status filter chips." />
 
     </PreferenceCategory>
+    <PreferenceCategory app:title="Online Search">
+
+        <ListPreference
+            app:key="online_search_api"
+            app:title="Search Provider"
+            app:summary="Choose which service to use for online book search."
+            app:entries="@array/api_provider_entries"
+            app:entryValues="@array/api_provider_values"
+            app:defaultValue="OPEN_LIBRARY" />
+
+    </PreferenceCategory>
 
     <PreferenceCategory app:title="About">
 

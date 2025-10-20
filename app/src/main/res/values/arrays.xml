@@ -40,4 +40,13 @@
         <item>EBOOK</item>
         <item>AUDIOBOOK</item>
     </string-array>
+    <string-array name="api_provider_entries">
+        <item>Google Books (Recommended)</item>
+        <item>Open Library</item>
+    </string-array>
+
+    <string-array name="api_provider_values">
+        <item>GOOGLE_BOOKS</item>
+        <item>OPEN_LIBRARY</item>
+    </string-array>
 </resources>
