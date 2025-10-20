@@ -97,15 +97,14 @@ class SearchOnlineActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
-        searchAdapter = SearchOnlineAdapter { bookDoc ->
-            val year = bookDoc.volumeInfo?.publishedDate?.split("-")?.firstOrNull()
+        searchAdapter = SearchOnlineAdapter { unifiedResult ->
             val intent = Intent(this, AddBook2::class.java).apply {
-                putExtra("EXTRA_PREFILL_TITLE", bookDoc.volumeInfo?.title)
-                putExtra("EXTRA_PREFILL_AUTHOR", bookDoc.volumeInfo?.authors?.firstOrNull())
-                putExtra("EXTRA_PREFILL_ISBN", bookDoc.volumeInfo?.industryIdentifiers?.get(0)?.identifier)
-                putExtra("EXTRA_PREFILL_YEAR", year?.toIntOrNull())
-                putExtra("EXTRA_PREFILL_COVER_URL", bookDoc.volumeInfo?.imageLinks?.thumbnail?.replace("http://", "https://"))
-                putExtra("EXTRA_PREFILL_PAGES", bookDoc.volumeInfo?.pageCount)
+                putExtra("EXTRA_PREFILL_TITLE", unifiedResult.title)
+                putExtra("EXTRA_PREFILL_AUTHOR", unifiedResult.authors)
+                putExtra("EXTRA_PREFILL_ISBN", unifiedResult.isbn)
+                putExtra("EXTRA_PREFILL_YEAR", unifiedResult.year)
+                putExtra("EXTRA_PREFILL_COVER_URL", unifiedResult.coverUrl)
+                putExtra("EXTRA_PREFILL_PAGES", unifiedResult.pages)
             }
             startActivity(intent)
             finish()
@@ -127,7 +126,7 @@ class SearchOnlineActivity : AppCompatActivity() {
             searchJob?.cancel()
             searchJob = lifecycleScope.launch {
                 delay(600L)
-                viewModel.search(editable.toString())
+                viewModel.searchNew(editable.toString())
             }
         }
 
@@ -135,7 +134,7 @@ class SearchOnlineActivity : AppCompatActivity() {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 searchJob?.cancel()
                 searchJob = lifecycleScope.launch {
-                    viewModel.search(textView.text.toString())
+                    viewModel.searchNew(textView.text.toString())
                 }
 
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -148,7 +147,7 @@ class SearchOnlineActivity : AppCompatActivity() {
         }
 
         binding.buttonRetry.setOnClickListener {
-            viewModel.search(viewModel.lastQuery ?: "", force = true)
+            viewModel.searchNew(viewModel.lastQuery ?: "", force = true)
         }
     }
 
@@ -165,7 +164,14 @@ class SearchOnlineActivity : AppCompatActivity() {
         }
 
 
-        viewModel.searchResults.observe(this) { results ->
+//        viewModel.searchResults.observe(this) { results ->
+//            searchAdapter.submitList(results) {
+//                if (results.isNotEmpty()) {
+//                    binding.recyclerViewOnlineResults.scrollToPosition(0)
+//                }
+//            }
+//        }
+        viewModel.unifiedSearchResults.observe(this) { results ->
             searchAdapter.submitList(results) {
                 if (results.isNotEmpty()) {
                     binding.recyclerViewOnlineResults.scrollToPosition(0)
