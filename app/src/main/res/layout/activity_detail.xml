@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context=".ui.detailScreen.DetailActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -32,10 +31,13 @@
                 android:id="@+id/image_view_cover_large"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginVertical="8dp"
                 android:scaleType="fitCenter"
                 app:layout_collapseMode="parallax"
                 tools:src="@tools:sample/backgrounds/scenic" />
+
+
+<!--            android:layout_marginVertical="8dp"-->
+
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
@@ -196,6 +198,7 @@
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
                         android:padding="16dp">
 
                         <LinearLayout

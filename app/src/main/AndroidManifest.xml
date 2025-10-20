@@ -30,6 +30,8 @@
             android:name=".ui.addBook2.AddBook2"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.onBoarding.OnboardingActivity"
+           />
         <activity
             android:name=".ui.setting.SettingsActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"

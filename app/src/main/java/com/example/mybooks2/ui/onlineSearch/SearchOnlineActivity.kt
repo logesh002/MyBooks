@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mybooks2.databinding.ActivitySearchOnlineBinding
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Looper
@@ -149,6 +150,12 @@ class SearchOnlineActivity : AppCompatActivity() {
         binding.buttonRetry.setOnClickListener {
             viewModel.searchNew(viewModel.lastQuery ?: "", force = true)
         }
+
+        binding.layoutError.setOnClickListener {
+            if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                hideKeyboard()
+            }
+        }
     }
 
     private fun observeViewModel() {
@@ -158,9 +165,9 @@ class SearchOnlineActivity : AppCompatActivity() {
             binding.textViewNoResults.visibility = if (state == SearchOnlineViewModel.SearchScreenState.NO_RESULTS) View.VISIBLE else View.GONE
             binding.layoutError.visibility = if (state == SearchOnlineViewModel.SearchScreenState.ERROR) View.VISIBLE else View.GONE
 
-            if(state == SearchOnlineViewModel.SearchScreenState.ERROR){
-                hideKeyboard()
-            }
+//            if(state == SearchOnlineViewModel.SearchScreenState.ERROR){
+//                hideKeyboard()
+//            }
         }
 
 
