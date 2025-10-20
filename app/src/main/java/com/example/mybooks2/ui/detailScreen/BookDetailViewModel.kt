@@ -1,5 +1,7 @@
 package com.example.mybooks2.ui.detailScreen
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
@@ -7,8 +9,10 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mybooks2.MyBooksApplication
 import com.example.mybooks2.data.BookDao
+import com.example.mybooks2.model.Book
 import com.example.mybooks2.model.BookWithTags
 import com.example.mybooks2.ui.addBook2.AddBook2ViewModel
+import com.example.mybooks2.ui.addBook2.Event
 import com.example.mybooks2.ui.addBook2.ReadingStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +22,16 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
 
     private val _bookDetails = MutableStateFlow<BookWithTags?>(null)
     val bookDetails: StateFlow<BookWithTags?> = _bookDetails
+    private var previousBookState: Book? = null
+
+    // Event to show the Snackbar
+    private val _showUndoSnackbarEvent =
+        MutableLiveData<Event<ReadingStatus>>() // Carries the NEW status
+    val showUndoSnackbarEvent: LiveData<Event<ReadingStatus>> = _showUndoSnackbarEvent
+
+    // Event to show the rating dialog (remains the same)
+    private val _showRatingDialogEvent = MutableLiveData<Event<Unit>>()
+    val showRatingDialogEvent: LiveData<Event<Unit>> = _showRatingDialogEvent
 
     fun loadBook(bookId: Long) {
         viewModelScope.launch {
@@ -29,6 +43,8 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
 
     fun updateStatus(newStatus: ReadingStatus) {
         val currentBook = _bookDetails.value?.book ?: return
+
+        previousBookState = currentBook
         viewModelScope.launch {
             var updatedBook = currentBook.copy(status = newStatus)
 
@@ -39,6 +55,22 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
                 updatedBook = updatedBook.copy(finishedDate = System.currentTimeMillis())
             }
             bookDao.updateBook(updatedBook)
+            _showUndoSnackbarEvent.postValue(Event(newStatus))
+        }
+    }
+    fun undoStatusChange() {
+        // Revert to the stored previous state
+        previousBookState?.let { bookToRestore ->
+            viewModelScope.launch {
+                bookDao.updateBook(bookToRestore)
+                previousBookState = null // Clear the undo state
+            }
+        }
+    }
+
+    fun triggerRatingDialogIfNeeded() {
+        if (_bookDetails.value?.book?.status == ReadingStatus.FINISHED && previousBookState?.status != ReadingStatus.FINISHED) {
+            _showRatingDialogEvent.value = Event(Unit)
         }
     }
     fun readAgain() {
@@ -76,13 +108,17 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
     fun updateCurrentPage(currentPage: Int) {
         val currentBook = _bookDetails.value?.book ?: return
 
+        previousBookState = currentBook
         viewModelScope.launch {
             var updatedBook = currentBook.copy(currentPage = currentPage)
             if (currentPage >= (currentBook.totalPages ?: 0)) {
+                previousBookState = currentBook.copy(currentPage = if(currentPage>0) currentPage-1 else 0)
                 updatedBook = updatedBook.copy(
                     status = ReadingStatus.FINISHED,
                     finishedDate = System.currentTimeMillis()
                 )
+                _showUndoSnackbarEvent.postValue(Event( ReadingStatus.FINISHED))
+
             }
             bookDao.updateBook(updatedBook)
         }

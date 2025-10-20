@@ -1,5 +1,7 @@
 package com.example.mybooks2
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +19,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.mybooks2.databinding.ActivityMainBinding
+import com.example.mybooks2.ui.onBoarding.OnboardingActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +29,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
+
+        val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val onboardingCompleted = prefs.getBoolean("onboarding_completed", false)
+
+        if (!onboardingCompleted) {
+            // First time launch: Show OnboardingActivity
+            val intent = Intent(this, OnboardingActivity::class.java)
+            startActivity(intent)
+            finish() // Close MainActivity so user can't go back to it
+            return // Stop further execution in this onCreate
+        }
+
         setContentView(binding.root)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->

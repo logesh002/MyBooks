@@ -73,34 +73,39 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
+            android:indeterminate="true"
+            style="@style/Widget.Material3Expressive.CircularProgressIndicator.Wavy"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
         <LinearLayout
             android:id="@+id/layout_error"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:gravity="center"
+            android:orientation="vertical"
             android:padding="32dp"
             android:visibility="gone"
-            tools:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.376"
+            tools:visibility="visible">
+
             <ImageView
                 android:layout_width="64dp"
                 android:layout_height="64dp"
+                android:contentDescription="An error occurred"
                 android:src="@drawable/outline_error_24"
-                app:tint="?attr/colorError"
-                android:contentDescription="An error occurred"/>
+                app:tint="?attr/colorError" />
 
             <TextView
                 android:id="@+id/text_error_message"
@@ -109,7 +114,7 @@
                 android:layout_marginTop="16dp"
                 android:text="Something went wrong"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorOnSurface"/>
+                android:textColor="?attr/colorOnSurface" />
 
             <Button
                 android:id="@+id/button_retry"

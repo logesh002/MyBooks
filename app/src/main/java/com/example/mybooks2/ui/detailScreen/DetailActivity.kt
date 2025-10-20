@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -22,6 +23,7 @@ import android.view.WindowInsetsController
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -37,6 +39,8 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.example.mybooks2.ui.addBook2.AddBook2
 import com.example.mybooks2.R
 import com.example.mybooks2.databinding.ActivityDetailBinding
@@ -58,6 +62,8 @@ import com.example.mybooks2.model.Book
 import com.example.mybooks2.ui.addBook2.BookFormat
 import com.google.android.material.color.MaterialColors
 import java.io.FileOutputStream
+import javax.sql.DataSource
+import com.bumptech.glide.request.target.Target
 
 class DetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailBinding
@@ -66,27 +72,30 @@ class DetailActivity : AppCompatActivity() {
 
     private lateinit var editBookLauncher: ActivityResultLauncher<Intent>
 
-    private var statusBarHeight: Int = 0
+    //private var statusBarHeight: Int = 0
 
     private var shareMenuItem: MenuItem? = null
+
+    private var statusSnackbar: Snackbar? = null
 
 
     private var previousStatus: ReadingStatus? = null
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+      //  WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = ""
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-
-            insets
-        }
+//        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+//            statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+//
+//            insets
+//        }
         ViewCompat.setOnApplyWindowInsetsListener(binding.appBar) { view, insets ->
             val topInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
             view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -94,6 +103,7 @@ class DetailActivity : AppCompatActivity() {
             }
             insets
         }
+
         val window = window
         val decorView = window.decorView
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -198,15 +208,55 @@ class DetailActivity : AppCompatActivity() {
                     }
                     val book = bookWithTags.book
 
-                    if (previousStatus != null && previousStatus != ReadingStatus.FINISHED && book.status == ReadingStatus.FINISHED) {
-                        launchRatingDialog()
-                    }
+//                    if (previousStatus != null && previousStatus != ReadingStatus.FINISHED && book.status == ReadingStatus.FINISHED) {
+//                       // launchRatingDialog()
+//                    }
                     previousStatus = book.status
 
                     updateUi(bookWithTags)
                 }
             }
         }
+        viewModel.showUndoSnackbarEvent.observe(this) { event ->
+            event.getContentIfNotHandled()?.let { newStatus ->
+               // val statusText = newStatus.name.replace("_", " ").capitalize()
+                showUndoSnackbar(newStatus)
+            }
+        }
+
+        // Observer for the RATING dialog (remains the same)
+        viewModel.showRatingDialogEvent.observe(this) { event ->
+            event.getContentIfNotHandled()?.let {
+                launchRatingDialog()
+            }
+        }
+    }
+    private fun showUndoSnackbar(newStatus: ReadingStatus) {
+        val statusTextMap = mapOf(
+            "IN_PROGRESS" to "In progress",
+            "FINISHED" to "Finished",
+            "FOR_LATER" to "To be read",
+            "UNFINISHED" to "Dropped"
+        )
+        statusSnackbar?.dismiss()
+        statusSnackbar = Snackbar.make(binding.root, "Moved to ${statusTextMap[newStatus.name]}", Snackbar.LENGTH_LONG)
+            .setAction("Undo") {
+                viewModel.undoStatusChange()
+            }
+            .addCallback(object : Snackbar.Callback() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    super.onDismissed(transientBottomBar, event)
+                    if (transientBottomBar == statusSnackbar) {
+                        statusSnackbar = null
+                    }
+
+                    if (newStatus == ReadingStatus.FINISHED && event != DISMISS_EVENT_ACTION) {
+                        viewModel.triggerRatingDialogIfNeeded()
+                    }
+                }
+            })
+
+        statusSnackbar?.show()
     }
 
 
@@ -390,37 +440,64 @@ class DetailActivity : AppCompatActivity() {
             binding.appBar.elevation = 4 * resources.displayMetrics.density
 
 
+//            Glide.with(this)
+//                .asBitmap()
+//                .load(File(book.coverImagePath))
+//                .error(R.drawable.outline_book_24)
+//                .into(object : CustomTarget<Bitmap>() {
+//                    override fun onResourceReady(
+//                        resource: Bitmap,
+//                        transition: Transition<in Bitmap>?
+//                    ) {
+//                        binding.imageViewCoverLarge.setImageBitmap(resource)
+//                        extractAndApplyDominantColor(resource)
+//                    }
+//
+//                    override fun onLoadCleared(placeholder: Drawable?) {
+//                        binding.imageViewCoverLarge.setImageDrawable(placeholder)
+//                        resetAppBarColors()
+//                    }
+//
+//                    override fun onLoadFailed(errorDrawable: Drawable?) {
+//                        super.onLoadFailed(errorDrawable)
+//                        binding.imageViewCoverLarge.setImageDrawable(errorDrawable)
+//                        resetAppBarColors()
+//                    }
+//                })
+
             Glide.with(this)
-                .asBitmap()
-                .load(File(book.coverImagePath))
+                .load(File(book.coverImagePath)) // Load the file
                 .error(R.drawable.outline_book_24)
-                .into(object : CustomTarget<Bitmap>() {
+                .listener(object : RequestListener<Drawable> { // Add the listener
+                    override fun onLoadFailed(
+                        e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean
+                    ): Boolean {
+                        resetAppBarColors() // Reset colors on failure
+                        return false // Allow Glide's error drawable to be shown
+                    }
+
                     override fun onResourceReady(
-                        resource: Bitmap,
-                        transition: Transition<in Bitmap>?
-                    ) {
-                        binding.imageViewCoverLarge.setImageBitmap(resource)
-                        extractAndApplyDominantColor(resource)
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        binding.imageViewCoverLarge.setImageDrawable(placeholder)
-                        resetAppBarColors()
-                    }
-
-                    override fun onLoadFailed(errorDrawable: Drawable?) {
-                        super.onLoadFailed(errorDrawable)
-                        binding.imageViewCoverLarge.setImageDrawable(errorDrawable)
-                        resetAppBarColors()
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable?>?,
+                        dataSource: com.bumptech.glide.load.DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        val bitmap = (resource as? BitmapDrawable)?.bitmap
+                        bitmap?.let { bmp ->
+                            extractAndApplyDominantColor(bmp)
+                        }
+                        return false
                     }
                 })
+                .into(binding.imageViewCoverLarge)
 
 
             binding.appBar.setExpanded(true, false)
             val params = binding.collapsingToolbarLayout.layoutParams as AppBarLayout.LayoutParams
             params.scrollFlags =
                 AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-            binding.toolbar.updatePadding(top = 20)
+           // binding.toolbar.updatePadding(top = 20)
 
             binding.collapsingToolbarLayout.title = ""
             binding.toolbarTitleCustom.visibility = View.GONE
@@ -451,29 +528,33 @@ class DetailActivity : AppCompatActivity() {
     private fun extractAndApplyDominantColor(bitmap: Bitmap) {
         Palette.from(bitmap).generate { palette ->
             palette?.let {
-                val surfaceColor = MaterialColors.getColor(binding.root, com.google.android.material.R.attr.colorSurface)
+                val surfaceColor = MaterialColors.getColor(
+                    binding.root,
+                    com.google.android.material.R.attr.colorSurface
+                )
 
-                val swatch = it.lightMutedSwatch ?: it.mutedSwatch ?: it.lightVibrantSwatch
+                //  val swatch = it.lightMutedSwatch ?: it.mutedSwatch ?: it.lightVibrantSwatch
 
-                if (swatch != null) {
-                    val topColor = ColorUtils.setAlphaComponent(swatch.rgb, 255)
-                    val finalColor = ColorUtils.compositeColors(topColor, surfaceColor)
+                val swatch = it.lightVibrantSwatch ?: it.lightMutedSwatch ?: it.mutedSwatch?:it.dominantSwatch
+                    if (swatch != null) {
+                        val topColor = ColorUtils.setAlphaComponent(swatch.rgb, 255)
+                        val finalColor = ColorUtils.compositeColors(topColor, surfaceColor)
 
-                    val gradient = GradientDrawable(
-                        GradientDrawable.Orientation.TOP_BOTTOM,
-                        intArrayOf(finalColor, Color.TRANSPARENT)
-                    )
+                        val gradient = GradientDrawable(
+                            GradientDrawable.Orientation.TOP_BOTTOM,
+                            intArrayOf(finalColor, Color.TRANSPARENT)
+                        )
 
-                    binding.gradientBackground.background = gradient
-                    binding.collapsingToolbarLayout.contentScrim = ColorDrawable(surfaceColor)
-                    binding.collapsingToolbarLayout.statusBarScrim = ColorDrawable(finalColor)
+                        binding.gradientBackground.background = gradient
+                        binding.collapsingToolbarLayout.contentScrim = ColorDrawable(surfaceColor)
+                        binding.collapsingToolbarLayout.statusBarScrim = ColorDrawable(finalColor)
 
-                } else {
-                    resetAppBarColors()
-                }
+                    } else {
+                        resetAppBarColors()
+                    }
+                }?:resetAppBarColors()
             }
         }
-    }
 
     private fun resetAppBarColors() {
         val surfaceColor = MaterialColors.getColor(binding.root, com.google.android.material.R.attr.colorSurface)

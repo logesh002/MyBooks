@@ -14,6 +14,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
             app:navigationIcon="@drawable/outline_arrow_back_24">
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout_search_search"
@@ -47,6 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:clipToPadding="false"
+            android:layout_marginStart="28dp"
             android:paddingTop="8dp"
             android:paddingBottom="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -59,6 +61,7 @@
             android:id="@+id/text_view_no_results"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintVertical_bias="0.006"
             android:text="No books found. Try a different search."
             android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="?attr/colorOnSurfaceVariant"
@@ -69,10 +72,13 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:indeterminate="true"
+            style="@style/Widget.Material3Expressive.CircularProgressIndicator.Wavy"
+            app:layout_constraintVertical_bias="0.076"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -80,12 +86,13 @@
             app:layout_constraintTop_toTopOf="parent" />
         <LinearLayout
             android:id="@+id/layout_error"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
             android:visibility="gone"
             tools:visibility="visible"
+            app:layout_constraintVertical_bias="0.007"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
