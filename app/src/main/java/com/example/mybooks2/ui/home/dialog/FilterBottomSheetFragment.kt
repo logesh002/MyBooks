@@ -48,19 +48,6 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
                 binding.filterAuthor.dropDownHeight = maxDropdownHeight
             }
         }
-//        viewModel.allTags.observe(viewLifecycleOwner) { tags ->
-//            val adapter = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, tags)
-//            binding.filterTag.setAdapter(adapter)
-//
-//            val maxDropdownHeight = (240 * resources.displayMetrics.density).toInt()
-//            val fiveOrFewerItems = adapter.count <= 5
-//
-//            if (fiveOrFewerItems) {
-//                binding.filterTag.dropDownHeight = ViewGroup.LayoutParams.WRAP_CONTENT
-//            } else {
-//                binding.filterTag.dropDownHeight = maxDropdownHeight
-//            }
-//        }
         val currentState = viewModel.getCurrentQueryState()
 
 
@@ -83,8 +70,6 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
             }
         }
         binding.filterAuthor.setText(currentState.author, false)
-      //  binding.filterTag.setText(currentState.tags, false)
-
 
         val chipIdToCheck = when (currentState.format) {
             BookFormat.PAPERBACK -> com.example.mybooks2.R.id.chip_format_paperback
@@ -112,7 +97,6 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
 
         binding.buttonApplyFilters.setOnClickListener {
             val author = binding.filterAuthor.text.toString()
-          //  val tag = binding.filterTag.text.toString()
 
             val sortBy = when (binding.chipGroupSortBy.checkedChipId) {
                 com.example.mybooks2.R.id.chip_sort_date -> SortBy.DATE_ADDED

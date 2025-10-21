@@ -166,7 +166,6 @@ class SearchActivity : AppCompatActivity() {
             else{
                 binding.textViewNoResults.visibility=View.GONE
                 binding.recyclerViewSearchResults.visibility=View.VISIBLE
-               // binding.recyclerViewOnlineResults.scrollToPosition(0)
             }
         }
     }

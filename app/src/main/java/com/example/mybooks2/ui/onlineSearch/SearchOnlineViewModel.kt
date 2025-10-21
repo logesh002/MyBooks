@@ -17,8 +17,7 @@ import com.example.mybooks2.network.ApiClient
 import com.example.mybooks2.network.ApiClientGoogle
 import com.example.mybooks2.ui.addBook2.Event
 import kotlinx.coroutines.launch
-
-import com.example.mybooks2.BuildConfig // Make sure to import your app's BuildConfig
+import com.example.mybooks2.BuildConfig
 
 class SearchOnlineViewModel(val application: MyBooksApplication) : ViewModel() {
 

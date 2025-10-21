@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels // Use activityViewModels if sharing with Activity
 import com.example.mybooks2.databinding.FragmentOnboardingSampleDataBinding
 
 class OnboardingSampleDataFragment : Fragment() {
@@ -15,10 +14,6 @@ class OnboardingSampleDataFragment : Fragment() {
     private var _binding: FragmentOnboardingSampleDataBinding? = null
     private val binding get() = _binding!!
 
-    // Assuming you have a ViewModel that can add sample data
-    // private val viewModel: SomeViewModel by activityViewModels()
-
-    // Or, get a reference to the Activity to trigger the final navigation
     private var listener: OnboardingActionListener? = null
 
     interface OnboardingActionListener {

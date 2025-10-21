@@ -72,7 +72,6 @@ class DetailActivity : AppCompatActivity() {
 
     private lateinit var editBookLauncher: ActivityResultLauncher<Intent>
 
-    //private var statusBarHeight: Int = 0
 
     private var shareMenuItem: MenuItem? = null
 
@@ -81,7 +80,6 @@ class DetailActivity : AppCompatActivity() {
 
     private var previousStatus: ReadingStatus? = null
     override fun onCreate(savedInstanceState: Bundle?) {
-      //  WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -91,11 +89,6 @@ class DetailActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = ""
 
-//        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-//            statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-//
-//            insets
-//        }
         ViewCompat.setOnApplyWindowInsetsListener(binding.appBar) { view, insets ->
             val topInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
             view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -208,9 +201,6 @@ class DetailActivity : AppCompatActivity() {
                     }
                     val book = bookWithTags.book
 
-//                    if (previousStatus != null && previousStatus != ReadingStatus.FINISHED && book.status == ReadingStatus.FINISHED) {
-//                       // launchRatingDialog()
-//                    }
                     previousStatus = book.status
 
                     updateUi(bookWithTags)
@@ -219,12 +209,10 @@ class DetailActivity : AppCompatActivity() {
         }
         viewModel.showUndoSnackbarEvent.observe(this) { event ->
             event.getContentIfNotHandled()?.let { newStatus ->
-               // val statusText = newStatus.name.replace("_", " ").capitalize()
                 showUndoSnackbar(newStatus)
             }
         }
 
-        // Observer for the RATING dialog (remains the same)
         viewModel.showRatingDialogEvent.observe(this) { event ->
             event.getContentIfNotHandled()?.let {
                 launchRatingDialog()
@@ -266,12 +254,9 @@ class DetailActivity : AppCompatActivity() {
 
         currentBookTitle = book.title
         isImagePresent = !book.coverImagePath.isNullOrEmpty()
-      //  binding.collapsingToolbarLayout.title = ""
         if (isImagePresent) {
-          //  binding.collapsingToolbarLayout.title = book.title
-          //  binding.toolbar.title = ""
+
         } else {
-        //    binding.toolbar.title = book.title
             binding.collapsingToolbarLayout.title = ""
         }
 
@@ -305,8 +290,6 @@ class DetailActivity : AppCompatActivity() {
         } else {
             binding.divider.visibility = View.GONE
         }
-
-        //setupLayoutForBook(book)
 
 
         binding.textViewTitle.text = book.title
@@ -440,40 +423,16 @@ class DetailActivity : AppCompatActivity() {
             binding.appBar.elevation = 4 * resources.displayMetrics.density
 
 
-//            Glide.with(this)
-//                .asBitmap()
-//                .load(File(book.coverImagePath))
-//                .error(R.drawable.outline_book_24)
-//                .into(object : CustomTarget<Bitmap>() {
-//                    override fun onResourceReady(
-//                        resource: Bitmap,
-//                        transition: Transition<in Bitmap>?
-//                    ) {
-//                        binding.imageViewCoverLarge.setImageBitmap(resource)
-//                        extractAndApplyDominantColor(resource)
-//                    }
-//
-//                    override fun onLoadCleared(placeholder: Drawable?) {
-//                        binding.imageViewCoverLarge.setImageDrawable(placeholder)
-//                        resetAppBarColors()
-//                    }
-//
-//                    override fun onLoadFailed(errorDrawable: Drawable?) {
-//                        super.onLoadFailed(errorDrawable)
-//                        binding.imageViewCoverLarge.setImageDrawable(errorDrawable)
-//                        resetAppBarColors()
-//                    }
-//                })
 
             Glide.with(this)
-                .load(File(book.coverImagePath)) // Load the file
+                .load(File(book.coverImagePath))
                 .error(R.drawable.outline_book_24)
-                .listener(object : RequestListener<Drawable> { // Add the listener
+                .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean
                     ): Boolean {
-                        resetAppBarColors() // Reset colors on failure
-                        return false // Allow Glide's error drawable to be shown
+                        resetAppBarColors()
+                        return false
                     }
 
                     override fun onResourceReady(
@@ -497,7 +456,6 @@ class DetailActivity : AppCompatActivity() {
             val params = binding.collapsingToolbarLayout.layoutParams as AppBarLayout.LayoutParams
             params.scrollFlags =
                 AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-           // binding.toolbar.updatePadding(top = 20)
 
             binding.collapsingToolbarLayout.title = ""
             binding.toolbarTitleCustom.visibility = View.GONE
@@ -508,7 +466,6 @@ class DetailActivity : AppCompatActivity() {
             binding.collapsingToolbarLayout.setContentScrimColor(Color.TRANSPARENT)
             binding.collapsingToolbarLayout.statusBarScrim = null
             binding.appBar.elevation = 0f
-           // binding.toolbar.updatePadding(top = 20)
             binding.collapsingToolbarLayout.title = ""
             binding.toolbar.title = ""
             binding.toolbarTitleCustom.visibility = View.VISIBLE
@@ -533,7 +490,6 @@ class DetailActivity : AppCompatActivity() {
                     com.google.android.material.R.attr.colorSurface
                 )
 
-                //  val swatch = it.lightMutedSwatch ?: it.mutedSwatch ?: it.lightVibrantSwatch
 
                 val swatch = it.lightVibrantSwatch ?: it.lightMutedSwatch ?: it.mutedSwatch?:it.dominantSwatch
                     if (swatch != null) {

@@ -24,12 +24,10 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
     val bookDetails: StateFlow<BookWithTags?> = _bookDetails
     private var previousBookState: Book? = null
 
-    // Event to show the Snackbar
     private val _showUndoSnackbarEvent =
-        MutableLiveData<Event<ReadingStatus>>() // Carries the NEW status
+        MutableLiveData<Event<ReadingStatus>>()
     val showUndoSnackbarEvent: LiveData<Event<ReadingStatus>> = _showUndoSnackbarEvent
 
-    // Event to show the rating dialog (remains the same)
     private val _showRatingDialogEvent = MutableLiveData<Event<Unit>>()
     val showRatingDialogEvent: LiveData<Event<Unit>> = _showRatingDialogEvent
 
@@ -59,11 +57,10 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
         }
     }
     fun undoStatusChange() {
-        // Revert to the stored previous state
         previousBookState?.let { bookToRestore ->
             viewModelScope.launch {
                 bookDao.updateBook(bookToRestore)
-                previousBookState = null // Clear the undo state
+                previousBookState = null
             }
         }
     }

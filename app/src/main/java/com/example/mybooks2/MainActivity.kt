@@ -34,11 +34,10 @@ class MainActivity : AppCompatActivity() {
         val onboardingCompleted = prefs.getBoolean("onboarding_completed", false)
 
         if (!onboardingCompleted) {
-            // First time launch: Show OnboardingActivity
             val intent = Intent(this, OnboardingActivity::class.java)
             startActivity(intent)
-            finish() // Close MainActivity so user can't go back to it
-            return // Stop further execution in this onCreate
+            finish()
+            return
         }
 
         setContentView(binding.root)

@@ -164,20 +164,8 @@ class SearchOnlineActivity : AppCompatActivity() {
             binding.recyclerViewOnlineResults.visibility = if (state == SearchOnlineViewModel.SearchScreenState.SUCCESS) View.VISIBLE else View.GONE
             binding.textViewNoResults.visibility = if (state == SearchOnlineViewModel.SearchScreenState.NO_RESULTS) View.VISIBLE else View.GONE
             binding.layoutError.visibility = if (state == SearchOnlineViewModel.SearchScreenState.ERROR) View.VISIBLE else View.GONE
-
-//            if(state == SearchOnlineViewModel.SearchScreenState.ERROR){
-//                hideKeyboard()
-//            }
         }
 
-
-//        viewModel.searchResults.observe(this) { results ->
-//            searchAdapter.submitList(results) {
-//                if (results.isNotEmpty()) {
-//                    binding.recyclerViewOnlineResults.scrollToPosition(0)
-//                }
-//            }
-//        }
         viewModel.unifiedSearchResults.observe(this) { results ->
             searchAdapter.submitList(results) {
                 if (results.isNotEmpty()) {

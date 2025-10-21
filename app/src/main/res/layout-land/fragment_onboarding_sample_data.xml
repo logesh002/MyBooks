@@ -41,18 +41,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline_middle" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/slide_description"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:gravity="center"-->
-<!--        android:text="Add a few sample books to your library to see how the app works."-->
-<!--        android:textAppearance="?attr/textAppearanceBodySmall"-->
-<!--        android:textColor="?attr/colorOnSurfaceVariant"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/slide_title" />-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

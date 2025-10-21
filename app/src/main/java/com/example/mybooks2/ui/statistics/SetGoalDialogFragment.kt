@@ -15,11 +15,9 @@ import com.google.android.material.textfield.TextInputEditText
 class SetGoalDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        // Inflate the custom layout
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_set_goal, null)
         val goalEditText = dialogView.findViewById<TextInputEditText>(R.id.edit_text_goal)
 
-        // Pre-populate with the current goal from SharedPreferences
         val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val currentGoal = prefs.getString("yearly_reading_goal", "25") ?: "25"
         goalEditText.setText(currentGoal)
@@ -30,7 +28,6 @@ class SetGoalDialogFragment : DialogFragment() {
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Save") { _, _ ->
                 val newGoalStr = goalEditText.text.toString()
-                // Send the new goal string back to the calling fragment
                 setFragmentResult(REQUEST_KEY, bundleOf(RESULT_KEY to newGoalStr))
             }
             .create()

@@ -31,79 +31,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
-<!--            <com.google.android.material.card.MaterialCardView-->
-<!--                style="@style/Widget.Material3.CardView.Elevated"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="16dp">-->
-
-<!--                <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:padding="16dp">-->
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/text_goal_title"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="Yearly Reading Goal"-->
-<!--                        android:textAppearance="?attr/textAppearanceTitleMedium"-->
-<!--                        app:layout_constraintStart_toStartOf="parent"-->
-<!--                        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--                    <com.google.android.material.progressindicator.CircularProgressIndicator-->
-<!--                        android:id="@+id/progress_goal"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginTop="16dp"-->
-<!--                        android:max="100"-->
-<!--                        app:indicatorSize="120dp"-->
-<!--                        app:trackThickness="12dp"-->
-<!--                        app:trackCornerRadius="6dp"-->
-<!--                        app:indicatorColor="?attr/colorPrimary"-->
-<!--                        app:trackColor="?attr/colorSurfaceVariant"-->
-<!--                        app:layout_constraintStart_toStartOf="parent"-->
-<!--                        app:layout_constraintTop_toBottomOf="@id/text_goal_title"-->
-<!--                        tools:progress="60"-->
-<!--                        />-->
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/text_goal_progress"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:textAppearance="?attr/textAppearanceHeadlineMedium"-->
-<!--                        app:layout_constraintTop_toTopOf="@id/progress_goal"-->
-<!--                        app:layout_constraintBottom_toBottomOf="@id/progress_goal"-->
-<!--                        app:layout_constraintStart_toStartOf="@id/progress_goal"-->
-<!--                        app:layout_constraintEnd_toEndOf="@id/progress_goal"-->
-<!--                        tools:text="15"/>-->
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/text_goal_label"-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginStart="16dp"-->
-<!--                        android:textAppearance="?attr/textAppearanceBodyLarge"-->
-<!--                        android:textColor="?attr/colorOnSurfaceVariant"-->
-<!--                        app:layout_constraintStart_toEndOf="@id/progress_goal"-->
-<!--                        app:layout_constraintEnd_toEndOf="parent"-->
-<!--                        app:layout_constraintTop_toTopOf="@id/progress_goal"-->
-<!--                        app:layout_constraintBottom_toBottomOf="@id/progress_goal"-->
-<!--                        tools:text="books read out of 25"/>-->
-
-<!--                    <Button-->
-<!--                        android:id="@+id/button_set_goal"-->
-<!--                        style="?attr/materialButtonStyle"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginTop="16dp"-->
-<!--                        android:text="Set Goal"-->
-<!--                        app:layout_constraintTop_toBottomOf="@id/progress_goal"-->
-<!--                        app:layout_constraintEnd_toEndOf="parent" />-->
-
-<!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
-<!--            </com.google.android.material.card.MaterialCardView>-->
-
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.Material3.CardView.Elevated"
                 android:layout_width="match_parent"
@@ -118,7 +45,6 @@
                     android:layout_height="wrap_content"
                     android:padding="20dp">
 
-                    <!-- Title Row -->
                     <TextView
                         android:id="@+id/text_goal_title"
                         android:layout_width="0dp"
@@ -130,7 +56,6 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <!-- Progress Indicator -->
                     <com.google.android.material.progressindicator.CircularProgressIndicator
                         android:id="@+id/progress_goal"
                         android:layout_width="wrap_content"
@@ -146,7 +71,6 @@
                         app:layout_constraintEnd_toStartOf="@id/guideline_vertical"
                         tools:progress="60" />
 
-                    <!-- Centered Progress Text -->
                     <TextView
                         android:id="@+id/text_goal_progress"
                         android:layout_width="wrap_content"
@@ -160,14 +84,12 @@
                         app:layout_constraintEnd_toEndOf="@id/progress_goal"
                         tools:text="15" />
 
-                    <!-- Vertical Guideline to Align Right Text -->
                     <androidx.constraintlayout.widget.Guideline
                         android:id="@+id/guideline_vertical"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintGuide_percent="0.45" />
 
-                    <!-- Label beside the indicator -->
                     <LinearLayout
                         android:id="@+id/layout_goal_info"
                         android:layout_width="0dp"
@@ -187,17 +109,9 @@
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="books read out of 25" />
 
-<!--                        <TextView-->
-<!--                            android:id="@+id/text_goal_percentage"-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:textAppearance="?attr/textAppearanceLabelMedium"-->
-<!--                            android:textColor="?attr/colorOnSurfaceVariant"-->
-<!--                            tools:text="60% completed" />-->
 
                     </LinearLayout>
 
-                    <!-- CTA Button -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_set_goal"
                         style="?attr/materialButtonOutlinedStyle"

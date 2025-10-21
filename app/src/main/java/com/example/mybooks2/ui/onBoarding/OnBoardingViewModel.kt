@@ -36,7 +36,7 @@ class OnBoardingViewModel(private val bookDao: BookDao) : ViewModel() {
                     author = "J.R.R. Tolkien",
                     status = ReadingStatus.FOR_LATER,
                     totalPages = 310,
-                    coverImagePath = hobbitCoverPath // Use the path
+                    coverImagePath = hobbitCoverPath
                 ),
                 Book(
                     title = "Dune",
@@ -44,7 +44,7 @@ class OnBoardingViewModel(private val bookDao: BookDao) : ViewModel() {
                     status = ReadingStatus.IN_PROGRESS,
                     totalPages = 412,
                     currentPage = 50,
-                    coverImagePath = duneCoverPath // Use the path
+                    coverImagePath = duneCoverPath
                 ),
                 Book(
                     title = "Pride and Prejudice",
@@ -52,6 +52,7 @@ class OnBoardingViewModel(private val bookDao: BookDao) : ViewModel() {
                     status = ReadingStatus.FINISHED,
                     totalPages = 279,
                     personalRating = 4.0f,
+                    review = "This was one of the best books I have ever read. The world-building is second to none...",
                     coverImagePath = prideCoverPath
                 )
             )
@@ -83,15 +84,15 @@ class OnBoardingViewModel(private val bookDao: BookDao) : ViewModel() {
 }
 fun copyDrawableToInternalStorage(context: Context, @DrawableRes drawableResId: Int, uniqueName: String): String? {
     val bitmap = BitmapFactory.decodeResource(context.resources, drawableResId)
-    if (bitmap == null) return null // Could not decode drawable
+    if (bitmap == null) return null
 
-    val fileName = "cover_${uniqueName}.jpg" // Or .png if your drawable is PNG
+    val fileName = "cover_${uniqueName}.jpg"
     val directory = context.filesDir
     val file = File(directory, fileName)
 
     try {
         FileOutputStream(file).use { stream ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream) // Use PNG if needed
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
             stream.flush()
         }
     } catch (e: IOException) {

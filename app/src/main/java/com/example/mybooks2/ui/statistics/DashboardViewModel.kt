@@ -32,9 +32,8 @@ class DashboardViewModel(bookDao: BookDao,application: MyBooksApplication) : Vie
     val formatBreakdown: LiveData<List<FormatCount>> = bookDao.getBookCountByFormat().asLiveData()
 
     val yearlyGoal: LiveData<Int> =
-        SharedPreferenceLiveData(prefs, "yearly_reading_goal", 25) // Default 25
+        SharedPreferenceLiveData(prefs, "yearly_reading_goal", 25)
 
-    // LiveData for books read this year
     val booksReadThisYear: LiveData<Int> = bookDao.getBooksReadBetween(
         getStartOfYearTimestamp(),
         getStartOfNextYearTimestamp()
@@ -55,7 +54,6 @@ class DashboardViewModel(bookDao: BookDao,application: MyBooksApplication) : Vie
         calendar.add(Calendar.YEAR, 1)
         calendar.set(Calendar.DAY_OF_YEAR, 1)
         calendar.set(Calendar.HOUR_OF_DAY, 0)
-        // ... (reset other fields) ...
         return calendar.timeInMillis
     }
 
@@ -163,7 +161,6 @@ class DashboardViewModel(bookDao: BookDao,application: MyBooksApplication) : Vie
         }
 
         private fun updateValue() {
-            // Read as String first because EditTextPreference saves as String
             value = try {
                 prefs.getString(key, defaultValue.toString())?.toInt() ?: defaultValue
             } catch (e: NumberFormatException) {

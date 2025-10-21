@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.mybooks2.R // Use your R file
 import com.example.mybooks2.databinding.FragmentOnboardingSlideBinding
 
 class OnboardingSlideFragment : Fragment() {
@@ -25,11 +24,11 @@ class OnboardingSlideFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.let {
-             binding.slideImage.setImageResource(it.getInt(ARG_IMAGE_RES)) // Pass image resource if needed
+             binding.slideImage.setImageResource(it.getInt(ARG_IMAGE_RES))
             binding.slideTitle.text = it.getString(ARG_TITLE)
             binding.slideDescription.text = it.getString(ARG_DESCRIPTION)
             val drawable = binding.slideImage.drawable
-            if (drawable is Animatable) { // Check if it's an animated drawable
+            if (drawable is Animatable) {
                 (drawable as Animatable).start()
             }
         }

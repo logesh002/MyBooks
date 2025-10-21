@@ -41,7 +41,6 @@ class OnboardingActivity : AppCompatActivity(),OnboardingSampleDataFragment.Onbo
 
         binding.dotsIndicator.attachTo(binding.viewPager)
 
-        // --- Button Logic ---
         binding.buttonSkip.setOnClickListener { finishOnboarding() }
 
         binding.buttonNext.setOnClickListener {
@@ -50,23 +49,17 @@ class OnboardingActivity : AppCompatActivity(),OnboardingSampleDataFragment.Onbo
                 binding.viewPager.currentItem = currentItem + 1
             } else {
                 finishOnboarding()
-                // We're on the last slide (Sample Data fragment)
-                // The finish logic is handled by the fragment's listener now.
-                // You could optionally trigger the finish here too if needed,
-                // but it's better handled by the fragment's buttons.
             }
         }
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if (position == adapter.itemCount - 1) { // Last page
+                if (position == adapter.itemCount - 1) {
                     binding.buttonNext.visibility = View.INVISIBLE
                     binding.buttonSkip.visibility=View.INVISIBLE
                 } else {
-                 //   binding.buttonNext.text = "Next"
                     binding.buttonNext.visibility = View.VISIBLE
                     binding.buttonSkip.visibility=View.VISIBLE
-                    // binding.buttonSkip.visibility = View.VISIBLE
                 }
             }
         })
@@ -88,23 +81,17 @@ class OnboardingActivity : AppCompatActivity(),OnboardingSampleDataFragment.Onbo
 
     override fun onSampleDataAdded() {
         lifecycleScope.launch {
-            // Show a loading indicator here if desired
 
             binding.progressOverlay.visibility = View.VISIBLE
-            // 1. Call the ViewModel function and get the Job
             val insertionJob = viewModel.addSampleBooks(this@OnboardingActivity)
 
             insertionJob.join()
             binding.progressOverlay.visibility = View.GONE
 
-            // 3. Once complete, switch back to the main thread to finish
             withContext(Dispatchers.Main) {
-                // Hide loading indicator here
                 finishOnboarding()
             }
         }
-      //  viewModel.addSampleBooks(this)
-        //finishOnboarding()
     }
 
     override fun onSampleDataSkipped() {
@@ -120,7 +107,7 @@ class OnboardingActivity : AppCompatActivity(),OnboardingSampleDataFragment.Onbo
     }
 
     private class OnboardingPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
-        override fun getItemCount(): Int = 4 // Number of slides
+        override fun getItemCount(): Int = 4
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
