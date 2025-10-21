@@ -89,12 +89,10 @@ class DashboardViewModel(bookDao: BookDao,application: MyBooksApplication) : Vie
 
         val booksReadPerMonth: LiveData<List<BarEntry>> =
             bookDao.getFinishDatesOfFinishedBooks().map { timestamps ->
-                val calendar = Calendar.getInstance()
-                val currentYear = calendar.get(Calendar.YEAR)
+                val currentYear =  Calendar.getInstance().get(Calendar.YEAR)
 
                 val monthlyCounts = timestamps.map {
-                    calendar.timeInMillis = it
-                    calendar
+                    Calendar.getInstance().apply { timeInMillis = it }
                 }.filter {
                     it.get(Calendar.YEAR) == currentYear
                 }.groupBy {
