@@ -12,9 +12,11 @@ import androidx.fragment.app.activityViewModels
 import com.example.mybooks2.databinding.FragmentFilterBottomSheetBinding
 import com.example.mybooks2.ui.addBook2.BookFormat
 import com.example.mybooks2.ui.home.HomeViewModel
+import com.example.mybooks2.ui.home.TagMatchMode
 import com.example.mybooks2.ui.home.util.SortBy
 import com.example.mybooks2.ui.home.util.SortOrder
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.chip.Chip
 
 class FilterBottomSheetFragment : BottomSheetDialogFragment() {
     private val viewModel: HomeViewModel by activityViewModels { HomeViewModel.Companion.factory }
@@ -31,6 +33,7 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val savedCheckedTagNames = savedInstanceState?.getStringArrayList("checked_tag_names")?.toSet()
         viewModel.allAuthors.observe(viewLifecycleOwner) { authors ->
             val adapter =
                 ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, authors)
@@ -45,22 +48,42 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
                 binding.filterAuthor.dropDownHeight = maxDropdownHeight
             }
         }
-        viewModel.allTags.observe(viewLifecycleOwner) { tags ->
-            val adapter = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, tags)
-            binding.filterTag.setAdapter(adapter)
+//        viewModel.allTags.observe(viewLifecycleOwner) { tags ->
+//            val adapter = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, tags)
+//            binding.filterTag.setAdapter(adapter)
+//
+//            val maxDropdownHeight = (240 * resources.displayMetrics.density).toInt()
+//            val fiveOrFewerItems = adapter.count <= 5
+//
+//            if (fiveOrFewerItems) {
+//                binding.filterTag.dropDownHeight = ViewGroup.LayoutParams.WRAP_CONTENT
+//            } else {
+//                binding.filterTag.dropDownHeight = maxDropdownHeight
+//            }
+//        }
+        val currentState = viewModel.getCurrentQueryState()
 
-            val maxDropdownHeight = (240 * resources.displayMetrics.density).toInt()
-            val fiveOrFewerItems = adapter.count <= 5
 
-            if (fiveOrFewerItems) {
-                binding.filterTag.dropDownHeight = ViewGroup.LayoutParams.WRAP_CONTENT
-            } else {
-                binding.filterTag.dropDownHeight = maxDropdownHeight
+        viewModel.allTags.observe(viewLifecycleOwner) { allAvailableTags ->
+            binding.filterChipGroupTags.removeAllViews()
+            val inflater = LayoutInflater.from(requireContext())
+
+            allAvailableTags.forEach { tag ->
+                val chip = inflater.inflate(com.example.mybooks2.R.layout.chip_filter, binding.filterChipGroupTags, false) as Chip
+
+                chip.text = tag.name
+                chip.isCheckable = true
+                chip.id = View.generateViewId()
+                if (savedCheckedTagNames != null) {
+                    chip.isChecked = savedCheckedTagNames.contains(tag.name)
+                } else {
+                    chip.isChecked = currentState.tags.contains(tag.name)
+                }
+                binding.filterChipGroupTags.addView(chip)
             }
         }
-        val currentState = viewModel.getCurrentQueryState()
         binding.filterAuthor.setText(currentState.author, false)
-        binding.filterTag.setText(currentState.tag, false)
+      //  binding.filterTag.setText(currentState.tags, false)
 
 
         val chipIdToCheck = when (currentState.format) {
@@ -89,7 +112,7 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
 
         binding.buttonApplyFilters.setOnClickListener {
             val author = binding.filterAuthor.text.toString()
-            val tag = binding.filterTag.text.toString()
+          //  val tag = binding.filterTag.text.toString()
 
             val sortBy = when (binding.chipGroupSortBy.checkedChipId) {
                 com.example.mybooks2.R.id.chip_sort_date -> SortBy.DATE_ADDED
@@ -108,11 +131,22 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
                 com.example.mybooks2.R.id.chip_format_audiobook -> BookFormat.AUDIOBOOK
                 else -> null
             }
+            val selectedTagNames = binding.filterChipGroupTags.checkedChipIds.mapNotNull { chipId ->
+                view.findViewById<Chip>(chipId)?.text?.toString()
+            }.toSet()
+
+            val selectedTagMatchMode = if (binding.toggleTagMatchMode.checkedButtonId == com.example.mybooks2.R.id.button_match_all) {
+                TagMatchMode.ALL
+            } else {
+                TagMatchMode.ANY
+            }
 
             val bundle = bundleOf(
-                "KEY_AUTHOR" to author, "KEY_TAG" to tag,
+                "KEY_AUTHOR" to author,
+                "KEY_TAGS" to ArrayList(selectedTagNames),
                 "KEY_SORT_BY" to sortBy, "KEY_ORDER" to order,
-                "KEY_FORMAT" to selectedFormat
+                "KEY_FORMAT" to selectedFormat,
+                "KEY_TAG_MATCH_MODE" to selectedTagMatchMode
             )
             parentFragmentManager.setFragmentResult("query_request", bundle)
             dismiss()
@@ -121,6 +155,14 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
             parentFragmentManager.setFragmentResult("query_request", bundleOf())
             dismiss()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val checkedTagNames = binding.filterChipGroupTags.checkedChipIds.mapNotNull { chipId ->
+            view?.findViewById<Chip>(chipId)?.text?.toString()
+        }
+        outState.putStringArrayList("checked_tag_names", ArrayList(checkedTagNames))
     }
     override fun onStart() {
         super.onStart()

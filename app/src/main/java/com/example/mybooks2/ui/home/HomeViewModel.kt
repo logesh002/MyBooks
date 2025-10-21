@@ -28,13 +28,17 @@ import com.example.mybooks2.ui.home.util.SortOrder
 import kotlinx.coroutines.launch
 
 
+// Define this enum, perhaps near your QueryState
+enum class TagMatchMode { ANY, ALL }
 data class QueryState(
     val status: String = "In progress",
     val author: String? = null,
-    val tag: String? = null,
+ //   val tag: String? = null,
+    val tags: Set<String> = emptySet(),
     val sortBy: SortBy = SortBy.DATE_ADDED,
     val order: SortOrder = SortOrder.DESCENDING,
-    val format: BookFormat? = null
+    val format: BookFormat? = null,
+    val tagMatchMode: TagMatchMode = TagMatchMode.ANY
 )
 class HomeViewModel(val bookDao: BookDao,
                     private val layoutPreferences: LayoutPreferences,
@@ -101,7 +105,22 @@ class HomeViewModel(val bookDao: BookDao,
                 else -> book.status == ReadingStatus.UNFINISHED
             }
             val authorMatch = query.author.isNullOrBlank() || book.author.equals(query.author, true)
-            val tagMatch = query.tag.isNullOrBlank() || bookWithTags.tags.any { it.name.equals(query.tag, true) }
+            //val tagMatch = query.tag.isNullOrBlank() || bookWithTags.tags.any { it.name.equals(query.tag, true) }
+
+//            val tagMatch = query.tags.isEmpty() || bookWithTags.tags.any { bookTag ->
+//                query.tags.contains(bookTag.name)
+//            }
+
+            val tagMatch = when {
+                query.tags.isEmpty() -> true
+                query.tagMatchMode == TagMatchMode.ANY -> bookWithTags.tags.any { bookTag ->
+                    query.tags.contains(bookTag.name)
+                }
+                query.tagMatchMode == TagMatchMode.ALL -> query.tags.all { filterTag ->
+                    bookWithTags.tags.any { bookTag -> bookTag.name.equals(filterTag, true) }
+                }
+                else -> true
+            }
             val formatMatch = query.format == null || book.format == query.format
             statusMatch && authorMatch && tagMatch && formatMatch
         }

@@ -1,3 +1,5 @@
 <resources>
     <dimen name="fab_margin">200dp</dimen>
+    <dimen name="dialog_input_padding_horizontal">19dp</dimen>
+
 </resources>

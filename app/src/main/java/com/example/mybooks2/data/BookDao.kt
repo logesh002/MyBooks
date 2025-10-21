@@ -157,4 +157,7 @@ interface BookDao {
 
     @Query("SELECT * FROM books WHERE status = 'FINISHED' AND startDate IS NOT NULL AND finishedDate IS NOT NULL ORDER BY (finishedDate - startDate) ASC LIMIT 1")
     fun getShortestRead(): Flow<Book?>
+
+    @Query("SELECT COUNT(*) FROM books WHERE status = 'FINISHED' AND finishedDate >= :startTimestamp AND finishedDate < :endTimestamp")
+    fun getBooksReadBetween(startTimestamp: Long, endTimestamp: Long): Flow<Int>
 }

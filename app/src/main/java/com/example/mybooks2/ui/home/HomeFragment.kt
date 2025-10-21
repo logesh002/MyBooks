@@ -138,7 +138,8 @@ class HomeFragment : Fragment() {
                 viewModel.updateQuery { currentState ->
                     currentState.copy(
                         author = null,
-                        tag = null,
+                        tags = emptySet(),
+                        tagMatchMode = TagMatchMode.ANY,
                         format = null,
                         sortBy = SortBy.DATE_ADDED,
                         order = SortOrder.DESCENDING
@@ -146,18 +147,20 @@ class HomeFragment : Fragment() {
                 }
             } else {
                 val author = bundle.getString("KEY_AUTHOR")
-                val tag = bundle.getString("KEY_TAG")
+                val tag = bundle.getStringArrayList("KEY_TAGS")
                 val format = bundle.getSerializable("KEY_FORMAT") as? BookFormat
                 val sortBy = bundle.getSerializable("KEY_SORT_BY") as? SortBy
                 val order = bundle.getSerializable("KEY_ORDER") as? SortOrder
+                val tagMatchMode = (bundle.getSerializable("KEY_TAG_MATCH_MODE") as? TagMatchMode) ?: TagMatchMode.ANY
 
                 viewModel.updateQuery { currentState ->
                     currentState.copy(
                         author = if (author.isNullOrBlank()) null else author,
-                        tag = if (tag.isNullOrBlank()) null else tag,
+                        tags = tag?.toSet()?:emptySet(),
                         format = format,
                         sortBy = sortBy ?: currentState.sortBy,
-                        order = order ?: currentState.order
+                        order = order ?: currentState.order,
+                        tagMatchMode = tagMatchMode
                     )
                 }
             }
