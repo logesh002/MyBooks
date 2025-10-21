@@ -18,12 +18,13 @@ import com.example.mybooks2.network.ApiClientGoogle
 import com.example.mybooks2.ui.addBook2.Event
 import kotlinx.coroutines.launch
 
+import com.example.mybooks2.BuildConfig // Make sure to import your app's BuildConfig
 
 class SearchOnlineViewModel(val application: MyBooksApplication) : ViewModel() {
 
     enum class SearchScreenState { IDLE, LOADING, SUCCESS, ERROR, NO_RESULTS }
 
-    private val API_KEY ="***REMOVED***"
+    private val API_KEY = BuildConfig.API_KEY
     private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
 
     val selectedApi = MutableLiveData<String>()
@@ -51,80 +52,6 @@ class SearchOnlineViewModel(val application: MyBooksApplication) : ViewModel() {
     init {
         selectedApi.value = prefs.getString("online_search_api", "OPEN_LIBRARY")
     }
-
-//    fun search(query: String) {
-//        if (!NetworkUtils.isNetworkAvailable(application)) {
-//            _errorMessage.value = Event("No internet connection")
-//            return
-//        }
-//        val sanitizedQuery = query.trim().replace(Regex("\\s+"), " ")
-//
-//        if (sanitizedQuery == lastQuery) {
-//            return
-//        }
-//        lastQuery = sanitizedQuery
-//
-//        if (sanitizedQuery.isBlank()) {
-//            _searchResults.value = emptyList()
-//            return
-//        }
-//        _isLoading.value = true
-//        _screenState.postValue(SearchScreenState.LOADING)
-//        viewModelScope.launch {
-//            try {
-//                val response = ApiClient.apiService.searchBooks(query)
-//                if (response.docs.isEmpty()) {
-//                    _screenState.postValue(SearchScreenState.NO_RESULTS)
-//                } else {
-//                    _searchResults.postValue(response.docs)
-//                    _screenState.postValue(SearchScreenState.SUCCESS)
-//                }
-//            } catch (e: Exception) {
-//                _screenState.postValue(SearchScreenState.ERROR)
-//            }
-//        }
-//    }
-
-    fun search(query: String, force: Boolean = false) {
-        val sanitizedQuery = query.trim().replace(Regex("\\s+"), " ")
-
-        if (!force && sanitizedQuery == lastQuery) {
-            return
-        }
-        lastQuery = sanitizedQuery
-
-        if (sanitizedQuery.isBlank()) {
-            _searchResults.value = emptyList()
-            _screenState.value = SearchScreenState.IDLE
-            return
-        }
-
-        if (!NetworkUtils.isNetworkAvailable(application)) {
-            _errorMessage.value = Event("No internet connection") // You can still use this for a specific message
-            _screenState.value = SearchScreenState.ERROR
-            return
-        }
-
-        _screenState.value = SearchScreenState.LOADING
-        viewModelScope.launch {
-            try {
-              //  val response = ApiClient.apiService.searchBooks(sanitizedQuery)
-                val response = ApiClientGoogle.googleBooksApiService.searchVolumes(query, API_KEY)
-                if (response.items.isNullOrEmpty()) {
-                    _searchResults.postValue(emptyList()) // Assuming _searchResults is now LiveData<List<VolumeItem>>
-                    _screenState.postValue(SearchScreenState.NO_RESULTS)
-                } else {
-                    _searchResults.postValue(response.items)
-                    _screenState.postValue(SearchScreenState.SUCCESS)
-                }
-            } catch (e: Exception) {
-                _searchResults.postValue(emptyList())
-                _screenState.postValue(SearchScreenState.ERROR)
-                e.printStackTrace()
-            }
-        }
-    }
-
 
     fun searchNew(query: String, force: Boolean = false) {
         val sanitizedQuery = query.trim().replace(Regex("\\s+"), " ")

@@ -90,12 +90,12 @@ class OnboardingActivity : AppCompatActivity(),OnboardingSampleDataFragment.Onbo
         lifecycleScope.launch {
             // Show a loading indicator here if desired
 
-            binding.progressBar.visibility = View.VISIBLE
+            binding.progressOverlay.visibility = View.VISIBLE
             // 1. Call the ViewModel function and get the Job
             val insertionJob = viewModel.addSampleBooks(this@OnboardingActivity)
 
             insertionJob.join()
-            binding.progressBar.visibility = View.GONE
+            binding.progressOverlay.visibility = View.GONE
 
             // 3. Once complete, switch back to the main thread to finish
             withContext(Dispatchers.Main) {

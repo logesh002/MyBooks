@@ -508,7 +508,7 @@ class DetailActivity : AppCompatActivity() {
             binding.collapsingToolbarLayout.setContentScrimColor(Color.TRANSPARENT)
             binding.collapsingToolbarLayout.statusBarScrim = null
             binding.appBar.elevation = 0f
-
+           // binding.toolbar.updatePadding(top = 20)
             binding.collapsingToolbarLayout.title = ""
             binding.toolbar.title = ""
             binding.toolbarTitleCustom.visibility = View.VISIBLE
@@ -735,6 +735,11 @@ class DetailActivity : AppCompatActivity() {
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         startActivity(Intent.createChooser(intent, "Share Book"))
+    }
+
+    override fun onStop() {
+        super.onStop()
+        hasLoadedInitialData =false
     }
 
     override fun onDestroy() {
