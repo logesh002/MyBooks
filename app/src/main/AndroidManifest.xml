@@ -18,6 +18,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.onlineSearch.SearchOnlineActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ui.detailScreen.DetailActivity"

@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mybooks2.databinding.ActivitySearchOnlineBinding
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Looper
@@ -85,7 +84,7 @@ class SearchOnlineActivity : AppCompatActivity() {
     private fun showKeyboard(view: View) {
         if (view.requestFocus()) {
             Handler(Looper.getMainLooper()).postDelayed({
-                val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = view.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
             }, 100)
         }
@@ -138,7 +137,7 @@ class SearchOnlineActivity : AppCompatActivity() {
                     viewModel.searchNew(textView.text.toString())
                 }
 
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(textView.windowToken, 0)
                 textView.clearFocus()
 
@@ -177,7 +176,7 @@ class SearchOnlineActivity : AppCompatActivity() {
         viewModel.errorMessage.observe(this) { event ->
 
             event.getContentIfNotHandled()?.let { message ->
-                hideKeyboard()
+               // hideKeyboard()
                 Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
             }
         }
