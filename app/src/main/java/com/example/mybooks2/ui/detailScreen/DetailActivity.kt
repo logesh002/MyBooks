@@ -1,6 +1,7 @@
 package com.example.mybooks2.ui.detailScreen
 
 import DeleteBookDialogFragment
+import android.animation.LayoutTransition
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
@@ -299,6 +300,12 @@ class DetailActivity : AppCompatActivity() {
         binding.cardDescription.visibility = if (book.description?.isNotBlank() ?:false ) View.VISIBLE else View.GONE
         binding.textViewDescription.text = book.description
 
+        if(book.status == ReadingStatus.IN_PROGRESS){
+            binding.statusFrame.layoutTransition = null
+        }
+        else{
+            binding.statusFrame.layoutTransition= LayoutTransition()
+        }
 
         when (book.status) {
             ReadingStatus.FOR_LATER -> {
