@@ -131,11 +131,11 @@ class AddBook2 : AppCompatActivity() {
             }
             supportActionBar?.title = "Add Book"
         }
+        setupFormatDropdown()
         setupViews()
         setupObservers()
         setupTextWatchers()
         setupTags()
-        setupFormatDropdown()
 
         binding.toolbar.setNavigationOnClickListener {
             handleCloseAttempt()
@@ -154,17 +154,8 @@ class AddBook2 : AppCompatActivity() {
 
     }
 
-    private fun scrollToShowView(scrollView: View, viewToScrollTo: View) {
-        val scrollRect = Rect()
-        scrollView.getHitRect(scrollRect)
-
-        if (!viewToScrollTo.getLocalVisibleRect(scrollRect)) {
-            (scrollView as? NestedScrollView)?.smoothScrollTo(0, viewToScrollTo.bottom)
-        }
-    }
-
     private fun setupFormatDropdown() {
-        val formats = BookFormat.values().map { it.displayName }
+        val formats = BookFormat.entries.map { it.displayName }
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, formats)
         binding.autoCompleteFormat.setAdapter(adapter)
 
@@ -181,9 +172,6 @@ class AddBook2 : AppCompatActivity() {
         }
     }
 
-    private fun isLandscape(): Boolean {
-        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    }
 
     private fun showDiscardChangesDialog() {
         DiscardChangesDialogFragment.newInstance()
@@ -352,10 +340,13 @@ class AddBook2 : AppCompatActivity() {
             text?.length?.let {
                 binding.titleInputLayout.isCounterEnabled = it>= 249
             }
-            viewModel.updateTitle(text.toString())
+            if(text.toString() != viewModel.bookFormState.value.title) viewModel.updateTitle(text.toString())
         }
 
         binding.subtitleEditText.doAfterTextChanged { text ->
+            text?.length?.let {
+                binding.subtitleInputLayout.isCounterEnabled = it>= 450
+            }
             viewModel.updateSubtitle(text.toString())
         }
 
@@ -363,7 +354,7 @@ class AddBook2 : AppCompatActivity() {
             text?.length?.let {
                 binding.authorInputLayout.isCounterEnabled = it>= 149
             }
-            viewModel.updateAuthor(text.toString())
+            if(text.toString() != viewModel.bookFormState.value.author) viewModel.updateAuthor(text.toString())
         }
 
         binding.pagesEditText.doAfterTextChanged { text ->
@@ -424,12 +415,12 @@ private fun setupObservers() {
             binding.authorEditText.setText(state.author)
         }
 
-        if (binding.pagesEditText.text.toString() != state.numberOfPages.toString()) {
-            binding.pagesEditText.setText(state.numberOfPages.toString())
+        if (binding.pagesEditText.text.toString() != state.numberOfPages) {
+            binding.pagesEditText.setText(state.numberOfPages)
         }
 
-        if (binding.yearEditText.text.toString() != state.publicationYear.toString()) {
-            binding.yearEditText.setText(state.publicationYear.toString())
+        if (binding.yearEditText.text.toString() != state.publicationYear) {
+            binding.yearEditText.setText(state.publicationYear)
         }
 
         if (binding.descriptionEditText.text.toString() != state.description) {
@@ -473,7 +464,7 @@ private fun setupObservers() {
         }
 
         if (binding.ratingBar.rating != state.rating) {
-            binding.ratingBar.rating = state.rating.toFloat()
+            binding.ratingBar.rating = state.rating
         }
         if (binding.autoCompleteFormat.text.toString() != state.format.displayName) {
             binding.autoCompleteFormat.setText(state.format.displayName, false)

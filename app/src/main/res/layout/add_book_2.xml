@@ -159,7 +159,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:hint="Enter the subtitle"
-                app:counterEnabled="true"
+                app:counterEnabled="false"
                 app:counterMaxLength="500"
                 app:startIconDrawable="@drawable/outline_book_24"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
@@ -345,6 +345,7 @@
                     android:id="@+id/auto_complete_format"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:saveEnabled="false"
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
