@@ -77,6 +77,14 @@ class OnboardingActivity : AppCompatActivity(),OnboardingSampleDataFragment.Onbo
                 }
             }
         }
+        viewModel.isLoading.observe(this){
+            if(it){
+                binding.progressOverlay.visibility = View.VISIBLE
+            }
+            else{
+                binding.progressOverlay.visibility = View.GONE
+            }
+        }
     }
 
     override fun onSampleDataAdded() {
@@ -86,7 +94,7 @@ class OnboardingActivity : AppCompatActivity(),OnboardingSampleDataFragment.Onbo
             val insertionJob = viewModel.addSampleBooks(this@OnboardingActivity)
 
             insertionJob.join()
-            binding.progressOverlay.visibility = View.GONE
+
 
             withContext(Dispatchers.Main) {
                 finishOnboarding()

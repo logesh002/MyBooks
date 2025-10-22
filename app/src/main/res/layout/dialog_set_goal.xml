@@ -17,6 +17,7 @@
             android:id="@+id/edit_text_goal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLength="3"
             android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>
 

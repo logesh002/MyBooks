@@ -45,6 +45,7 @@
             android:id="@+id/recycler_view_search_results"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginStart="28dp"
             android:clipToPadding="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             />

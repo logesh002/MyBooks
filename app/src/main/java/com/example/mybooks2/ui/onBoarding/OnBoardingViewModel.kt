@@ -11,6 +11,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.annotation.DrawableRes
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.mybooks2.R
 import com.example.mybooks2.model.Book
@@ -25,8 +27,11 @@ import java.io.IOException
 import java.util.UUID
 class OnBoardingViewModel(private val bookDao: BookDao) : ViewModel() {
 
+    private val _isLoading = MutableLiveData<Boolean>(false)
+    val isLoading: LiveData<Boolean> = _isLoading
     fun addSampleBooks(context: Context): Job {
         return viewModelScope.launch(Dispatchers.IO) {
+            _isLoading.postValue(true)
 
             val hobbitCoverPath = copyDrawableToInternalStorage(context, R.drawable.sample_cover_hobbit, UUID.randomUUID().toString())
             val duneCoverPath = copyDrawableToInternalStorage(context, R.drawable.sample_cover_dune, UUID.randomUUID().toString())
@@ -229,11 +234,18 @@ class OnBoardingViewModel(private val bookDao: BookDao) : ViewModel() {
 
             sampleBooks.forEach { book ->
                 try {
-                    bookDao.insertBook(book)
+                    if(book.title == "The Hobbit"){
+                        bookDao.insertBookWithTags(book,listOf("Fantasy","Adventure"))
+                    }
+                    else if(book.title == "Atomic Habits" || book.title == "Sapiens"){
+                        bookDao.insertBookWithTags(book,listOf("Non-Fiction"))
+                    }
+                    else bookDao.insertBook(book)
                 } catch (e: Exception) {
                     Log.e("SampleData", "Error inserting sample book: ${book.title}", e)
                 }
             }
+            _isLoading.postValue(false)
         }
     }
 

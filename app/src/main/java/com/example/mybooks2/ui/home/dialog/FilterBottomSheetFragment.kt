@@ -1,12 +1,14 @@
 package com.example.mybooks2.ui.home.dialog
 
 import android.R
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ArrayAdapter
+import android.widget.FrameLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import com.example.mybooks2.databinding.FragmentFilterBottomSheetBinding
@@ -15,6 +17,8 @@ import com.example.mybooks2.ui.home.HomeViewModel
 import com.example.mybooks2.ui.home.TagMatchMode
 import com.example.mybooks2.ui.home.util.SortBy
 import com.example.mybooks2.ui.home.util.SortOrder
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 
@@ -138,6 +142,18 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
         binding.buttonClearFilters.setOnClickListener {
             parentFragmentManager.setFragmentResult("query_request", bundleOf())
             dismiss()
+        }
+    }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState).apply {
+            setOnShowListener { dialog ->
+                val bottomSheetDialog = dialog as BottomSheetDialog
+                val bottomSheet = bottomSheetDialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
+                if (bottomSheet != null) {
+                    val behavior = BottomSheetBehavior.from(bottomSheet)
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                }
+            }
         }
     }
 

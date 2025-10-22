@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Tags"
-                android:textAppearance="?attr/textAppearanceTitleMedium"/>
+                android:textAppearance="?attr/textAppearanceLabelLarge"/>
 
 
             <com.google.android.material.chip.ChipGroup
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Tag Matching"
-                android:textAppearance="?attr/textAppearanceLabelLarge"/>
+                android:textAppearance="?attr/textAppearanceLabelSmall"/>
 
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/toggle_tag_match_mode"

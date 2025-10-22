@@ -21,6 +21,7 @@
             app:dialogTitle="Enter your goal"
             app:useSimpleSummaryProvider="true"
             android:defaultValue="25"
+            android:digits="0123456789"
             android:inputType="number" />
     </PreferenceCategory>
     <PreferenceCategory app:title="Data Management">

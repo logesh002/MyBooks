@@ -2,6 +2,7 @@ package com.example.mybooks2.ui.setting
 
 import android.app.Application
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
@@ -10,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -76,6 +78,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("chip_order_preference")?.setOnPreferenceClickListener {
             ReorderChipsDialogFragment().show(parentFragmentManager, "ReorderChipsDialog")
             true
+        }
+        val setgoal = findPreference<EditTextPreference>("yearly_reading_goal")
+        setgoal?.setOnBindEditTextListener { editText ->
+            editText.inputType = InputType.TYPE_CLASS_NUMBER
         }
 
         val versionPreference: Preference? = findPreference("app_version")
