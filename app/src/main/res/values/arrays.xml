@@ -41,7 +41,7 @@
         <item>AUDIOBOOK</item>
     </string-array>
     <string-array name="api_provider_entries">
-        <item>Google Books (Recommended)</item>
+        <item>Google Books</item>
         <item>Open Library</item>
     </string-array>
 
