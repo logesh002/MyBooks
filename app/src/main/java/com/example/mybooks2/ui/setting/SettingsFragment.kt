@@ -98,7 +98,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         viewModel.toastMessage.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { message ->
-                Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(view, message, Snackbar.LENGTH_LONG).show()
             }
         }
     }

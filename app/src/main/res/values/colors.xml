@@ -142,6 +142,6 @@
     <color name="md_theme_surfaceContainerHighest_highContrast">#D4C3BE</color>
     <color name="menu_text_color">#FF000000</color> <!-- Black -->
     <color name="menu_icon_color">#FF757575</color>
-    <color name="your_selection_border_color">@color/md_theme_primary</color>
+    <color name="selection_border_color">@color/md_theme_primary</color>
 
 </resources>

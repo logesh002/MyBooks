@@ -114,7 +114,10 @@ class SettingsViewModel(
                 _toastMessage.postValue(Event(message))
             }
             catch (e: Exception) {
-                _toastMessage.postValue(Event("Error: Failed to import data. Check file format."))
+                if(importedCount>0){
+                    _toastMessage.postValue(Event("Error: Failed to import data fully check field formats, Import complete: $importedCount books"))
+                }
+                else _toastMessage.postValue(Event("Error: Failed to import data. Check file format."))
                 e.printStackTrace()
             }
         }

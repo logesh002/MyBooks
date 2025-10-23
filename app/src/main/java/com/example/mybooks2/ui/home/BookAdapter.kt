@@ -68,7 +68,7 @@ class BookAdapter(private val onItemClicked: (Book) -> Unit,
 
         if (isSelected) {
             cardView.strokeWidth = holder.itemView.context.resources.getDimensionPixelSize(R.dimen.selected_card_stroke_width)
-            cardView.strokeColor = ContextCompat.getColor(holder.itemView.context, R.color.your_selection_border_color)
+            cardView.strokeColor = ContextCompat.getColor(holder.itemView.context, R.color.selection_border_color)
         } else {
             cardView.strokeWidth = 0
         }
@@ -80,10 +80,10 @@ class BookAdapter(private val onItemClicked: (Book) -> Unit,
                 onItemClicked(book)
             }
         }
-        holder.itemView.setOnLongClickListener {
-            onItemLongClicked(book)
-            true
-        }
+//        holder.itemView.setOnLongClickListener {
+//            onItemLongClicked(book)
+//            true
+//        }
 
         holder.itemView.setOnLongClickListener {
             onItemLongClicked(book)
