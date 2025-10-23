@@ -1,6 +1,5 @@
 package com.example.mybooks2.ui.onlineSearch
 
-import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mybooks2.databinding.ActivitySearchOnlineBinding

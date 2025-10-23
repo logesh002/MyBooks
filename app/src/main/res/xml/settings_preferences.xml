@@ -1,19 +1,24 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="Appearance">
+    <PreferenceCategory app:title="Appearance"
+        android:icon="@drawable/outline_routine_24"
+        >
 
         <ListPreference
             app:key="theme_preference"
             app:title="Theme"
             app:summary="Choose your app's theme"
             app:entries="@array/theme_entries"
+
             app:entryValues="@array/theme_values"
             app:defaultValue="SYSTEM" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Reading Goals">
+    <PreferenceCategory app:title="Reading Goals"
+        app:icon="@drawable/ic_goal"
+        >
         <EditTextPreference
             app:key="yearly_reading_goal"
             app:title="Yearly Reading Goal"
@@ -24,7 +29,9 @@
             android:digits="0123456789"
             android:inputType="number" />
     </PreferenceCategory>
-    <PreferenceCategory app:title="Data Management">
+    <PreferenceCategory app:title="Data Management"
+        app:icon="@drawable/outline_database_24"
+        >
 
         <Preference
             app:key="reset_database"
@@ -43,7 +50,9 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Defaults">
+    <PreferenceCategory app:title="Defaults"
+        app:icon="@drawable/outline_reset_settings_24"
+        >
 
         <ListPreference
             app:key="default_status_preference"
@@ -63,7 +72,9 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Home Screen">
+    <PreferenceCategory app:title="Home Screen"
+        app:icon="@drawable/outline_home_24"
+        >
 
         <Preference
             app:key="chip_order_preference"
@@ -71,7 +82,9 @@
             app:summary="Set the display order for the status filter chips." />
 
     </PreferenceCategory>
-    <PreferenceCategory app:title="Online Search">
+    <PreferenceCategory app:title="Online Search"
+        app:icon="@drawable/outline_database_search_24"
+        >
 
         <ListPreference
             app:key="online_search_api"
@@ -83,7 +96,8 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="About">
+    <PreferenceCategory app:title="About"
+        app:icon="@drawable/outline_info_24">
 
         <Preference
             app:key="app_version"

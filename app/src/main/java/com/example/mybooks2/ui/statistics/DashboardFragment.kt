@@ -230,6 +230,7 @@ class DashboardFragment : Fragment() {
 
         pieChart.legend.textColor = ContextCompat.getColor(requireContext(), R.color.md_theme_onSurface)
 
+        pieChart.legend.isEnabled = false
         pieChart.invalidate()
     }
     private fun setupMonthlyChart(entries: List<BarEntry>) {

@@ -190,30 +190,106 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView android:text="Reading Habits"
+<!--                    <TextView android:text="Reading Habits"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:textAppearance="?attr/textAppearanceTitleMedium"-->
+<!--                        android:layout_marginBottom="8dp"/>-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:textAppearance="?attr/textAppearanceTitleMedium" android:layout_marginBottom="8dp"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:id="@+id/text_books_in_progress" tools:text="Currently reading: 3 books" android:textAppearance="?attr/textAppearanceBodyLarge" android:layout_marginTop="8dp"/>
-                    <TextView android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:id="@+id/text_avg_rating" tools:text="Average rating: 4.2 stars" android:textAppearance="?attr/textAppearanceBodyLarge" android:layout_marginTop="8dp"/>
-                    <TextView android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:id="@+id/text_avg_time"
-                        tools:text="Average time to finish: 7 days"
-                        android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:layout_marginTop="8dp"/>
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        >
 
-                    <TextView android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:id="@+id/text_favorite_tag"
-                        tools:text="Average time to finish: 7 days"
-                        android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:layout_marginTop="8dp"/>
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/outline_menu_book_24"
+                            app:tint="?attr/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Reading Habits"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textColor="?attr/colorOnSurface" />
+                    </LinearLayout>
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:layout_marginTop="12dp"-->
+<!--                    android:divider="?android:attr/dividerHorizontal"-->
+<!--                    android:showDividers="middle">-->
+<!--                    <TextView-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:id="@+id/text_books_in_progress"-->
+<!--                        tools:text="Currently reading: 3 books"-->
+<!--                        android:textAppearance="?attr/textAppearanceBodyLarge"-->
+<!--                        android:layout_marginTop="8dp"/>-->
+<!--                    <TextView android:layout_height="wrap_content"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:id="@+id/text_avg_rating"-->
+<!--                        tools:text="Average rating: 4.2 stars"-->
+<!--                        android:textAppearance="?attr/textAppearanceBodyLarge"-->
+<!--                        android:layout_marginTop="8dp"/>-->
+<!--                    <TextView android:layout_height="wrap_content"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:id="@+id/text_avg_time"-->
+<!--                        tools:text="Average time to finish: 7 days"-->
+<!--                        android:textAppearance="?attr/textAppearanceBodyLarge"-->
+<!--                        android:layout_marginTop="8dp"/>-->
+
+<!--                    <TextView android:layout_height="wrap_content"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:id="@+id/text_favorite_tag"-->
+<!--                        tools:text="Average time to finish: 7 days"-->
+<!--                        android:textAppearance="?attr/textAppearanceBodyLarge"-->
+<!--                        android:layout_marginTop="8dp"/>-->
+<!--                </LinearLayout>-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="12dp"
+                        android:divider="?android:attr/dividerHorizontal"
+                        android:showDividers="middle">
+
+                        <TextView
+                            android:id="@+id/text_books_in_progress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="4dp"
+                            tools:text="Currently reading: 3 books"
+                            android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+                        <TextView
+                            android:id="@+id/text_avg_rating"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="4dp"
+                            tools:text="Average rating: 4.2 stars"
+                            android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+                        <TextView
+                            android:id="@+id/text_avg_time"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="4dp"
+                            tools:text="Average time to finish: 7 days"
+                            android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+                        <TextView
+                            android:id="@+id/text_favorite_tag"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="4dp"
+                            tools:text="Favorite tag: Fiction"
+                            android:textAppearance="?attr/textAppearanceBodyLarge" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -228,19 +304,39 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView android:text="Publication year by decade"
+<!--                    <TextView android:text="Publication year by decade"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:textAppearance="?attr/textAppearanceTitleMedium" -->
+<!--                        android:layout_marginBottom="8dp"/>-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:textAppearance="?attr/textAppearanceTitleMedium" android:layout_marginBottom="8dp"/>
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/outline_calendar_month_24"
+                            app:tint="?attr/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Publication by Decade"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textColor="?attr/colorOnSurface" />
+                    </LinearLayout>
 
                     <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
                         android:id="@+id/text_books_by_decade"
-                        tools:text="Formats: Paperback (15), E-book (10)"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:layout_marginTop="8dp"
-                        />
+                        tools:text="2000s (15), 2010s (10)" />
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
