@@ -408,7 +408,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">">
+        android:padding="16dp">
 <TextView
     android:text="My Review"
     android:layout_width="match_parent"
@@ -422,6 +422,7 @@
     android:layout_marginTop="8dp"
     android:textAppearance="?attr/textAppearanceBodyMedium"
     tools:text="A long book description goes here..."
+    android:textIsSelectable="true"
     />
 </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
