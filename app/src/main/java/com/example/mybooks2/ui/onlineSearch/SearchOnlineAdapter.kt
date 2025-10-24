@@ -59,7 +59,7 @@ class SearchOnlineAdapter(private val onItemClicked: (UnifiedSearchResult) -> Un
             titleTextView.text = result.title
             authorTextView.text = result.authors
 
-            coverImageView.load(result.coverUrl) {
+            coverImageView.load(result.smallCoverUrl) {
                 placeholder(R.drawable.outline_book_24)
                 error(R.drawable.outline_book_24)
             }
