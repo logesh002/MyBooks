@@ -57,9 +57,10 @@
             android:gravity="center_horizontal"
             android:layout_gravity="center"
             android:layout_marginBottom="100dp"
-            android:text="No books found..."
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:text="No books found"
+            android:textAppearance="?attr/textAppearanceTitleSmall"
+            android:textColor="?attr/colorOnSurface"
+            android:textAlignment="center"
             android:visibility="gone"
             tools:visibility="visible" />
 

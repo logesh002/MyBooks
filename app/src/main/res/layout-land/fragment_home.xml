@@ -80,107 +80,27 @@
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="2"
                 tools:listitem="@layout/grid_item_book" />
-<!--        <LinearLayout-->
-<!--            android:id="@+id/book_not_found"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:orientation="vertical"-->
-<!--            android:visibility="gone"-->
-<!--            tools:visibility="visible"-->
-<!--            android:gravity="center"-->
-<!--            android:padding="32dp">-->
-
-<!--            <ImageView-->
-<!--                android:layout_width="120dp"-->
-<!--                android:layout_height="120dp"-->
-<!--                android:src="@drawable/outline_library_books_24"-->
-<!--                android:alpha="0.6"-->
-<!--                app:tint="?attr/colorOnSurfaceVariant" />-->
-
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="24dp"-->
-<!--                android:text="No books found"-->
-<!--                android:textAppearance="?attr/textAppearanceTitleLarge"-->
-<!--                android:textColor="?attr/colorOnSurface"-->
-<!--                android:textAlignment="center" />-->
-
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:text="Click + button below to new book"-->
-<!--                android:textAppearance="?attr/textAppearanceBodyMedium"-->
-<!--                android:textColor="?attr/colorOnSurfaceVariant"-->
-<!--                android:textAlignment="center"-->
-<!--                android:alpha="0.87" />-->
-
-<!--        </LinearLayout>-->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/book_not_found"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical"
             android:visibility="gone"
             tools:visibility="visible"
-            android:padding="32dp">
-
-            <View
-                android:id="@+id/empty_background"
-                android:layout_width="140dp"
-                android:layout_height="140dp"
-                android:background="@drawable/circle_background"
-                android:backgroundTint="?attr/colorPrimaryContainer"
-                android:alpha="0.2"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintVertical_bias="0.25" />
-
-            <ImageView
-                android:id="@+id/empty_icon"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:src="@drawable/outline_auto_stories_24"
-                android:contentDescription="@null"
-                app:layout_constraintTop_toTopOf="@id/empty_background"
-                app:layout_constraintBottom_toBottomOf="@id/empty_background"
-                app:layout_constraintStart_toStartOf="@id/empty_background"
-                app:layout_constraintEnd_toEndOf="@id/empty_background"
-                app:tint="?attr/colorPrimary" />
+            android:gravity="center"
+            android:padding="12dp">
 
             <TextView
-                android:id="@+id/empty_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 android:text="No books found"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textColor="?attr/colorOnSurface"
-                android:textAlignment="center"
-                app:layout_constraintTop_toBottomOf="@id/empty_background"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:textAlignment="center" />
 
-            <TextView
-                android:id="@+id/empty_description"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="48dp"
-                android:layout_marginEnd="48dp"
-                android:text="Click + button below to add a new book"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textAlignment="center"
-                android:maxLines="2"
-                app:layout_constraintTop_toBottomOf="@id/empty_title"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -189,7 +109,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="16dp"
         android:contentDescription="Add new book"
         android:src="@drawable/outline_add_24"
         app:layout_constraintBottom_toBottomOf="parent"

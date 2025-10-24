@@ -1,0 +1,150 @@
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="360dp"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="?attr/colorSurfaceContainer"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="?attr/colorOutlineVariant">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <!-- Book Cover with rounded corners and shadow -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/share_cover_container"
+            android:layout_width="110dp"
+            android:layout_height="165dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/share_image_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:src="@tools:sample/backgrounds/scenic" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/share_text_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
+            android:textStyle="bold"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:lineSpacingExtra="2dp"
+            app:layout_constraintStart_toEndOf="@id/share_cover_container"
+            app:layout_constraintTop_toTopOf="@id/share_cover_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="The Name of the Wind" />
+
+        <!-- Author -->
+        <TextView
+            android:id="@+id/share_text_author"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            app:layout_constraintStart_toStartOf="@id/share_text_title"
+            app:layout_constraintTop_toBottomOf="@id/share_text_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Patrick Rothfuss" />
+
+        <!-- Rating Container -->
+        <LinearLayout
+            android:id="@+id/share_rating_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="@id/share_text_title"
+            app:layout_constraintTop_toBottomOf="@id/share_text_author">
+
+            <RatingBar
+                android:id="@+id/share_rating_bar"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:progressTint="?attr/colorPrimary"
+                tools:rating="4.5" />
+
+            <TextView
+                android:id="@+id/share_text_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="4.5" />
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:id="@+id/share_divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="?attr/colorOutlineVariant"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/share_cover_container"
+            tools:visibility="visible" />
+
+        <!-- Review Text -->
+        <TextView
+            android:id="@+id/share_text_review"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ellipsize="end"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="12sp"
+            app:autoSizeStepGranularity="2sp"
+            android:maxLines="8"
+            android:padding="16dp"
+            android:background="?attr/colorSurfaceContainerHighest"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textStyle="italic"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:lineSpacingExtra="4dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/share_divider"
+            tools:text="&quot;This was one of the best books I have ever read. The world-building is second to none, and the characters feel incredibly real. Rothfuss has created something truly magical.&quot;"
+            tools:visibility="visible" />
+
+<!--        <TextView-->
+<!--            android:id="@+id/share_text_branding"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:textAppearance="?attr/textAppearanceBodySmall"-->
+<!--            android:textColor="?attr/colorOnSurfaceVariant"-->
+<!--            android:alpha="0.7"-->
+<!--            android:visibility="gone"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/share_text_review"-->
+<!--            tools:text="Shared from MyBooks"-->
+<!--            tools:visibility="visible" />-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

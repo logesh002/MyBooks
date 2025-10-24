@@ -1,5 +1,6 @@
 package com.example.mybooks2.ui.detailScreen
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,6 +36,7 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
         viewModelScope.launch {
             bookDao.getBookWithTags(bookId).collect {
                 _bookDetails.value = it
+              // triggerRatingDialogIfNeeded(it?.book?.status)
             }
         }
     }
@@ -54,6 +56,8 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
             }
             bookDao.updateBook(updatedBook)
             _showUndoSnackbarEvent.postValue(Event(newStatus))
+         //   Log.d("slider","trigger call from update status")
+         //   triggerRatingDialogIfNeeded(newStatus)
         }
     }
     fun undoStatusChange() {
@@ -65,8 +69,8 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
         }
     }
 
-    fun triggerRatingDialogIfNeeded() {
-        if (_bookDetails.value?.book?.status == ReadingStatus.FINISHED && previousBookState?.status != ReadingStatus.FINISHED) {
+    fun triggerRatingDialogIfNeeded(newStatus: ReadingStatus) {
+        if (newStatus == ReadingStatus.FINISHED  && previousBookState?.status != ReadingStatus.FINISHED) {
             _showRatingDialogEvent.value = Event(Unit)
         }
     }
@@ -115,7 +119,8 @@ class BookDetailViewModel(private val bookDao: BookDao) : ViewModel() {
                     finishedDate = System.currentTimeMillis()
                 )
                 _showUndoSnackbarEvent.postValue(Event( ReadingStatus.FINISHED))
-
+              //  Log.d("slider","trigger call from page")
+              //  triggerRatingDialogIfNeeded(ReadingStatus.FINISHED)
             }
             bookDao.updateBook(updatedBook)
         }

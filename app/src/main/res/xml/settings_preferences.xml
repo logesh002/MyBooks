@@ -16,19 +16,6 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Reading Goals"
-        app:icon="@drawable/ic_goal"
-        >
-        <EditTextPreference
-            app:key="yearly_reading_goal"
-            app:title="Yearly Reading Goal"
-            app:summary="Set how many books you want to read this year."
-            app:dialogTitle="Enter your goal"
-            app:useSimpleSummaryProvider="true"
-            android:defaultValue="25"
-            android:digits="0123456789"
-            android:inputType="number" />
-    </PreferenceCategory>
     <PreferenceCategory app:title="Data Management"
         app:icon="@drawable/outline_database_24"
         >
@@ -81,6 +68,19 @@
             app:title="Home screen filter order"
             app:summary="Set the display order for the status filter chips." />
 
+    </PreferenceCategory>
+    <PreferenceCategory app:title="Reading Goals"
+        app:icon="@drawable/ic_goal"
+        >
+        <EditTextPreference
+            app:key="yearly_reading_goal"
+            app:title="Yearly Reading Goal"
+            app:summary="Set how many books you want to read this year."
+            app:dialogTitle="Enter your goal"
+            app:useSimpleSummaryProvider="true"
+            android:defaultValue="25"
+            android:digits="0123456789"
+            android:inputType="number" />
     </PreferenceCategory>
     <PreferenceCategory app:title="Online Search"
         app:icon="@drawable/outline_database_search_24"

@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mybooks2.ui.addBook2.AddBook2
@@ -274,11 +275,52 @@ class HomeFragment : Fragment() {
     private fun observeViewModel() {
 
         viewModel.booksToShow.observe(viewLifecycleOwner) { books ->
-
             books?.let {
-                bookAdapter.submitList(it)
+                if(it.isEmpty()){
+                    binding.recyclerViewBooks.visibility = View.GONE
+                    binding.bookNotFound.visibility = View.VISIBLE
+                    bookAdapter.submitList(it)
+                } else {
+                    binding.bookNotFound.visibility = View.GONE
+
+                    binding.recyclerViewBooks.itemAnimator = null
+                    binding.recyclerViewBooks.visibility = View.VISIBLE
+
+                    bookAdapter.submitList(it) {
+                        binding.recyclerViewBooks.itemAnimator = DefaultItemAnimator()
+                    }
+                }
             }
         }
+
+//        viewModel.booksToShow.observe(viewLifecycleOwner) { books ->
+//            books?.let {
+//                val isEmpty = it.isEmpty()
+//
+//                if(isEmpty){
+//                    binding.recyclerViewBooks.visibility = View.GONE
+//                    binding.bookNotFound.visibility = View.VISIBLE
+//                    bookAdapter.submitList(it)
+//                } else {
+//                    binding.bookNotFound.visibility = View.GONE
+//
+//                    if(wasEmpty) {
+//                        // Only if transitioning from empty, wait for list submission
+//                        binding.recyclerViewBooks.alpha = 0f
+//                        binding.recyclerViewBooks.visibility = View.VISIBLE
+//
+//                        bookAdapter.submitList(it) {
+//                            binding.recyclerViewBooks.animate().alpha(1f).setDuration(150).start()
+//                        }
+//                    } else {
+//                        binding.recyclerViewBooks.visibility = View.VISIBLE
+//                        bookAdapter.submitList(it)
+//                    }
+//                }
+//
+//                wasEmpty = isEmpty
+//            }
+//        }
         viewModel.layoutMode.observe(viewLifecycleOwner) { mode ->
             updateLayoutIcon(mode)
             switchLayoutManager(mode)

@@ -118,6 +118,7 @@ class SearchOnlineActivity : AppCompatActivity() {
                 }
             }
         })
+        binding.recyclerViewOnlineResults.itemAnimator = null
     }
 
     private fun setupSearch() {
@@ -158,10 +159,49 @@ class SearchOnlineActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.screenState.observe(this) { state ->
-            binding.progressBar.visibility = if (state == SearchOnlineViewModel.SearchScreenState.LOADING) View.VISIBLE else View.GONE
-            binding.recyclerViewOnlineResults.visibility = if (state == SearchOnlineViewModel.SearchScreenState.SUCCESS) View.VISIBLE else View.GONE
-            binding.textViewNoResults.visibility = if (state == SearchOnlineViewModel.SearchScreenState.NO_RESULTS) View.VISIBLE else View.GONE
-            binding.layoutError.visibility = if (state == SearchOnlineViewModel.SearchScreenState.ERROR) View.VISIBLE else View.GONE
+//            binding.progressBar.visibility = if (state == SearchOnlineViewModel.SearchScreenState.LOADING) View.VISIBLE else View.GONE
+//            binding.recyclerViewOnlineResults.visibility = if (state == SearchOnlineViewModel.SearchScreenState.SUCCESS) View.VISIBLE else View.GONE
+//            binding.textViewNoResults.visibility = if (state == SearchOnlineViewModel.SearchScreenState.NO_RESULTS) View.VISIBLE else View.GONE
+//            binding.layoutError.visibility = if (state == SearchOnlineViewModel.SearchScreenState.ERROR) View.VISIBLE else View.GONE
+
+            when(state){
+                SearchOnlineViewModel.SearchScreenState.LOADING ->{
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.recyclerViewOnlineResults.visibility = View.GONE
+                    binding.textViewNoResults.visibility =  View.GONE
+                    binding.layoutError.visibility = View.GONE
+                    searchAdapter.submitList(null)
+                }
+
+                SearchOnlineViewModel.SearchScreenState.IDLE -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerViewOnlineResults.visibility = View.GONE
+                    binding.textViewNoResults.visibility =  View.GONE
+                    binding.layoutError.visibility = View.GONE
+                    searchAdapter.submitList(null)
+                }
+                SearchOnlineViewModel.SearchScreenState.SUCCESS -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerViewOnlineResults.visibility = View.VISIBLE
+                    binding.textViewNoResults.visibility =  View.GONE
+                    binding.layoutError.visibility = View.GONE
+                }
+                SearchOnlineViewModel.SearchScreenState.ERROR -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerViewOnlineResults.visibility = View.GONE
+                    binding.textViewNoResults.visibility =  View.GONE
+                    binding.layoutError.visibility = View.VISIBLE
+                    searchAdapter.submitList(null)
+                }
+
+                SearchOnlineViewModel.SearchScreenState.NO_RESULTS -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerViewOnlineResults.visibility = View.GONE
+                    binding.textViewNoResults.visibility =  View.VISIBLE
+                    binding.layoutError.visibility = View.GONE
+                    searchAdapter.submitList(null)
+                }
+            }
         }
 
         viewModel.unifiedSearchResults.observe(this) { results ->

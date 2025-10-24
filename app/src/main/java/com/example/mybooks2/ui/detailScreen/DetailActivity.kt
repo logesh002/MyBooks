@@ -143,10 +143,16 @@ class DetailActivity : AppCompatActivity() {
             }
         }
         supportFragmentManager.setFragmentResultListener(RatingDialogFragment.REQUEST_KEY, this) { _, bundle ->
-            val rating = bundle.getFloat(RatingDialogFragment.RESULT_RATING)
-            val review = bundle.getString(RatingDialogFragment.RESULT_REVIEW) ?: ""
+            val undo = bundle.getBoolean(RatingDialogFragment.RESULT_UNDO)
+            if(undo){
+                viewModel.undoStatusChange()
+            }
+            else {
 
-            viewModel.saveFinishedDetails(rating, review)
+                val rating = bundle.getFloat(RatingDialogFragment.RESULT_RATING)
+                val review = bundle.getString(RatingDialogFragment.RESULT_REVIEW) ?: ""
+                viewModel.saveFinishedDetails(rating, review)
+            }
         }
         binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val totalScrollRange = appBarLayout.totalScrollRange
@@ -201,6 +207,9 @@ class DetailActivity : AppCompatActivity() {
                         hasLoadedInitialData = true
                     }
                     val book = bookWithTags.book
+                    if (previousStatus!=null && previousStatus != ReadingStatus.FINISHED && book.status == ReadingStatus.FINISHED) {
+                        viewModel.triggerRatingDialogIfNeeded(book.status)
+                    }
 
                     previousStatus = book.status
 
@@ -228,24 +237,33 @@ class DetailActivity : AppCompatActivity() {
             "UNFINISHED" to "Dropped"
         )
         statusSnackbar?.dismiss()
-        statusSnackbar = Snackbar.make(binding.root, "Moved to ${statusTextMap[newStatus.name]}", Snackbar.LENGTH_LONG)
-            .setAction("Undo") {
-                viewModel.undoStatusChange()
-            }
-            .addCallback(object : Snackbar.Callback() {
-                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                    super.onDismissed(transientBottomBar, event)
-                    if (transientBottomBar == statusSnackbar) {
-                        statusSnackbar = null
-                    }
-
-                    if (newStatus == ReadingStatus.FINISHED && event != DISMISS_EVENT_ACTION) {
-                        viewModel.triggerRatingDialogIfNeeded()
-                    }
+        if(newStatus != ReadingStatus.FINISHED) {
+            statusSnackbar = Snackbar.make(
+                binding.root,
+                "Moved to ${statusTextMap[newStatus.name]}",
+                Snackbar.LENGTH_LONG
+            )
+                .setAction("Undo") {
+                    viewModel.undoStatusChange()
                 }
-            })
+                .addCallback(object : Snackbar.Callback() {
+                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                        super.onDismissed(transientBottomBar, event)
+                        if (transientBottomBar == statusSnackbar) {
+                            statusSnackbar = null
+                        }
 
-        statusSnackbar?.show()
+//                        if (newStatus == ReadingStatus.FINISHED && event != DISMISS_EVENT_ACTION) {
+//                            viewModel.triggerRatingDialogIfNeeded()
+//                        }
+                    }
+                })
+
+            statusSnackbar?.show()
+        }
+//        else{
+//            viewModel.triggerRatingDialogIfNeeded()
+//        }
     }
 
 
@@ -612,23 +630,26 @@ class DetailActivity : AppCompatActivity() {
     private fun shareBookAsImage(bookWithTags: BookWithTags) {
         val book = bookWithTags.book
 
-        val shareView = layoutInflater.inflate(R.layout.share_card_layout, null)
+        val shareView = layoutInflater.inflate(R.layout.share_card_layout_2, null)
 
         val coverImage = shareView.findViewById<ImageView>(R.id.share_image_cover)
         val titleText = shareView.findViewById<TextView>(R.id.share_text_title)
         val authorText = shareView.findViewById<TextView>(R.id.share_text_author)
         val ratingBar = shareView.findViewById<RatingBar>(R.id.share_rating_bar)
 
+        val ratingNumber = shareView.findViewById<TextView>(R.id.share_text_rating)
         val reviewText = shareView.findViewById<TextView>(R.id.share_text_review)
 
         titleText.text = book.title
         authorText.text = "by ${book.author}"
 
         if(book.personalRating != null && book.personalRating>0) {
-            ratingBar.rating = book.personalRating.toFloat()
+            ratingBar.rating = book.personalRating
+            ratingNumber.text = book.personalRating.toString()
         }
         else{
             ratingBar.visibility = View.GONE
+            ratingNumber.visibility =View.GONE
         }
 
 

@@ -20,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mybooks2.databinding.ActivitySearchBinding
 import com.example.mybooks2.ui.detailScreen.DetailActivity
@@ -158,14 +159,29 @@ class SearchActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.searchResults.observe(this) { results ->
-            searchAdapter.submitList(results)
+//            searchAdapter.submitList(results)
+//            if(results.isEmpty()){
+//                binding.textViewNoResults.visibility=View.VISIBLE
+//                binding.recyclerViewSearchResults.visibility=View.GONE
+//            }
+//            else{
+//                binding.textViewNoResults.visibility=View.GONE
+//                binding.recyclerViewSearchResults.visibility=View.VISIBLE
+//            }
+
             if(results.isEmpty()){
-                binding.textViewNoResults.visibility=View.VISIBLE
-                binding.recyclerViewSearchResults.visibility=View.GONE
-            }
-            else{
-                binding.textViewNoResults.visibility=View.GONE
-                binding.recyclerViewSearchResults.visibility=View.VISIBLE
+                binding.recyclerViewSearchResults.visibility = View.GONE
+                binding.textViewNoResults.visibility = View.VISIBLE
+                searchAdapter.submitList(results)
+            } else {
+                binding.textViewNoResults.visibility = View.GONE
+
+                binding.recyclerViewSearchResults.itemAnimator = null
+                binding.recyclerViewSearchResults.visibility = View.VISIBLE
+
+                searchAdapter.submitList(results) {
+                    binding.recyclerViewSearchResults.itemAnimator = DefaultItemAnimator()
+                }
             }
         }
     }

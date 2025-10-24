@@ -25,7 +25,11 @@ class RatingDialogFragment : DialogFragment() {
 
         return MaterialAlertDialogBuilder(requireContext())
             .setView(dialogView)
-            .setNegativeButton("Skip", null)
+            .setNegativeButton("Undo"){ _,_ ->
+                setFragmentResult(REQUEST_KEY, bundleOf(
+                    RESULT_UNDO to true
+                ))
+            }
             .setPositiveButton("Save") { _, _ ->
                 val rating = ratingBar.rating
                 val review = reviewEditText.text.toString()
@@ -43,6 +47,8 @@ class RatingDialogFragment : DialogFragment() {
         const val REQUEST_KEY = "rating_request"
         const val RESULT_RATING = "rating_result"
         const val RESULT_REVIEW = "review_result"
+
+        const val RESULT_UNDO = "undo_result"
 
         private const val ARG_RATING = "arg_rating"
         private const val ARG_REVIEW = "arg_review"
