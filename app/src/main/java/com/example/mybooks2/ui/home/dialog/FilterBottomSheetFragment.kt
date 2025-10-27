@@ -2,12 +2,17 @@ package com.example.mybooks2.ui.home.dialog
 
 import android.R
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
@@ -39,18 +44,19 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
 
         val savedCheckedTagNames = savedInstanceState?.getStringArrayList("checked_tag_names")?.toSet()
         viewModel.allAuthors.observe(viewLifecycleOwner) { authors ->
+           // Log.d("DropDownHeight", "Authors received: ${authors.size}")
             val adapter =
                 ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, authors)
             binding.filterAuthor.setAdapter(adapter)
-
-            val maxDropdownHeight = (240 * resources.displayMetrics.density).toInt()
-            val fiveOrFewerItems = adapter.count <= 5
-
-            if (fiveOrFewerItems) {
-                binding.filterAuthor.dropDownHeight = ViewGroup.LayoutParams.WRAP_CONTENT
-            } else {
-                binding.filterAuthor.dropDownHeight = maxDropdownHeight
-            }
+//
+//            val maxDropdownHeight = (240 * resources.displayMetrics.density).toInt()
+//            val fiveOrFewerItems = adapter.count <= 5
+//
+//            if (fiveOrFewerItems) {
+//                binding.filterAuthor.dropDownHeight = ViewGroup.LayoutParams.WRAP_CONTENT
+//            } else {
+//                binding.filterAuthor.dropDownHeight = maxDropdownHeight
+//            }
         }
         val currentState = viewModel.getCurrentQueryState()
 
@@ -143,6 +149,53 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
             parentFragmentManager.setFragmentResult("query_request", bundleOf())
             dismiss()
         }
+        binding.filterAuthor.setOnItemClickListener { adapterView, view, position, id ->
+            clearFocusAndHideKeyboard()
+        }
+        binding.chipGroupSortBy.setOnCheckedStateChangeListener { _, _ ->
+            clearFocusAndHideKeyboard()
+        }
+
+        binding.toggleButtonGroupOrder.setOnClickListener {  _ ->
+            clearFocusAndHideKeyboard()
+        }
+       binding.filterChipGroupFormat.setOnCheckedStateChangeListener { _,_  ->
+           clearFocusAndHideKeyboard()
+       }
+
+        binding.filterChipGroupTags.setOnCheckedStateChangeListener { group, checkedIds ->
+            clearFocusAndHideKeyboard()
+        }
+
+        binding.toggleTagMatchMode.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (isChecked) {
+                clearFocusAndHideKeyboard()
+            }
+        }
+        setupDropdownHeightOnClick()
+    }
+    fun clearFocusAndHideKeyboard() {
+        binding.filterAuthor.clearFocus()
+
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+    private fun setupDropdownHeightOnClick() {
+        val maxDropdownHeight = (240 * resources.displayMetrics.density).toInt() // 240dp in pixels
+
+        binding.filterAuthor.setOnClickListener {
+            val adapter = binding.filterAuthor.adapter
+            val itemCount = adapter?.count ?: 0
+            val fiveOrFewerItems = itemCount <= 5
+
+            binding.filterAuthor.dropDownHeight = if (fiveOrFewerItems) {
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            } else {
+                maxDropdownHeight
+            }
+            binding.filterAuthor.showDropDown()
+        }
+
     }
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return super.onCreateDialog(savedInstanceState).apply {

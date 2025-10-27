@@ -41,12 +41,14 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:endIconMode="clear_text"
                 android:hint="Author">
 
                 <AutoCompleteTextView
                     android:id="@+id/filter_author"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:completionThreshold="1"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
