@@ -146,7 +146,7 @@ interface BookDao {
     @Query("SELECT finishedDate FROM books WHERE status = 'FINISHED' AND finishedDate IS NOT NULL")
     fun getFinishDatesOfFinishedBooks(): Flow<List<Long>>
 
-    @Query("SELECT * FROM books WHERE status = 'FINISHED' ORDER BY totalPages DESC LIMIT 1")
+    @Query("SELECT * FROM books WHERE status = 'FINISHED' AND totalPages > 0 ORDER BY totalPages DESC LIMIT 1")
     fun getLongestBookByPages(): Flow<Book?>
 
     @Query("SELECT * FROM books WHERE status = 'FINISHED' AND totalPages > 0 ORDER BY totalPages ASC LIMIT 1")
